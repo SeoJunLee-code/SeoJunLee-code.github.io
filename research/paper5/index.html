@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper 5 — Predicting success via internal signals · AEVORIN</title><meta name="description" content="Independent AI research and engineering. Beyond What Exists. Exploring the boundaries of intelligence."><meta name="theme-color" content="#03060d">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="en" href="./"><link rel="alternate" hreflang="ko" href="../../ko/research/paper5/">
+<link rel="stylesheet" href="../../assets/css/fonts.css"><link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="inner">
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="nav-in">
+<a class="logo" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
+<nav id="menu" class="menu" aria-label="Main"><a href="../../">Home</a><a href="../" aria-current="page">Research</a><a href="../../projects/">Projects</a><a href="../../about/">About</a><a href="../../contact/">Contact</a></nav><div class="lang" role="group" aria-label="Language"><a class="on" href="./" hreflang="en" lang="en">EN</a><a class="" href="../../ko/research/paper5/" hreflang="ko" lang="ko">KR</a></div>
+</div></header>
+<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← All research</a><h1>Paper 5</h1><p class="subh">Predicting success via internal signals</p><div class="meta"><span class="badge b-progress">In Progress</span><span class="pill">AI-assisted implementation</span><span class="pill">No independent review</span></div><div class="qbox"><span>Research question</span>Can an agent's early internal signal predict whether it will succeed, or does it only reflect how well it was trained?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>In progress.</b> The pre-registered next step (1j) has not been run. So far the data do not support reading the signal as “confidence”.</div>
+<h2>Question</h2>
+<p>A reinforcement-learning agent scores every action with a Q value. Its maximum, maxQ, roughly says how good the agent thinks the situation is. Can the maxQ over the first five steps predict whether the agent later reaches a key? And is that signal really “confidence”, or just how well the agent was trained (the training setting k)?</p>
+<h2>Method</h2>
+<p>A start close to the key makes success easy, so the comparison is fair only within the same run and the same distance. Stratified AUROC compares successes and failures only inside such strata (0.5 = chance, 1 = perfect). Only step 1f was pre-registered; the others are exploratory.</p>
+<h2>Result 1 — the early signal and its decomposition <span class="ev ev-m">Measured</span></h2>
+<p>In the decomposition (step 1i), maxQ over the first steps reaches AUROC 0.820 for the deterministic agent. But k alone gives 0.788, and after removing what k explains, only 0.597 [0.503, 0.688] remains. Most of the signal is the training setting.</p>
+<div class="tw-scroll"><table><thead><tr><th>Agent</th><th>Total (maxQ)</th><th>k alone</th><th>After removing k</th><th>Runs / episodes</th></tr></thead><tbody><tr><td>Deterministic agent</td><td>0.820 [0.710, 0.903]</td><td>0.788 [0.678, 0.876]</td><td>0.597 [0.503, 0.688]</td><td>60 / 663</td></tr><tr><td>Stochastic agent (ε=0.1)</td><td>0.861 [0.751, 0.944]</td><td>0.798 [0.639, 0.910]</td><td>0.512 [0.348, 0.665]</td><td>60 / 588</td></tr></tbody></table></div>
+<h2>Result 2 — a different run set <span class="ev ev-m">Measured</span></h2>
+<p>On another set of runs (steps 1g/1h, 120 runs, 752 episodes) the total is 0.680 [0.596, 0.762]; after removing k it is 0.511 [0.442, 0.585], which includes 0.5. (Step 1g reports the same number under the name “layout×distance”; the two intervals differ slightly because they were computed separately.)</p>
+<h2>Result 3 — a stricter follow-up (Phase 2b) <span class="ev ev-m">Measured</span></h2>
+<p>With comparison restricted to the same run and the same distance after four steps, the AUROC is <b>0.548 [0.486, 0.605]</b> (interval width 0.120) on 3,478 samples, 2,639 of them successes, 8,931 comparable pairs in 116 strata. The pre-set verdict: <b>no signal detected</b> (and the interval is narrow enough to say so).</p>
+<ul><li>A weaker control that matches only the starting distance gives 0.794 [0.756, 0.831]; it was not used for the verdict</li><li>Pooled with the earlier main experiment: 0.544 [0.476, 0.598] (reference only; the designs differ slightly)</li></ul>
+<h2>What this means <span class="ev ev-j">Judgment</span></h2>
+<p>The early AUROC of about 0.8 is mostly the training setting. Under stricter matching, maxQ is near chance. The “confidence” reading is not supported so far; the pre-registered step 1j, which excludes the extreme k=2 setting, is the planned test and has not been run.</p>
+<h2>Limitations</h2>
+<ul><li>Only step 1f was pre-registered; its original text is not kept (only its hash), so it cannot be compared with the stated hypothesis</li><li>Phase 2b was designed after the earlier main experiment's results were seen. Its pre-registration was locked before the new seeds ran, and the verdict follows one pre-set line</li><li>The environment and agent are re-implementations; results are about this environment and do not generalise to other settings</li><li>Step 1c scanned many signals and conditions at once, with no multiple-comparison correction on record</li><li>Hypotheses H-B1 and H-B2 were not re-tested in Phase 2b</li><li>Code for steps 1b–1h lives only in notebooks, so its hashes are not available</li></ul>
+<h2>Verification and AI use</h2>
+<p>Steps 1g–1i figures were generated from the project's analysis files by script and checked by tests. The Phase 2b figures were checked by hand against the original report and result files. AI-assisted implementation. No independent review.</p></article></main>
+<footer class="foot"><div class="foot-in">
+<a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<p class="tag">A new era begins with a question.</p>
+<div class="foot-links"><a href="https://github.com/SeoJunLee-code" rel="noopener">GitHub <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a><a href="../../contact/">Contact <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg></a></div>
+</div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body></html>

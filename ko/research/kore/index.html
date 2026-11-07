@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KORE — Knowledge Orchestration & Retrieval Engine · AEVORIN</title><meta name="description" content="독립 AI 연구 및 엔지니어링. Beyond What Exists. 지능의 경계를 탐구합니다."><meta name="theme-color" content="#03060d">
+<link rel="icon" href="../../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="en" href="../../../research/kore/"><link rel="alternate" hreflang="ko" href="./">
+<link rel="stylesheet" href="../../../assets/css/fonts.css"><link rel="stylesheet" href="../../../assets/css/site.css">
+</head>
+<body class="inner">
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><div class="nav-in">
+<a class="logo" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
+<nav id="menu" class="menu" aria-label="Main"><a href="../../">홈</a><a href="../" aria-current="page">연구</a><a href="../../projects/">프로젝트</a><a href="../../about/">소개</a><a href="../../contact/">연락</a></nav><div class="lang" role="group" aria-label="Language"><a class="" href="../../../research/kore/" hreflang="en" lang="en">EN</a><a class="on" href="./" hreflang="ko" lang="ko">KR</a></div>
+</div></header>
+<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>KORE</h1><p class="subh">Knowledge Orchestration & Retrieval Engine</p><div class="meta"><span class="badge b-prototype">프로토타입 · 미검증</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>언어모델이 답하는 데 실제로 도움이 되는 지식을 골라 주는 검색 계층이, 같은 조건에서 단순 RAG보다 나은가?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>아직 검증된 것은 없습니다.</b> 저장소 README가 직접 그렇게 밝힙니다. 샘플 데이터(문서 15개, 질문 9개)는 파이프라인이 도는지만 확인하며, KORE와 단순 RAG의 비교에 대해 어떤 결론도 뒷받침하지 않습니다.</div>
+<h2>질문</h2>
+<p>언어모델은 알맞은 외부 지식이 있으면 더 잘 답하지만, 검색은 관련 있어 보이기만 하고 도움이 되지 않는 글을 가져오기도 합니다. KORE는 실제로 도움이 되는 지식을 고르려는 프로토타입이며, 같은 조건에서 단순 RAG와 비교합니다.</p>
+<h2>있는 것</h2>
+<ul><li>실험 골격과 중단 후 이어 하는 실험 실행기</li><li>BM25 검색, 가중 점수 선택기, 부트스트랩 구간이 있는 평가 코드</li><li>무료 오픈 모델 생성기와 문서 기여도 라벨링 도구</li><li>데이터 점검 도구와 테스트</li></ul>
+<h2>하지 않은 것</h2>
+<ul><li>가설(H1–H3), KORE와 RAG의 비교, 독창성 주장은 모두 시험하지 않았습니다 <span class="ev ev-u">미검증</span></li><li>승인된 실제 평가 세트가 없습니다. AI의 도움으로 쓴 20문항 초안이 사람의 승인을 기다리고 있습니다</li><li>코드를 쓴 환경에서는 GPU 대규모 실행을 하지 못했습니다</li></ul>
+<h2>데이터</h2>
+<p>저장소에는 지식 표 초안이 있습니다. 출처 기록에서 모든 항목의 라이선스가 아직 확인되지 않은 상태라서, 이 사이트는 그 데이터를 재배포하지 않습니다.</p>
+<h2>팀과 역할</h2>
+<div class="tw-scroll"><table><thead><tr><th>기여자</th><th>역할</th></tr></thead><tbody><tr><td>SeoJunLee</td><td>개발 및 통합</td></tr><tr><td>기여자 B</td><td>데이터 및 선행 연구</td></tr><tr><td>기여자 C</td><td>평가 및 재현</td></tr></tbody></table></div>
+<p>3인 공동 프로젝트입니다. 팀원은 역할로 표기합니다.</p>
+<h2>AI 활용</h2>
+<p><b>AI 보조 개발입니다.</b> 저장소 이력에서 32개 커밋 중 24개는 AI 어시스턴트, 6개는 저자 계정, 2개는 자리표시자 계정의 커밋입니다. 자리표시자 계정으로 커밋된 작업을 누가 썼는지는 이력만으로 알 수 없습니다. 이 페이지는 단독 저작이나 단독 개발을 주장하지 않습니다.</p>
+<h2>검증 상태</h2>
+<p>저장소 자체 현황 문서의 수치(테스트 개수, 개발 질문 20개에 대한 검색 진단)는 이 페이지를 위해 재현하지 않았으므로 여기에 싣지 않습니다.</p></article></main>
+<footer class="foot"><div class="foot-in">
+<a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<p class="tag">A new era begins with a question.</p>
+<div class="foot-links"><a href="https://github.com/SeoJunLee-code" rel="noopener">GitHub <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a><a href="../../contact/">연락 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg></a></div>
+</div></footer>
+<script src="../../../assets/js/site.js" defer></script>
+</body></html>

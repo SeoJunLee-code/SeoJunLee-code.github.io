@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM Internal Computing — LLM 내부 결정론적 컴퓨터 검증 · AEVORIN</title><meta name="description" content="독립 AI 연구 및 엔지니어링. Beyond What Exists. 지능의 경계를 탐구합니다."><meta name="theme-color" content="#03060d">
+<link rel="icon" href="../../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="en" href="../../../research/llm-internal-computing/"><link rel="alternate" hreflang="ko" href="./">
+<link rel="stylesheet" href="../../../assets/css/fonts.css"><link rel="stylesheet" href="../../../assets/css/site.css">
+</head>
+<body class="inner">
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><div class="nav-in">
+<a class="logo" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
+<nav id="menu" class="menu" aria-label="Main"><a href="../../">홈</a><a href="../" aria-current="page">연구</a><a href="../../projects/">프로젝트</a><a href="../../about/">소개</a><a href="../../contact/">연락</a></nav><div class="lang" role="group" aria-label="Language"><a class="" href="../../../research/llm-internal-computing/" hreflang="en" lang="en">EN</a><a class="on" href="./" hreflang="ko" lang="ko">KR</a></div>
+</div></header>
+<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>LLM Internal Computing</h1><p class="subh">LLM 내부 결정론적 컴퓨터 검증</p><div class="meta"><span class="badge b-partial">재현 · 부분</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span><span class="repo off">저장소: 공개 예정</span></div><div class="qbox"><span>연구 질문</span>LLM 안에 결정론적 컴퓨터를 넣는 두 업스트림 프로젝트의 단위 테스트가 고정 커밋에서 통과하는가?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>재현만 했습니다.</b> 두 업스트림 프로젝트의 단위 테스트를 고정 커밋에서 돌렸습니다. 통과·실패 개수와 원인만 보고하며 성능 수치는 없습니다. 업스트림이 주장하는 회로, riscv-tests, 벤치마크는 재현하지 않았습니다.</div>
+<h2>질문</h2>
+<p>공개 프로젝트 QwenPU와 Qwenputer는 언어모델 안에 결정론적 컴퓨터를 넣습니다. 이를 바탕으로 무언가 만들기 전에, 고정한 버전에서 그들의 단위 테스트가 통과하는지 확인했습니다.</p>
+<h2>출처 표기</h2>
+<p>업스트림 프로젝트의 저자는 <b>divagr18</b>입니다(qwenpu 커밋 5af1fc0, qwenputer 커밋 bec1a0c). 이 저장소는 그들의 코드를 복사하지 않고 커밋만 가리킵니다. 고정한 커밋은 클론한 시점의 최신 커밋이며, 업스트림 저자가 고른 버전이 아닙니다.</p>
+<h2>첫 실행 (컨테이너) <span class="ev ev-m">실측</span></h2>
+<div class="tw-scroll"><table><thead><tr><th>프로젝트</th><th>수집</th><th>통과</th><th>건너뜀</th><th>실패</th><th>오류</th><th>미완료</th></tr></thead><tbody><tr><td>QwenPU</td><td>282</td><td>246</td><td>22</td><td>11</td><td>–</td><td>3</td></tr><tr><td>Qwenputer</td><td>562</td><td>479</td><td>49</td><td>11</td><td>15</td><td>8</td></tr></tbody></table></div>
+<p>실패와 오류의 원인은 네 가지입니다. 업스트림 코드와 맞지 않는 테스트, 없는 입력 파일, 메모리 부족으로 강제 종료된 프로세스, 시간 제한입니다. 이 결과만으로 업스트림 구현이 맞다 틀리다를 판단할 수 없습니다.</p>
+<h2>재실행 <span class="ev ev-m">실측</span></h2>
+<ul><li>코랩(RAM 13GB)에서는 컨테이너가 끝내지 못한 메모리 부담이 큰 테스트 6개가 모두 통과했습니다</li><li>시간 제한에서 잘렸던 테스트 파일 하나는 이후 끝까지 돌았습니다: 113개 중 113개 통과</li><li>다른 파일은 더 긴 제한에서도 멈췄습니다: 6개 중 3개 통과, 3,000초 제한에 걸림. 제한을 더 늘리면 달라지는지는 <span class="ev ev-u">미검증</span>입니다</li></ul>
+<h2>한계</h2>
+<ul><li>단위 테스트만 했으며 성능 수치는 없고, 업스트림 설계가 소개대로 동작한다는 주장도 하지 않습니다</li><li>첫 실행 표는 컨테이너 실행 기록이며 재실행 뒤에 고쳐 쓰지 않았습니다</li><li>일부 실패는 업스트림 변경 때 남은 테스트 때문일 수 있으나, 이는 판단이며 확인된 원인이 아닙니다</li></ul>
+<h2>검증과 AI 활용</h2>
+<p>개수는 프로젝트의 테스트 보고서와 대조했습니다. AI 보조 구현. 독립적인 검토는 없습니다. 테스트는 컨테이너와 코랩에서 돌렸습니다.</p></article></main>
+<footer class="foot"><div class="foot-in">
+<a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<p class="tag">A new era begins with a question.</p>
+<div class="foot-links"><a href="https://github.com/SeoJunLee-code" rel="noopener">GitHub <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a><a href="../../contact/">연락 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg></a></div>
+</div></footer>
+<script src="../../../assets/js/site.js" defer></script>
+</body></html>

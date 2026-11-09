@@ -5,6 +5,7 @@ import json, os, pathlib, random, subprocess, sys, shutil
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from content import build as build_content, BADGES  # noqa: E402
+from intro import intro_html  # noqa: E402
 
 D = json.load(open(ROOT / "data/research.json", encoding="utf-8"))
 LANGS = ("en", "ko")
@@ -20,13 +21,17 @@ MARK = ('<svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="fal
         '<path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/>'
         '<path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg>')
 
+INTRO_HEAD = ("<script>try{var q=location.search;if(/[?&]intro\\b/.test(q)||(!sessionStorage.getItem('aev_intro')&&!/[?&]nointro\\b/.test(q)"
+              "&&!matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('intro-on')}catch(e){}</script>\n")
 ICON_GH = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>'
 ICON_MAIL = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg>'
-ORBIT = '''<svg class="orbit" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-<defs><linearGradient id="og" x1="0" x2="1"><stop offset="0" stop-color="#9db4ff" stop-opacity="0"/><stop offset=".5" stop-color="#b9c9ff" stop-opacity=".55"/><stop offset="1" stop-color="#9db4ff" stop-opacity=".05"/></linearGradient></defs>
-<path id="orbitpath" d="M 160 520 C 360 150, 1180 60, 1440 330 C 1560 470, 1360 620, 1040 640" fill="none" stroke="url(#og)" stroke-width="1.4"/>
-<circle r="3.2" fill="#dfe8ff"><animateMotion dur="18s" repeatCount="indefinite" rotate="auto"><mpath href="#orbitpath"/></animateMotion></circle>
-<circle cx="800" cy="92" r="2.2" fill="#fff" class="tw"/></svg>'''
+ORBIT = '''<svg class="orbit" viewBox="0 0 1672 540" preserveAspectRatio="xMidYMin slice" aria-hidden="true" focusable="false">
+<defs><linearGradient id="og" x1="0" x2="1"><stop offset="0" stop-color="#9db4ff" stop-opacity="0"/><stop offset=".3" stop-color="#b9c9ff" stop-opacity=".5"/><stop offset=".7" stop-color="#cfdcff" stop-opacity=".6"/><stop offset="1" stop-color="#9db4ff" stop-opacity=".1"/></linearGradient>
+<radialGradient id="fl"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#cfe0ff" stop-opacity=".8"/><stop offset="1" stop-color="#6f95ff" stop-opacity="0"/></radialGradient></defs>
+<path id="orbitpath" d="M 170 275 C 400 130, 700 92, 835 92 C 1080 92, 1330 170, 1385 235 C 1440 300, 1400 380, 1230 447" fill="none" stroke="url(#og)" stroke-width="1.8"/>
+<g class="flare" transform="translate(835 92)"><circle r="26" fill="url(#fl)" opacity=".85"/><path d="M-72 0H72M0 -46V46" stroke="#dfe8ff" stroke-width=".9" opacity=".7"/><circle r="2.8" fill="#fff"/></g>
+<g class="tw2" transform="translate(1383 235)"><circle r="14" fill="url(#fl)" opacity=".7"/><circle r="2.6" fill="#fff"/></g>
+<circle r="3" fill="#dfe8ff"><animateMotion dur="22s" repeatCount="indefinite" rotate="auto"><mpath href="#orbitpath"/></animateMotion></circle></svg>'''
 
 def stars_svg(seed=11, n=170):
     rnd = random.Random(seed); out = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">']
@@ -77,9 +82,9 @@ def shell(lang, path, C, title, body, hero=False, active=""):
 <link rel="icon" href="{assets}/img/favicon.svg" type="image/svg+xml">
 <link rel="alternate" hreflang="en" href="{link(lang, path, "en", path)}"><link rel="alternate" hreflang="ko" href="{link(lang, path, "ko", path)}">
 <link rel="stylesheet" href="{assets}/css/fonts.css"><link rel="stylesheet" href="{assets}/css/site.css">
-</head>
+{INTRO_HEAD if hero else ""}</head>
 <body class="{"home" if hero else "inner"}">
-<a class="skip" href="#main">{C["brand"]["skip"]}</a>
+{intro_html(lang) if hero else ""}<a class="skip" href="#main">{C["brand"]["skip"]}</a>
 <header class="nav"><div class="nav-in">
 <a class="logo" href="{home}" aria-label="AEVORIN">{MARK}<span class="wm">AEVORIN</span></a>
 <button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
@@ -94,9 +99,11 @@ def shell(lang, path, C, title, body, hero=False, active=""):
 <script src="{assets}/js/site.js" defer></script>
 </body></html>'''
 
+ART = {"kore": "kore.svg", "h1": "h1.svg", "paper5": "paper5.svg", "llm-internal-computing": "llm.svg"}
 def card(lang, path, r, with_q=False):
     href = link(lang, path, lang, f"research/{r['id']}/")
-    return (f'<a class="card" href="{href}"><div class="card-top">{badge(lang, r["badge"])}</div>'
+    art = rel(page_dir(lang, path), ROOT / "assets/img/cards", trailing=False) + "/" + ART[r["id"]] if r["id"] in ART else ""
+    return (f'<a class="card c-{r["id"]}" href="{href}">' + (f'<img class="art" src="{art}" alt="" aria-hidden="true" loading="lazy">' if art else "") + f'<div class="card-top">{badge(lang, r["badge"])}</div>'
             f'<h3>{r["title"]}</h3><p class="sub">{r["sub"]}</p><p class="blurb">{r["blurb"]}</p>'
             f'<span class="more">{C_BRAND["learn"]} <i aria-hidden="true">→</i></span></a>')
 
@@ -112,7 +119,7 @@ def build_site():
             if path == "":
                 cards = "".join(card(lang, path, r) for r in C["research"][:4])
                 body = f'''<main id="main"><section class="hero">
-<div class="hero-sky"></div><div class="hero-photo"></div><div class="hero-glow"></div>{ORBIT}
+<div class="hero-sky"></div><div class="hero-photo"></div><div class="hero-glow"></div><svg class="limb" viewBox="0 0 1672 540" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#7fa0ff" stop-opacity=".0"/><stop offset=".25" stop-color="#a9c3ff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".95"/><stop offset=".75" stop-color="#a9c3ff" stop-opacity=".55"/><stop offset="1" stop-color="#7fa0ff" stop-opacity="0"/></linearGradient></defs><path d="M-40 532 Q836 312 1712 532" fill="none" stroke="url(#lg)" stroke-width="7" opacity=".35" vector-effect="non-scaling-stroke"/><path d="M-40 532 Q836 312 1712 532" fill="none" stroke="url(#lg)" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>{ORBIT}
 <div class="hero-in"><h1 class="brand">AEVORIN</h1><p class="ident">{C["brand"]["identity"]}</p><span class="rule"></span>
 <p class="slogan">{C["brand"]["slogan_a"]}<em>{C["brand"]["slogan_b"]}</em></p><p class="support">{C["brand"]["support"]}</p>
 <a class="down" href="#research" aria-label="Scroll"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></a></div>

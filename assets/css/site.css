@@ -128,7 +128,7 @@ html[lang=ko] .ev{text-transform:none;letter-spacing:0}
 .foot-links{margin-left:auto;display:flex;gap:26px}.foot-links a{display:inline-flex;gap:8px;align-items:center;color:var(--silver);font-size:14px}
 
 /* numerals + tables (kept late: the font shorthand above resets variants) */
-h1,h2,h3,.brand,.slogan,.card h3,.row h3,.proj h3,.kv dt,.logo .wm,.foot .tag{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
+h1,h2,h3,.brand,.slogan,.card h3,.row h3,.proj h3,.kv dt,.logo .wm,.foot .tag,.phead h1,.prose h2,.hr-lead h2,.subh{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
 td:not(:first-child){white-space:nowrap}
 
 /* responsive */

@@ -69,7 +69,7 @@ def intro_html(lang):
 <polyline points="310,125 516,487" stroke="#eef3ff" stroke-width="1.8" fill="none" opacity=".8"/>
 </g>
 <path class="in-front" d="{FRONT}" pathLength="1" filter="url(#iF)"/>
-<g class="in-star" transform="translate({sx} {sy})"><circle r="150" fill="url(#iS)" opacity=".8"/><circle r="92" fill="url(#iS)"/><circle r="34" fill="url(#iS)"/><path d="M-120 0H120M0 -80V80" stroke="#d6e4ff" stroke-width="1" opacity=".75"/><path d="M-60 24L60 -24" stroke="#bcd0ff" stroke-width=".8" opacity=".5"/><circle r="7" fill="#fff"/></g>
+<g class="in-star" transform="translate({sx} {sy})"><circle r="104" fill="url(#iS)" opacity=".6"/><circle r="70" fill="url(#iS)"/><circle r="34" fill="url(#iS)"/><path d="M-120 0H120M0 -80V80" stroke="#d6e4ff" stroke-width="1" opacity=".75"/><path d="M-60 24L60 -24" stroke="#bcd0ff" stroke-width=".8" opacity=".5"/><circle r="7" fill="#fff"/></g>
 <g class="in-word" fill="none" stroke="#dfe6f4" stroke-width="4.6">{wordmark()}</g>
 <text class="in-tag" x="318" y="735" text-anchor="middle">Beyond What Exists.</text>
 </svg>

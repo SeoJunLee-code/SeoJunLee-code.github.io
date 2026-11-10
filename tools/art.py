@@ -75,54 +75,60 @@ def svg(w, h, body, defs="", shift=0):
             f'<defs><filter id="g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/>'
             f'<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>{defs}</defs>{body}</svg>')
 CARDS = IMG / "cards"
-# 1) KORE: flowing particle ribbons
+# 1) KORE: luminous flowing ribbons + particles
 rr = random.Random(3); b = []
-for ribbon, (amp, ph, yoff, hue) in enumerate([(34, 0, 120, "#7fa4ff"), (26, 1.1, 132, "#9db8ff"), (40, 2.2, 108, "#5f86f0")]):
-    for i in range(130):
-        t = i / 129; x = 10 + 300 * t
-        y = yoff + amp * math.sin(t * 5.2 + ph) * (0.35 + t) - 70 * t
-        for j in range(2):
-            o = rr.uniform(.15, .95) * (0.4 + .6 * math.sin(t * math.pi))
-            rad = rr.choice([.6, .8, 1.1, 1.5]) if rr.random() > .06 else 2.2
-            b.append(f'<circle cx="{x + rr.gauss(0, 3):.1f}" cy="{y + rr.gauss(0, 7 + 10 * t):.1f}" r="{rad}" fill="{hue}" opacity="{o:.2f}"/>')
+def bez(p0, p1, p2, p3, t):
+    u = 1 - t; return (u**3*p0[0] + 3*u*u*t*p1[0] + 3*u*t*t*p2[0] + t**3*p3[0], u**3*p0[1] + 3*u*u*t*p1[1] + 3*u*t*t*p2[1] + t**3*p3[1])
+ribbons = [((6, 150), (90, 40), (170, 190), (318, 40), "#8fb2ff"), ((6, 160), (100, 70), (190, 170), (318, 66), "#6f98ff"),
+           ((6, 140), (80, 20), (160, 150), (318, 20), "#b9ceff"), ((6, 170), (110, 100), (200, 150), (318, 96), "#5b84f2")]
+for (p0, p1, p2, p3, col) in ribbons:
+    pts = [bez(p0, p1, p2, p3, i / 60) for i in range(61)]
+    b.append(f'<path d="M{pts[0][0]:.1f} {pts[0][1]:.1f} ' + " ".join(f"L{x:.1f} {y:.1f}" for x, y in pts[1:]) + f'" stroke="{col}" stroke-opacity=".42" stroke-width=".9"/>')
+    for i in range(150):
+        t = rr.random(); x, y = bez(p0, p1, p2, p3, t); spread = 3 + 9 * math.sin(t * math.pi)
+        o = rr.uniform(.2, 1) * (.25 + .75 * math.sin(t * math.pi) ** .6)
+        rad = rr.choice([.5, .7, .9, 1.2, 1.7]) if rr.random() > .05 else 2.6
+        b.append(f'<circle cx="{x + rr.gauss(0, spread):.1f}" cy="{y + rr.gauss(0, spread):.1f}" r="{rad}" fill="{col}" opacity="{o:.2f}"/>')
 (CARDS / "kore.svg").write_text(svg(320, 200, '<g filter="url(#g)">' + "".join(b) + "</g>"), encoding="utf-8")
-# 2) H1: group of silhouettes with rim light
+# 2) H1: backlit silhouettes
 def head(cx, cy, s, op):
     return (f'<g opacity="{op}" transform="translate({cx} {cy}) scale({s})">'
-            f'<path d="M-46 110 C-46 62 -26 48 0 44 C26 48 46 62 46 110 Z" fill="url(#sh)" stroke="#8fa8e8" stroke-opacity=".5" stroke-width="1.2"/>'
-            f'<ellipse cx="0" cy="12" rx="21" ry="26" fill="url(#sh)" stroke="#9db6ff" stroke-opacity=".7" stroke-width="1.3"/></g>')
-defs = '<linearGradient id="sh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2a52"/><stop offset="1" stop-color="#070c1c"/></linearGradient>'
-body = head(60, 62, .95, .55) + head(250, 66, .95, .55) + head(112, 50, 1.12, .8) + head(200, 50, 1.12, .8) + head(156, 38, 1.3, 1)
-body += "".join(f'<circle cx="{rr.uniform(10,310):.0f}" cy="{rr.uniform(10,120):.0f}" r="{rr.choice([.7,1,1.4])}" fill="#9db8ff" opacity="{rr.uniform(.2,.8):.2f}"/>' for _ in range(40))
+            f'<path d="M-46 110 C-46 62 -26 48 0 44 C26 48 46 62 46 110 Z" fill="url(#sh)" stroke="#9db6ff" stroke-opacity=".6" stroke-width="1.3"/>'
+            f'<ellipse cx="0" cy="12" rx="21" ry="26" fill="url(#sh)" stroke="#b4c8ff" stroke-opacity=".85" stroke-width="1.4"/></g>')
+defs = ('<linearGradient id="sh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22366a"/><stop offset="1" stop-color="#060b1b"/></linearGradient>'
+        '<radialGradient id="bk" cx=".5" cy=".35" r=".6"><stop offset="0" stop-color="#6f95ff" stop-opacity=".55"/><stop offset="1" stop-color="#6f95ff" stop-opacity="0"/></radialGradient>')
+body = '<ellipse cx="160" cy="70" rx="170" ry="90" fill="url(#bk)"/>' + head(58, 70, .9, .5) + head(262, 72, .9, .5) + head(108, 56, 1.1, .78) + head(210, 56, 1.1, .78) + head(160, 40, 1.3, 1)
+body += "".join(f'<circle cx="{rr.uniform(10,310):.0f}" cy="{rr.uniform(8,110):.0f}" r="{rr.choice([.7,1,1.5])}" fill="#b4c8ff" opacity="{rr.uniform(.3,.9):.2f}"/>' for _ in range(46))
 (CARDS / "h1.svg").write_text(svg(320, 200, body, defs, shift=95), encoding="utf-8")
-# 3) Paper 5: brain-shaped neural network
+# 3) Paper 5: brain with contour + denser network
 rr = random.Random(11)
 def inside(x, y):
     def e(cx, cy, rx, ry): return ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1
     return e(150, 92, 100, 66) or e(105, 112, 52, 40) or e(205, 118, 46, 36) or e(168, 150, 24, 30)
 pts = []
-while len(pts) < 150:
+while len(pts) < 190:
     p = (rr.uniform(40, 270), rr.uniform(20, 190))
-    if inside(*p) and all(math.dist(p, q) > 10 for q in pts): pts.append(p)
-lines = []; 
+    if inside(*p) and all(math.dist(p, q) > 8.5 for q in pts): pts.append(p)
+lines = []
 for i, p in enumerate(pts):
-    near = sorted(range(len(pts)), key=lambda j: math.dist(p, pts[j]))[1:4]
-    for j in near:
-        if j > i: lines.append(f'<line x1="{p[0]:.1f}" y1="{p[1]:.1f}" x2="{pts[j][0]:.1f}" y2="{pts[j][1]:.1f}" stroke="#7fa0ff" stroke-opacity=".45" stroke-width=".8"/>')
-nodes = "".join(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{rr.choice([1.3,1.8,2.4,3.2]):.1f}" fill="#cfe0ff" opacity="{rr.uniform(.5,1):.2f}"/>' for x, y in pts)
-(CARDS / "paper5.svg").write_text(svg(320, 200, '<g filter="url(#g)">' + "".join(lines) + nodes + "</g>", shift=70), encoding="utf-8")
-# 4) LLM: wireframe cube lattice (isometric, 4x4x4)
+    for j in sorted(range(len(pts)), key=lambda j: math.dist(p, pts[j]))[1:5]:
+        if j > i and math.dist(p, pts[j]) < 30: lines.append(f'<line x1="{p[0]:.1f}" y1="{p[1]:.1f}" x2="{pts[j][0]:.1f}" y2="{pts[j][1]:.1f}" stroke="#86a8ff" stroke-opacity=".5" stroke-width=".8"/>')
+contour = "".join(f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" stroke="#a9c3ff" stroke-opacity=".28" stroke-width="1"/>' for cx, cy, rx, ry in [(150, 92, 100, 66), (105, 112, 52, 40), (205, 118, 46, 36), (168, 150, 24, 30)])
+nodes = "".join(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{rr.choice([1.3,1.8,2.4,3.4]):.1f}" fill="#d6e5ff" opacity="{rr.uniform(.55,1):.2f}"/>' for x, y in pts)
+glow = '<radialGradient id="bg2" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#5f86f0" stop-opacity=".35"/><stop offset="1" stop-color="#5f86f0" stop-opacity="0"/></radialGradient>'
+(CARDS / "paper5.svg").write_text(svg(320, 200, '<ellipse cx="160" cy="100" rx="150" ry="95" fill="url(#bg2)"/><g filter="url(#g)">' + contour + "".join(lines) + nodes + "</g>", glow, shift=70), encoding="utf-8")
+# 4) LLM: glowing wireframe cube
 def iso(x, y, z, s=34, ox=160, oy=118):
     return (ox + (x - y) * s * .866, oy + (x + y) * s * .5 - z * s)
-ln = []
-N = 4
-for a in range(N + 1):
+ln = []; N = 4
+for a_ in range(N + 1):
     for b_ in range(N + 1):
-        for (p, q) in [((a, b_, 0), (a, b_, N)), ((a, 0, b_), (a, N, b_)), ((0, a, b_), (N, a, b_))]:
-            (x1, y1), (x2, y2) = iso(*p), iso(*q)
-            ln.append(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" stroke="#8fb0ff" stroke-opacity="{.75 if a in (0, N) and b_ in (0, N) else .28}" stroke-width="{1.1 if a in (0, N) and b_ in (0, N) else .7}"/>')
-verts = "".join(f'<circle cx="{iso(x,y,z)[0]:.1f}" cy="{iso(x,y,z)[1]:.1f}" r="1.5" fill="#dfe9ff" opacity=".8"/>' for x in range(N + 1) for y in range(N + 1) for z in (0, N) if x in (0, N) and y in (0, N))
-(CARDS / "llm.svg").write_text(svg(320, 220, '<g filter="url(#g)">' + "".join(ln) + verts + "</g>"), encoding="utf-8")
+        for (p, q) in [((a_, b_, 0), (a_, b_, N)), ((a_, 0, b_), (a_, N, b_)), ((0, a_, b_), (N, a_, b_))]:
+            (x1, y1), (x2, y2) = iso(*p), iso(*q); edge = a_ in (0, N) and b_ in (0, N)
+            ln.append(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" stroke="{"#cfe0ff" if edge else "#8fb0ff"}" stroke-opacity="{.95 if edge else .32}" stroke-width="{1.4 if edge else .7}"/>')
+verts = "".join(f'<circle cx="{iso(x,y,z)[0]:.1f}" cy="{iso(x,y,z)[1]:.1f}" r="2" fill="#fff" opacity=".95"/>' for x in range(N + 1) for y in range(N + 1) for z in (0, N) if x in (0, N) and y in (0, N))
+core = '<radialGradient id="cg" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#9dbbff" stop-opacity=".55"/><stop offset="1" stop-color="#6f95ff" stop-opacity="0"/></radialGradient>'
+(CARDS / "llm.svg").write_text(svg(320, 220, '<ellipse cx="160" cy="98" rx="120" ry="95" fill="url(#cg)"/><g filter="url(#g)">' + "".join(ln) + verts + "</g>", core), encoding="utf-8")
 
 # ---------------------------------------------------------------- footer mountain ridge (SVG)
 def ridge(seed, base, rough, n=5):

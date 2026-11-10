@@ -280,3 +280,9 @@ html.intro-on .intro{display:block}
 
 /* intro polish: no visible top edge on the planet layer, tighter star halo */
 .in-photo{height:78%;-webkit-mask-image:linear-gradient(to top,#000 40%,transparent 100%);mask-image:linear-gradient(to top,#000 40%,transparent 100%)}
+
+/* ---- design pass: sky nebula behind the hero, footer mountains weighted to the right like the mock-up ---- */
+.hero-sky::after{content:"";position:absolute;inset:0;background:url(../img/milkyway.webp) right -6% top -8%/78% auto no-repeat;mix-blend-mode:screen;opacity:.5;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 45%,transparent 85%);mask-image:linear-gradient(to bottom,#000 0,#000 45%,transparent 85%)}
+.foot::before{-webkit-mask-image:linear-gradient(to right,rgba(0,0,0,.18) 0,rgba(0,0,0,.5) 35%,#000 70%);mask-image:linear-gradient(to right,rgba(0,0,0,.18) 0,rgba(0,0,0,.5) 35%,#000 70%)}
+@media (max-width:820px){.hero-sky::after{background-size:140% auto;opacity:.4}}

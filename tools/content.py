@@ -8,9 +8,9 @@ def pct(x, d=0): return f"{x*100:.{d}f}%"
 
 BADGES = {
     "en": {"prototype": "Prototype · Unvalidated", "refuted": "Hypothesis Refuted", "progress": "In Progress",
-           "partial": "Reproduction · Partial", "exploratory": "Exploratory · 3 seeds"},
+           "partial": "Reproduction · Partial", "exploratory": "Exploratory · 3 seeds", "mixed": "Mixed Results"},
     "ko": {"prototype": "프로토타입 · 미검증", "refuted": "가설 반증", "progress": "진행 중",
-           "partial": "재현 · 부분", "exploratory": "탐색적 · 시드 3개"},
+           "partial": "재현 · 부분", "exploratory": "탐색적 · 시드 3개", "mixed": "혼합 결과"},
 }
 TAGS = {"en": {"m": "Measured", "r": "Reported", "j": "Judgment", "u": "Unverified"},
         "ko": {"m": "실측", "r": "문서 기재", "j": "판단", "u": "미검증"}}
@@ -74,9 +74,43 @@ def build(lang, D):
                else f"maze 3000스텝 위치 프로브 {f3(m['probe3000'])}, 미학습 {f3(m['probe3000_untrained'])} (미학습이 설명하는 몫 {m['untrained_share_pct']}%)."),
           blurb="Exploratory results, three seeds, no significance tests." if en else "탐색적 결과. 시드 3개, 유의성 검정 없음."),
     ]
+
+    # ------------------------------------------------------------------ four newer projects (newest first)
+    Al, Fo, Cr, Rs = D["algorithm"], D["forgetting"], D["creativity"], D["responsibility"]
+    cx1, cx2 = Cr["exp1_recomputed"], Cr["exp2_recomputed"]
+    R = [
+     dict(id="algorithm-innovation", badge="mixed", title="Algorithm Innovation" if en else "알고리즘 혁신",
+          sub="A cache-line approximate membership filter" if en else "캐시 라인 하나로 읽는 근사 멤버십 필터",
+          q=("With equal memory, can an insert-only filter that reads one cache line, with fingerprint length following block load, beat blocked Bloom and Prefix filter at a practical cost?" if en
+             else "같은 메모리에서, 블록 부하에 따라 지문 길이를 바꾸는 삽입 전용 필터가 캐시 라인 하나만 읽고도 blocked Bloom과 Prefix filter를 실용적인 비용으로 이길 수 있는가?"),
+          one=(f"False-positive rate {f3(Al['h1'][-1][1])}–{f3(Al['h1'][0][1])} of blocked Bloom at equal memory, but slower, and the core mechanism was already published (TinySet)." if en
+               else f"같은 메모리에서 오탐률이 blocked Bloom의 {f3(Al['h1'][-1][1])}~{f3(Al['h1'][0][1])}배이지만 더 느리고, 핵심 메커니즘은 이미 발표된 TinySet입니다."),
+          blurb="Pre-registered experiment with one rejected hypothesis." if en else "가설 하나가 기각된 사전등록 실험."),
+     dict(id="ai-responsibility", badge="refuted", title="AI Responsibility" if en else "AI 책임",
+          sub="Structural responsibility for AI agents" if en else "구조적 AI 책임",
+          q=("Without presupposing consciousness or moral status, can AI agents combined with institutional structure perform the functions of responsibility?" if en
+             else "의식이나 도덕적 지위를 전제하지 않고, AI 에이전트와 제도적 구조의 결합이 책임의 기능을 실제로 수행하게 만들 수 있는가?"),
+          one=("The thesis is rejected as stated; what held up works without the agent: the deployer's liability and records." if en
+               else "논지는 처음 적은 형태로는 기각됩니다. 남은 것은 에이전트 없이도 작동하는 배포자의 책임과 기록입니다."),
+          blurb="A literature-based study with a reference implementation." if en else "참조 구현을 곁들인 문헌 기반 연구."),
+     dict(id="ai-forgetting-review", badge="mixed", title="AI Forgetting & Review" if en else "AI 망각과 복습",
+          sub="One model for eviction and review under a fixed budget" if en else "고정 예산에서 퇴출과 복습을 함께 정하는 모델",
+          q=("With storage and compute fixed, does one per-item need model that decides eviction and review together beat simple baselines at the same budget?" if en
+             else "저장·연산 예산이 고정될 때, 항목별 필요 모델 하나로 퇴출과 복습을 함께 정하는 정책이 같은 예산의 단순 기준선보다 나은가?"),
+          one=(f"Study A supports the main hypothesis (+{Fo['h1']['diff']:.2f} pp over LRU on real conversations); Study B was not run." if en
+               else f"연구 A는 주 가설을 지지하지만(실제 대화에서 LRU보다 +{Fo['h1']['diff']:.2f}%p) 연구 B는 실행하지 않았습니다."),
+          blurb="Three studies; one confirmed, one not run, one exploratory." if en else "세 연구 중 하나는 확증, 하나는 미실행, 하나는 탐색적."),
+     dict(id="ai-creativity", badge="refuted", title="AI Creativity" if en else "AI 창의성",
+          sub="Doxa Negation Search" if en else "Doxa Negation Search (가정 부정 탐색)",
+          q=("Can AI create and develop creative ideas by extracting and negating the assumptions a population of ideas silently shares?" if en
+             else "아이디어 집단이 말없이 공유하는 가정을 추출해 뒤집는 방식으로, AI가 스스로 창의적 아이디어를 만들고 발전시킬 수 있는가?"),
+          one=(f"The pre-registered core hypothesis was rejected; a common critique-and-improve loop cut core retention from {cx2['expand']['retention']:.2f} to {cx2['refine']['retention']:.2f}." if en
+               else f"사전등록한 핵심 가설은 기각됐고, 흔히 쓰는 비판·개선 루프는 핵심 유지도를 {cx2['expand']['retention']:.2f}에서 {cx2['refine']['retention']:.2f}로 떨어뜨렸습니다."),
+          blurb="2,240 ideas scored by two LLM judges; no human rating." if en else "LLM 심사자 2명이 매긴 아이디어 2,240개. 사람 평가 없음."),
+    ] + R
     C["research"] = R
-    C["research_intro"] = ("Five lines of work. Each page states what was measured, what failed, and what was not checked." if en
-                           else "다섯 가지 연구입니다. 각 페이지는 무엇을 쟀는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지를 적습니다.")
+    C["research_intro"] = ("Nine lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
+                           else "아홉 가지 연구입니다. 최신순으로 늘어놓았고, 각 페이지는 무엇을 쟀는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지를 적습니다.")
     C["home_research_lead"] = ("We explore fundamental questions in AI, from collective decision-making to what models represent inside. Every page states what failed and what was not checked." if en
                                else "집단 의사결정부터 모델 내부 표현까지, AI의 근본 질문을 탐구합니다. 모든 페이지에 실패한 것과 확인하지 못한 것을 함께 적습니다.")
 
@@ -310,6 +344,188 @@ def build(lang, D):
      ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
      ("p", ("The figures were checked by hand against the original report file. AI-assisted implementation. No independent review." if en
             else "수치는 원본 보고서 파일과 직접 대조했습니다. AI 보조 구현. 독립적인 검토는 없습니다.")),
+    ]
+
+    # ================================================================== Algorithm Innovation
+    h1rows = [[f"{b:.2f}", f3(r), "10 / 10"] for b, r in Al["h1"]]
+    pages["algorithm-innovation"] = [
+     ("note", ("<b>Mixed results.</b> The filter beats blocked Bloom on false-positive rate at equal memory, but it is slower, its core mechanism was already published (TinySet, 2015), and the follow-up speed study is incomplete." if en
+               else "<b>혼합 결과입니다.</b> 같은 메모리에서 오탐률은 blocked Bloom보다 낮지만 속도는 더 느리고, 핵심 메커니즘은 이미 발표된 것(TinySet, 2015)이며, 후속 속도 연구는 끝나지 않았습니다."), "warn"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("An approximate membership filter answers “is this key in the set?” with some false positives. Blocked Bloom filters read one cache line per query. This study asks whether a filter that sizes each key's fingerprint by how full its block is, and truncates on overflow, can use one cache line and still give fewer false positives at the same memory." if en
+            else "근사 멤버십 필터는 “이 키가 집합에 있는가?”에 약간의 오탐을 허용하며 답합니다. blocked Bloom 필터는 질의마다 캐시 라인 하나를 읽습니다. 이 연구는 블록이 얼마나 찼는지에 따라 지문 길이를 정하고 넘치면 자르는 필터가, 캐시 라인 하나만 읽으면서도 같은 메모리에서 오탐을 줄일 수 있는지 묻습니다.")),
+     ("h2", "Method" if en else "방법"),
+     ("ul", ([f"A C++17 header implementation of the filter (variant EPF-nc, frozen before the confirmatory runs). Every baseline is the author's own implementation, because downloading third-party code was not allowed",
+              f"False-positive rate: {Al['seeds']} held-out seeds at n = {Al['n']:,} keys and {Al['seeds_large']} seeds at n = {Al['n_large']:,}; 5×10⁷ negative queries per cell",
+              "Cost: instruction counts and a cache simulator (cachegrind, simulated 256 KB last-level cache), plus wall-clock time on a shared machine",
+              "Hypotheses H1, H1b, H2, H3, H4 and their pass limits were written in a plan before the confirmatory runs, according to the repository's plan and review documents. The clone available here has one commit, so commit order could not be checked"] if en else
+             [f"필터의 C++17 헤더 구현(확증 실험 전에 고정한 EPF-nc 변형). 외부 코드를 내려받을 수 없어서 기준선은 모두 직접 구현했습니다",
+              f"오탐률: n = {Al['n']:,}개 키에서 보류 시드 {Al['seeds']}개, n = {Al['n_large']:,}개에서 시드 {Al['seeds_large']}개. 셀마다 음성 질의 5×10⁷개",
+              "비용: 명령어 수와 캐시 시뮬레이터(cachegrind, 마지막 수준 캐시 256 KB로 모사), 그리고 공유 머신의 벽시계 시간",
+              "가설 H1, H1b, H2, H3, H4와 통과 기준은 저장소의 계획·검토 문서에 따르면 확증 실험 전에 계획서에 적었습니다. 여기서 볼 수 있는 복제본은 커밋이 1개라서 커밋 순서는 확인하지 못했습니다"])),
+     ("h2", f"H1 — false positives at equal memory {T('m')}" if en else f"H1 — 같은 메모리에서의 오탐 {T('m')}"),
+     ("table", (["Bits per key", "False-positive rate, EPF-nc ÷ blocked Bloom", "Seeds won"] if en else ["키당 비트", "오탐률 비 (EPF-nc ÷ blocked Bloom)", "이긴 시드"]), h1rows),
+     ("p", (f"At n = {Al['n']:,} the ratio is below 1 at every point and in every seed: {f3(Al['h1'][0][1])} at {Al['h1'][0][0]:.2f} bits per key, falling to {f3(Al['h1'][-1][1])} at {Al['h1'][-1][0]:.2f}. H1 passed at all 12 points (both sizes)." if en
+            else f"n = {Al['n']:,}에서 모든 지점, 모든 시드에서 비가 1보다 작습니다. 키당 {Al['h1'][0][0]:.2f}비트에서 {f3(Al['h1'][0][1])}, {Al['h1'][-1][0]:.2f}비트에서 {f3(Al['h1'][-1][1])}까지 내려갑니다. H1은 12개 지점(두 크기) 모두 통과했습니다.")),
+     ("h2", f"H1b — memory needed for a target error rate {T('m')}" if en else f"H1b — 목표 오류율에 필요한 메모리 {T('m')}"),
+     ("table", (["Target false-positive rate", "Blocked Bloom (bits/key)", "EPF-nc (bits/key)", "Saving"] if en else ["목표 오탐률", "blocked Bloom (비트/키)", "EPF-nc (비트/키)", "절감"]), [[r["target"], (f"{r['bbf']:.2f}" if "bbf" in r else f"&gt; {r['bbf_gt']:.2f}"), f"{r['epf']:.2f}", (f"{r['saving']:.2f}" if "saving" in r else f"&ge; {r['saving_ge']:.2f}")] for r in Al["h1b"]]),
+     ("h2", f"Cost, and what failed {T('m')}" if en else f"비용, 그리고 실패한 것 {T('m')}"),
+     ("table", (["Hypothesis", "Measured", "Limit", "Verdict"] if en else ["가설", "측정", "한도", "판정"]),
+      [["H4a — instructions per negative query", f"{Al['h4a']['epf']} ÷ {Al['h4a']['bbf']} = {Al['h4a']['ratio']:.2f}×", f"≤ {Al['h4a']['limit']:.1f}×", "Pass" if en else "통과"],
+       ["H4b — last-level cache misses per negative query", f"{Al['h4b']['epf']:.3f} (Cuckoo {Al['h4b']['cuckoo']:.3f})", f"≤ {Al['h4b']['limit']:.2f}, fewer than Cuckoo" if en else f"≤ {Al['h4b']['limit']:.2f}, Cuckoo보다 적음", "Pass" if en else "통과"],
+       ["H4c — instructions per insert", f"{Al['h4c']['epf']} ÷ {Al['h4c']['cuckoo']} = {Al['h4c']['ratio']:.2f}×", f"≤ {Al['h4c']['limit']:.1f}×", "<b>Rejected</b>" if en else "<b>기각</b>"],
+       ["H2 — against the Prefix filter", "not testable: no reference implementation" if en else "검증 못 함: 참조 구현 없음", "–", "–"]]),
+     ("ul", ([f"Wall-clock: negative queries take {Al['wallclock_negative_query']['vs_blocked_bloom']:.2f}× the time of blocked Bloom, {Al['wallclock_negative_query']['vs_cuckoo']:.2f}× Cuckoo and {Al['wallclock_negative_query']['vs_prefix_style']:.2f}× the Prefix-style reimplementation (the report calls the filter slow). Instruction and miss counts are the deterministic metrics; milliseconds are noisy on a shared machine",
+              f"Novelty is <b>not achieved</b>: the report states the core mechanism is TinySet (Einziger &amp; Friedman, 2015/2017), found by a prior-art check after the work began, and the added improvements are standard techniques worth about {Al['novelty_gain_bits_per_key']} bits per key",
+              "A second study on query speed was started but is incomplete: its result file judged_run2.csv is empty (0 bytes) and there is no verdict, so nothing from it is reported here"] if en else
+             [f"벽시계: 음성 질의 시간이 blocked Bloom의 {Al['wallclock_negative_query']['vs_blocked_bloom']:.2f}배, Cuckoo의 {Al['wallclock_negative_query']['vs_cuckoo']:.2f}배, Prefix식 재구현의 {Al['wallclock_negative_query']['vs_prefix_style']:.2f}배입니다(보고서가 이 필터를 느리다고 적습니다). 결정적 지표는 명령어 수와 미스 수이고, 밀리초는 공유 머신에서 잡음이 있습니다",
+              f"신규성은 <b>확보하지 못했습니다</b>: 보고서에 따르면 핵심 메커니즘이 TinySet(Einziger &amp; Friedman, 2015/2017)과 같습니다. 작업이 시작된 뒤 선행연구 확인에서 알게 되었고, 추가한 개선은 표준 기법이며 효과는 키당 약 {Al['novelty_gain_bits_per_key']}비트입니다",
+              "질의 속도에 대한 2차 연구를 시작했지만 끝나지 않았습니다. 결과 파일 judged_run2.csv가 비어 있고(0바이트) 판정이 없어서 여기에는 싣지 않습니다"])),
+     ("h2", "Limitations" if en else "한계"),
+     ("ul", (["Only the author's own baselines were measured: the original TinySet, the Prefix filter, VQF and Morton filter were not. The Prefix-style filter is a reimplementation from memory",
+              "Speed was measured on one shared machine with independent query loops; the regime dominated by cache misses was not tested by wall-clock",
+              f"The large-n runs have only {Al['seeds_large']} seeds, and the filter is insert-only",
+              "Paper bodies were not read for the prior-art check; it relied on the authors' source code and abstracts"] if en else
+             ["직접 구현한 기준선만 측정했습니다. TinySet 원본, Prefix filter, VQF, Morton filter는 측정하지 않았고 Prefix식 필터는 기억에 의존한 재구현입니다",
+              "속도는 공유 머신 한 대에서 독립 질의 루프로만 측정했고, 캐시 미스가 지배하는 조건은 벽시계로 재지 못했습니다",
+              f"큰 n의 실행은 시드가 {Al['seeds_large']}개뿐이고, 필터는 삽입 전용입니다",
+              "선행연구 확인에서 논문 본문은 읽지 않았고 저자들의 소스 코드와 초록에 의존했습니다"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", ("The figures above were checked by hand against the repository's results file. The repository's review file, written by an AI reviewer agent, reports no blocking issue and accepts three listed concerns; no independent human review is recorded. The repository has no AI-use statement; its logs describe an orchestrator with sub-agent roles (scouts, prior-art check, baselines, reviewer). AI-assisted implementation. The repository has no licence file." if en
+            else "위 수치는 저장소의 결과 파일과 직접 대조했습니다. 저장소의 검토 문서는 AI 검토 에이전트가 쓴 것으로, 차단할 지적이 없다고 하고 세 가지 우려를 수용합니다. 독립적인 사람 검토는 기록되어 있지 않습니다. 저장소에는 AI 활용 선언이 없고, 로그에는 조율자와 하위 에이전트 역할(탐색, 선행연구 확인, 기준선, 검토자)이 적혀 있습니다. AI 보조 구현입니다. 저장소에 라이선스 파일은 없습니다.")),
+    ]
+
+    # ================================================================== AI Responsibility
+    sr, rg, cc, rt = Rs["sources"], Rs["registry"], Rs["claim_check"], Rs["red_team"]
+    pages["ai-responsibility"] = [
+     ("note", ("<b>Thesis rejected as stated.</b> The repository's own conclusion: the thesis that AI agents combined with structure can make the functions of responsibility (except retribution) be performed is rejected in the form written in its introduction. This is a working draft, not a finished manuscript." if en
+               else "<b>논지는 처음 적은 형태로는 기각됩니다.</b> 저장소 스스로의 결론입니다. AI 에이전트와 구조의 결합이 (응보를 제외한) 책임의 기능을 수행하게 만들 수 있다는 논지는 서론에 적은 형태로는 기각됩니다. 이 글은 완성본이 아니라 작업 중인 초안입니다."), "bad"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("Without assuming that AI is conscious or has moral status, can an AI agent, combined with institutional structure, perform what responsibility does: compensating victims, keeping records, withdrawing authority?" if en
+            else "AI가 의식이 있거나 도덕적 지위를 가진다고 가정하지 않고, AI 에이전트가 제도적 구조와 결합해 책임이 하는 일, 곧 피해자 보상, 기록, 권한 회수를 수행할 수 있는가?")),
+     ("h2", "Method" if en else "방법"),
+     ("ul", (["A web-based literature survey with four scouts (academic databases were blocked), checked against Crossref, arXiv and the Stanford Encyclopedia of Philosophy",
+              "A check of quotations and attributed claims against the sources that could be reached",
+              "A Python reference implementation, attacked by a separate red-team agent",
+              "A model of liability regimes, and a behavioural experiment with LLM subjects"] if en else
+             ["스카우트 4명(학술 DB 접근 차단)으로 한 웹 기반 문헌 조사. Crossref, arXiv, 스탠퍼드 철학 백과로 대조",
+              "닿을 수 있었던 출처에 대한 인용·귀속 주장 대조",
+              "파이썬 참조 구현과, 별도의 레드팀 에이전트의 공격",
+              "책임 체제 모형과, LLM 피험자를 쓴 행동 실험"])),
+     ("h2", f"Results {T('m')}" if en else f"결과 {T('m')}"),
+     ("table", (["Item", "Count"] if en else ["항목", "개수"]),
+      [["Candidate sources (grade A / B / C)" if en else "후보 출처 (A / B / C 등급)", f"{sr['total']} ({sr['A']} / {sr['B']} / {sr['C']})"],
+       ["Registry check: verified / not found / mismatch / not checked" if en else "레지스트리 대조: 확인 / 못 찾음 / 불일치 / 미확인", f"{rg['verified']} / {rg['not_found']} / {rg['mismatch']} / {rg['not_checked']}"],
+       ["BibTeX entries" if en else "BibTeX 항목", str(Rs['bibtex_entries'])],
+       ["Attributed claims checked: supported / partly / not supported / unreachable" if en else "귀속 주장 대조: 지지 / 부분 / 지지 안 됨 / 접근 불가", f"{cc['supported']} / {cc['partly']} / {cc['not_supported']} / {cc['unreachable']} (of {cc['total']})" if en else f"{cc['supported']} / {cc['partly']} / {cc['not_supported']} / {cc['unreachable']} (총 {cc['total']}개)"],
+       ["Red team against the first reference implementation" if en else "첫 참조 구현에 대한 레드팀", f"{rt['succeeded']} of {rt['attacks']} attacks succeeded" if en else f"공격 {rt['attacks']}개 중 {rt['succeeded']}개 성공"]]),
+     ("ul", ([f"A “supported” verdict at abstract depth means the abstract says it, not that the article was read; the claim check lists the {cc['not_supported']} unsupported claims as corrections to make",
+              f"After strengthening, the implementation's own attack tests pass {rt['tests_passed_after']} of {rt['tests_after']}; {rt['design_limits']} are design limits that code cannot block. No fresh re-attack was run",
+              f"In the behavioural experiment, a difference appeared only under the charter that names the behaviour and attaches a penalty (verification performed in {Rs['behaviour']['verified_charter']} runs against {Rs['behaviour']['verified_other']}); whether that is an effect of having a stake could not be separated. A condition that only described the structure showed no difference",
+              "What survives: compensation, records and withdrawal of authority are carried out by the deployer's responsibility and institutions, without the agent. In the model, most of the compensation benefit came from certainty of attribution and strict liability, not from the agent's stake. Whether anything requires the agent is not shown"] if en else
+             [f"초록 수준에서의 “지지”는 초록이 그렇게 말한다는 뜻이지 논문을 읽었다는 뜻이 아닙니다. 인용 대조 문서는 지지되지 않은 {cc['not_supported']}건을 고쳐야 할 항목으로 적습니다",
+              f"보강한 뒤 구현 자체의 공격 테스트는 {rt['tests_after']}개 중 {rt['tests_passed_after']}개를 통과하고, {rt['design_limits']}개는 코드로 막을 수 없는 설계 한계입니다. 새로 다시 공격하지는 않았습니다",
+              f"행동 실험에서 차이는 행동을 지목하고 불이익을 건 헌장에서만 나타났습니다(검증 수행 {Rs['behaviour']['verified_charter']} 대 {Rs['behaviour']['verified_other']}). 그것이 지분의 효과인지는 가를 수 없었고, 구조를 서술만 한 조건에서는 차이가 없었습니다",
+              "남은 것: 보상, 기록, 권한 회수는 에이전트 없이도 배포자의 책임과 제도가 수행합니다. 모형에서 보상의 이득은 대부분 지분이 아니라 귀속의 확실성과 엄격 책임에서 나왔습니다. 에이전트가 있어야만 되는 것이 있는지는 보이지 못했습니다"])),
+     ("h2", "Limitations" if en else "한계"),
+     ("ul", (["Paid or blocked sources were not read: verification is at metadata and abstract level, and the acquisition list names sources that must be obtained by hand",
+              "One model, one task and one instruction in the experiment, with several factors mixed across conditions",
+              "The same model family wrote, attacked, scored and reviewed the work, and there was no re-review after the review",
+              "The regime model restates assumptions; the classification of the denial arguments is provisional and depends on originals that were not read",
+              "Not run by us: the repository's tests and reproduction commands"] if en else
+             ["유료이거나 막힌 출처는 읽지 못했습니다. 검증은 메타데이터와 초록 수준이며, 확보해야 할 원문은 목록으로만 남아 있습니다",
+              "실험은 한 모델, 한 과제, 한 지시문이고 조건 사이에 여러 요인이 섞여 있습니다",
+              "같은 계열의 모델이 쓰고, 공격하고, 채점하고, 검토했으며, 검토 뒤 재검토는 없었습니다",
+              "체제 모형은 가정을 다시 서술한 것이고, 부정 논증의 분류는 읽지 못한 원문에 달려 있어 잠정적입니다",
+              "우리가 돌려 보지 않은 것: 저장소의 테스트와 재현 명령"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", ("<b>AI performed the research.</b> The repository's README states that the survey, design, implementation, experiments and writing were done by an AI (Claude), that the attacker, subjects, graders and reviewers were models of the same family, that a human made four decisions, and that no human read the source texts or reviewed the manuscript. Counts above were checked against the repository's audit and claim-check files; the rest is quoted from its README and reports. No independent review." if en
+            else "<b>연구는 AI가 수행했습니다.</b> 저장소 README는 조사, 설계, 구현, 실험, 집필을 AI(Claude)가 했고, 공격자·피험자·채점자·검토자도 같은 계열의 모델이며, 사람이 내린 결정은 네 번이고, 사람이 원문을 읽거나 원고를 검토한 적은 없다고 적습니다. 위 개수는 저장소의 감사·인용 대조 파일과 대조했고, 나머지는 README와 보고서를 인용했습니다. 독립적인 검토는 없습니다.")),
+    ]
+
+    # ================================================================== AI Forgetting & Review
+    h1b = Fo["h1b_vs_random"]; lm = Fo["learnedneed_minus"]
+    pages["ai-forgetting-review"] = [
+     ("note", ("<b>Mixed results.</b> Study A supports the main hypothesis on real conversation data. Study B (continual learning) was not run. Study C is exploratory and uses synthetic traces." if en
+               else "<b>혼합 결과입니다.</b> 연구 A는 실제 대화 데이터에서 주 가설을 지지합니다. 연구 B(연속학습)는 실행하지 않았고, 연구 C는 합성 트레이스를 쓴 탐색적 연구입니다."), "warn"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("An agent that remembers has a fixed budget for storage and compute. This work asks whether one model that scores each item's need to be kept, and uses that score to decide both what to evict and what to review, does better than simple baselines (random, first-in-first-out, least recently or frequently used, forgetting-curve and ACT-R rules) at the same budget." if en
+            else "기억하는 에이전트에게는 저장과 연산 예산이 정해져 있습니다. 이 연구는 항목마다 보존 필요도를 점수로 매기고 그 점수로 퇴출과 복습을 함께 정하는 모델 하나가, 같은 예산에서 단순 기준선(무작위, 먼저 들어온 것부터, 최근·빈도 기준, 망각 곡선과 ACT-R 규칙)보다 나은지 묻습니다.")),
+     ("h2", "Method" if en else "방법"),
+     ("ul", ([f"Study A: {Fo['conversations']} real LoCoMo conversations (the data are not in the repository), memory eviction simulated; paired bootstrap over conversations ({Fo['bootstrap']:,} resamples); {Fo['result_rows']:,} result rows",
+              "Study B: continual learning on MNIST, seeds 0–9: not run",
+              "Study C: synthetic traces, seeds 0–9, exploratory: the plan registers no confirmatory hypothesis for it"] if en else
+             [f"연구 A: 실제 LoCoMo 대화 {Fo['conversations']}개(데이터는 저장소에 없음), 메모리 퇴출 시뮬레이션. 대화 단위 대응 부트스트랩({Fo['bootstrap']:,}회), 결과 {Fo['result_rows']:,}행",
+              "연구 B: MNIST 연속학습, 시드 0–9: 실행하지 않음",
+              "연구 C: 합성 트레이스, 시드 0–9, 탐색적: 계획서에 확증 가설을 등록하지 않았음"])),
+     ("h2", f"Study A — H1 {T('m')}" if en else f"연구 A — H1 {T('m')}"),
+     ("p", (f"With the budget at ρ = {Fo['rho']}, the best classical baseline is LRU at {Fo['h1']['lru']:.1f}% evidence retention; the learned model reaches {Fo['h1']['learnedneed']:.1f}%. The difference is +{Fo['h1']['diff']:.2f} percentage points, 95% CI [+{Fo['h1']['ci'][0]:.2f}, +{Fo['h1']['ci'][1]:.2f}]. The pre-set criterion (CI above 0 and at least {Fo['h1']['min_pp']} points) is met: <b>H1 supported</b>." if en
+            else f"예산이 ρ = {Fo['rho']}일 때 기존 기준선 중 최선은 LRU의 증거 보존율 {Fo['h1']['lru']:.1f}%이고, 학습 모델은 {Fo['h1']['learnedneed']:.1f}%에 이릅니다. 차이는 +{Fo['h1']['diff']:.2f}%p, 95% 구간 [+{Fo['h1']['ci'][0]:.2f}, +{Fo['h1']['ci'][1]:.2f}]입니다. 미리 정한 기준(구간이 0 위, 그리고 {Fo['h1']['min_pp']}%p 이상)을 충족해서 <b>H1은 지지됩니다</b>.")),
+     ("table", (["Policy compared", "Learned model minus policy (pp)", "95% CI"] if en else ["비교 정책", "학습 모델 − 정책 (%p)", "95% 구간"]),
+      [[k, f"{v[0]:+.1f}", f"[{v[1]:+.1f}, {v[2]:+.1f}]"] for k, v in lm.items()]),
+     ("p", (f"The closest competitor is GA-proxy (a generative-agents-style rule): the margin is only +{lm['GA-proxy'][0]:.1f} points [+{lm['GA-proxy'][1]:.1f}, +{lm['GA-proxy'][2]:.1f}]. GA-proxy is not part of the pre-registered set of classical baselines that H1 is judged against." if en
+            else f"가장 가까운 경쟁자는 GA-proxy(생성형 에이전트 방식의 규칙)이며, 격차는 +{lm['GA-proxy'][0]:.1f}%p [+{lm['GA-proxy'][1]:.1f}, +{lm['GA-proxy'][2]:.1f}]에 불과합니다. GA-proxy는 H1을 판정하는 사전등록 기존 기준선 집합에 들어 있지 않습니다.")),
+     ("h2", f"Study A — H1b rejected {T('m')}" if en else f"연구 A — H1b 기각 {T('m')}"),
+     ("p", (f"H1b said the classical policies cannot be told apart from random eviction. It is rejected: against Random, LRU is +{h1b['LRU'][0]:.1f} pp [+{h1b['LRU'][1]:.1f}, +{h1b['LRU'][2]:.1f}], LFU {h1b['LFU'][0]:+.1f} [{h1b['LFU'][1]:+.1f}, {h1b['LFU'][2]:+.1f}] and Ebbinghaus +{h1b['Ebbinghaus'][0]:.1f} [+{h1b['Ebbinghaus'][1]:.1f}, +{h1b['Ebbinghaus'][2]:.1f}], each with an interval that excludes 0 and a size of at least 3 points. ACT-R ({h1b['ACT-R'][0]:+.1f}) is below the 3-point bar." if en
+            else f"H1b는 기존 정책이 무작위 퇴출과 구분되지 않는다는 가설이었고 기각됩니다. Random 대비 LRU는 +{h1b['LRU'][0]:.1f}%p [+{h1b['LRU'][1]:.1f}, +{h1b['LRU'][2]:.1f}], LFU는 {h1b['LFU'][0]:+.1f} [{h1b['LFU'][1]:+.1f}, {h1b['LFU'][2]:+.1f}], Ebbinghaus는 +{h1b['Ebbinghaus'][0]:.1f} [+{h1b['Ebbinghaus'][1]:.1f}, +{h1b['Ebbinghaus'][2]:.1f}]로, 모두 구간이 0을 벗어나고 3%p 이상입니다. ACT-R({h1b['ACT-R'][0]:+.1f})은 3%p 기준에 못 미칩니다.")),
+     ("h2", "What did not work or was not done" if en else "되지 않은 것, 하지 않은 것"),
+     ("ul", ([f"One of Study A's own self-checks <b>failed</b>: the spread of random eviction across its 5 policy seeds is {Fo['selfcheck_fail']['random_seed_sd_pp']} points (standard error {Fo['selfcheck_fail']['se_pp']}), against a {Fo['selfcheck_fail']['margin_pp']:.0f}-point margin used to judge differences",
+              "Study B has no results: the repository has no Study B output and no MNIST data, so H2–H4 cannot be judged",
+              "Study C is exploratory and every trace is synthetic, so its statements depend on the trace generator",
+              "No manuscript was written: the article, book and presentation folders are templates"] if en else
+             [f"연구 A의 자체 점검 하나가 <b>실패</b>했습니다. Random의 5개 정책 시드 사이 퍼짐이 {Fo['selfcheck_fail']['random_seed_sd_pp']}%p(표준오차 {Fo['selfcheck_fail']['se_pp']})로, 차이를 판단하는 데 쓴 {Fo['selfcheck_fail']['margin_pp']:.0f}%p 기준과 비교됩니다",
+              "연구 B는 결과가 없습니다. 저장소에 연구 B 산출물도 MNIST 데이터도 없어서 H2–H4는 판정할 수 없습니다",
+              "연구 C는 탐색적이고 모든 트레이스가 합성이라, 진술이 트레이스 생성기에 따라 달라집니다",
+              "원고는 쓰지 않았습니다. 논문, 책, 발표 폴더는 템플릿 상태입니다"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", ("The Study A numbers were checked by hand against the repository's report. We did not re-run the study. AI-assisted implementation: the repository's logs record sub-agents for the literature survey and a design approval given by delegation. No independent review. LoCoMo is credited to Maharana et al. (2024)." if en
+            else "연구 A의 수치는 저장소 보고서와 직접 대조했습니다. 연구를 다시 돌려 보지는 않았습니다. AI 보조 구현이며, 저장소 로그에는 문헌 조사에 하위 에이전트를 썼고 설계 승인을 위임으로 했다고 기록되어 있습니다. 독립적인 검토는 없습니다. LoCoMo는 Maharana 외(2024)의 데이터입니다.")),
+    ]
+
+    # ================================================================== AI Creativity
+    cond_order = [("iid", "iid — 20 independent calls", "iid — 독립 호출 20회"), ("list", "list — 20 at once", "list — 한 번에 20개"),
+                  ("cot", "cot — brainstorm, then replace", "cot — 브레인스토밍 후 교체"), ("deny", "deny — see the archive, must differ", "deny — 아카이브를 보고 달라야 함"),
+                  ("box", "box — deny + “think outside the box”", "box — deny + “think outside the box”"), ("stim", "stim — deny + random concept stimulus", "stim — deny + 무작위 개념 자극"),
+                  ("doxa", "<b>doxa — deny + extract and negate assumptions (proposed)</b>", "<b>doxa — deny + 가정 추출·부정 (제안 방법)</b>")]
+    ex = Cr["exp1_report_extra"]
+    rows1 = [[(a if en else b), f"{cx1[k]['originality']:.2f}", f"{cx1[k]['quality']:.2f}", f"{ex[k]['yield']:.2f}", f"{ex[k]['diversity']:.3f}"] for k, a, b in cond_order]
+    arms = [("expand", "expand — develop as is", "expand — 그대로 발전"), ("refine", "refine — critique and improve", "refine — 비판하고 개선"), ("anchor", "anchor — develop around the core departure", "anchor — 핵심 이탈점을 고정하고 발전")]
+    rows2 = [[(a if en else b), f"{cx2[k]['originality']:.2f}", f"{cx2[k]['quality']:.2f}", f"{cx2[k]['retention']:.2f}"] for k, a, b in arms]
+    pages["ai-creativity"] = [
+     ("note", ("<b>The pre-registered core hypothesis was rejected.</b> The proposed method did not make ideas more original than the controls. All scores come from two LLM judges of the same family as the generator; no human rated anything." if en
+               else "<b>사전등록한 핵심 가설은 기각됐습니다.</b> 제안한 방법이 대조군보다 독창적인 아이디어를 만들지 못했습니다. 모든 점수는 생성 모델과 같은 계열인 LLM 심사자 2명의 것이며, 사람이 평가한 것은 없습니다."), "bad"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("Idea generators tend to produce the same ideas. Doxa Negation Search extracts the assumption that most of the existing ideas silently share, drops it, and asks for ideas that only make sense without it. The study asks whether this makes AI-generated ideas more original, and what happens when AI develops an idea further." if en
+            else "아이디어 생성기는 같은 아이디어를 되풀이하는 경향이 있습니다. Doxa Negation Search는 기존 아이디어 대부분이 말없이 공유하는 가정을 추출해 버리고, 그 가정 없이야 성립하는 아이디어를 요청합니다. 이 연구는 그렇게 하면 AI가 만든 아이디어가 더 독창적이 되는지, 그리고 AI가 아이디어를 더 발전시킬 때 무슨 일이 일어나는지 묻습니다.")),
+     ("h2", "Method" if en else "방법"),
+     ("ul", ([f"Experiment 1: {Cr['tasks']} tasks × 2 random tags × {Cr['conditions']} conditions × 20 ideas = {Cr['ideas']:,} ideas ({Cr['per_cell']} per condition). The tag is not a model seed",
+              "Each idea is scored blind for originality and quality by two LLM judges (an Opus-class and a Haiku-class model); the two scores are averaged",
+              f"Experiment 2: 24 seed ideas developed three ways = {Cr['proposals_exp2']} proposals. Experiment 3: one open-ended run of 6 generations per arm (exploratory)",
+              "Human rating: not collected. The repository has a template and a 72-item file, and no ratings"] if en else
+             [f"실험 1: 과제 {Cr['tasks']}개 × 난수 태그 2개 × 조건 {Cr['conditions']}개 × 20개 = 아이디어 {Cr['ideas']:,}개(조건당 {Cr['per_cell']}개). 태그는 모델 시드가 아닙니다",
+              "각 아이디어는 LLM 심사자 2명(Opus급, Haiku급)이 독창성과 품질을 블라인드로 채점하고, 두 점수를 평균합니다",
+              f"실험 2: 씨앗 아이디어 24개를 세 방식으로 발전 = 제안 {Cr['proposals_exp2']}개. 실험 3: 방식마다 6세대 열린 탐색 1회(탐색적)",
+              "사람 평가: 수집하지 않았습니다. 저장소에는 평가 틀과 72개 항목 파일만 있고 평점은 없습니다"])),
+     ("h2", f"Experiment 1 {T('m')}" if en else f"실험 1 {T('m')}"),
+     ("table", (["Condition", "Originality", "Quality", "Yield (≥ 6 on both, of 20)", "Embedding diversity"] if en else ["조건", "독창성", "품질", "수율 (둘 다 6 이상, 20개 중)", "임베딩 다양성"]), rows1),
+     ("p", (f"Originality and quality are means recomputed from the raw scores and match the report. Verdicts from the report: H2 (doxa is the most original) <b>rejected</b>: doxa beat only cot ({Cr['h2']['vs_cot']:+.2f}), equalled deny ({Cr['h2']['vs_deny']:+.2f}) and was lower than box ({Cr['h2']['vs_box']:+.2f}) and stim ({Cr['h2']['vs_stim']:+.2f}). H3 (highest yield) <b>rejected</b>: deny {ex['deny']['yield']:.2f}, doxa {ex['doxa']['yield']:.2f}, box {ex['box']['yield']:.2f}, with no significant difference. H4 (originality rising faster over rounds) <b>rejected</b>." if en
+            else f"독창성과 품질은 원점수에서 다시 계산한 평균이며 보고서와 일치합니다. 보고서의 판정: H2(doxa가 가장 독창적)는 <b>기각</b>입니다. doxa는 cot보다만 높았고({Cr['h2']['vs_cot']:+.2f}), deny와 같았으며({Cr['h2']['vs_deny']:+.2f}), box({Cr['h2']['vs_box']:+.2f})와 stim({Cr['h2']['vs_stim']:+.2f})보다는 낮았습니다. H3(수율 최고)은 <b>기각</b>입니다. deny {ex['deny']['yield']:.2f}, doxa {ex['doxa']['yield']:.2f}, box {ex['box']['yield']:.2f}로 유의한 차이가 없습니다. H4(라운드가 갈수록 독창성 상승폭이 큼)도 <b>기각</b>입니다.")),
+     ("h2", f"Experiment 2 — the most solid result {T('m')}" if en else f"실험 2 — 가장 견고한 결과 {T('m')}"),
+     ("table", (["Development method", "Originality", "Quality", "Core retention (1–5)"] if en else ["발전 방식", "독창성", "품질", "핵심 유지도 (1–5)"]), rows2),
+     ("p", (f"The common “critique and improve” loop did not improve the ideas: compared with developing them as they were, quality rose by {Cr['h5']['quality_diff']:.2f} but originality fell by {abs(Cr['h5']['originality_diff']):.2f}, and core retention fell from {Cr['h5']['retention_from']:.2f} to {Cr['h5']['retention_to']:.2f}. A retention of 2 means the idea was mostly replaced by a more conventional approach. Anchoring the core departure kept originality (+{Cr['h6']['originality_diff']:.2f}, p = {Cr['h6']['originality_p']:.2f}) and core (4.23) but did not raise quality ({Cr['h6']['quality_diff']:+.2f}): H6 is half supported, and anchor's quality matched or beat refine's in only {Cr['h6']['anchor_quality_ge_refine']} of {Cr['h6']['of']} cases. The p-values are quoted from the report; we did not recompute them." if en
+            else f"흔히 쓰는 “비판하고 개선하라” 루프는 아이디어를 개선하지 못했습니다. 그대로 발전시킨 것과 비교해 품질은 {Cr['h5']['quality_diff']:.2f} 올랐지만 독창성은 {abs(Cr['h5']['originality_diff']):.2f} 떨어졌고, 핵심 유지도는 {Cr['h5']['retention_from']:.2f}에서 {Cr['h5']['retention_to']:.2f}로 내려갔습니다. 유지도 2는 아이디어가 더 관습적인 접근으로 대부분 교체됐다는 뜻입니다. 핵심 이탈점을 고정하면 독창성(+{Cr['h6']['originality_diff']:.2f}, p = {Cr['h6']['originality_p']:.2f})과 핵심(4.23)은 지켰지만 품질은 오르지 않았습니다({Cr['h6']['quality_diff']:+.2f}). H6은 절반만 지지되고, anchor의 품질이 refine 이상인 경우는 {Cr['h6']['of']}개 중 {Cr['h6']['anchor_quality_ge_refine']}개뿐입니다. p값은 보고서에서 인용했고 우리가 다시 계산하지 않았습니다.")),
+     ("p", (f"Exploratory, not pre-registered: among the top 10 ideas per task by originality × quality (80 slots), doxa held {Cr['exploratory_top10']['doxa_slots']} (an even split would be {Cr['exploratory_top10']['uniform_slots']}). The report treats this as a follow-up hypothesis, not a finding." if en
+            else f"탐색적이며 사전등록하지 않은 관찰: 과제별 독창성×품질 상위 10개(80자리) 중 doxa가 {Cr['exploratory_top10']['doxa_slots']}자리를 차지했습니다(균등 분배라면 {Cr['exploratory_top10']['uniform_slots']}). 보고서는 이를 발견이 아니라 후속 가설로 다룹니다.")),
+     ("h2", "Limitations" if en else "한계"),
+     ("ul", (["The judges are LLMs of the same family as the generator, and earlier work reports that LLM judgments of novelty agree only weakly with experts. Every result is “as judged by the models”, not validated by humans",
+              "A single generator model and 8 tasks; the experiment-3 design had 12 generations and 6 were run; experiment 2 had 24 of the 40 designed seeds",
+              "The review of earlier work relied on abstracts and secondary summaries; several details are marked unverified in the repository"] if en else
+             ["심사자는 생성 모델과 같은 계열의 LLM이고, 선행연구는 LLM의 참신성 판단이 전문가와 약하게만 일치한다고 보고합니다. 모든 결과는 사람이 검증한 것이 아니라 “모델이 판단한 기준”입니다",
+              "생성 모델 하나와 과제 8개. 실험 3은 설계 12세대 중 6세대, 실험 2는 설계 40개 중 24개 씨앗만 실행했습니다",
+              "선행연구 검토는 초록과 2차 요약에 기댔고, 저장소에는 확인하지 못한 세부가 여러 곳에 표시되어 있습니다"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", ("The experiment-1 and experiment-2 means were recomputed from the raw score files and match the report; p-values were not recomputed. Idea generation and judging are done by LLMs by design. AI-assisted implementation; the repository does not say how much of the code and report was AI-written. No independent review, and no human rating." if en
+            else "실험 1과 실험 2의 평균은 원점수 파일에서 다시 계산했고 보고서와 일치합니다. p값은 다시 계산하지 않았습니다. 아이디어 생성과 심사는 설계상 LLM이 합니다. AI 보조 구현이며, 코드와 보고서 중 얼마나 AI가 썼는지는 저장소에 적혀 있지 않습니다. 독립적인 검토도, 사람 평가도 없습니다.")),
     ]
     C["pages"] = pages
     C["detail_labels"] = dict(

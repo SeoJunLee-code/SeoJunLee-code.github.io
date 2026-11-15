@@ -9,7 +9,7 @@ from intro import intro_html  # noqa: E402
 
 D = json.load(open(ROOT / "data/research.json", encoding="utf-8"))
 LANGS = ("en", "ko")
-PAGES = ["", "research/", "projects/", "about/", "contact/"] + [f"research/{i}/" for i in ("kore", "h1", "paper5", "llm-internal-computing", "world-model")]
+PAGES = ["", "research/", "projects/", "about/", "contact/"] + [f"research/{i}/" for i in ("algorithm-innovation", "ai-responsibility", "ai-forgetting-review", "ai-creativity", "kore", "h1", "paper5", "llm-internal-computing", "world-model")]
 REPO = {"llm-internal-computing": "https://github.com/SeoJunLee-code/llm-internal-computing"}  # KORE repo link intentionally omitted
 # Links are switched on only after the repository is verified public (see tools/public_repos.json).
 PUBLIC = json.load(open(ROOT / "tools/public_repos.json")) if (ROOT / "tools/public_repos.json").exists() else {}
@@ -117,7 +117,8 @@ def build_site():
         for path in PAGES:
             pd = page_dir(lang, path); pd.mkdir(parents=True, exist_ok=True)
             if path == "":
-                cards = "".join(card(lang, path, r) for r in C["research"][:4])
+                HOME_IDS = ("kore", "h1", "paper5", "llm-internal-computing")   # the four cards of the approved mock-up; newer work is listed on /research/
+                cards = "".join(card(lang, path, next(r for r in C["research"] if r["id"] == i)) for i in HOME_IDS)
                 body = f'''<main id="main"><section class="hero">
 <div class="hero-sky"></div><div class="hero-photo"></div><div class="hero-glow"></div><svg class="limb" viewBox="0 0 1672 540" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#7fa0ff" stop-opacity=".0"/><stop offset=".25" stop-color="#a9c3ff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".95"/><stop offset=".75" stop-color="#a9c3ff" stop-opacity=".55"/><stop offset="1" stop-color="#7fa0ff" stop-opacity="0"/></linearGradient></defs><path d="M-40 532 Q836 312 1712 532" fill="none" stroke="url(#lg)" stroke-width="7" opacity=".35" vector-effect="non-scaling-stroke"/><path d="M-40 532 Q836 312 1712 532" fill="none" stroke="url(#lg)" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>{ORBIT}
 <div class="hero-in"><h1 class="brand">AEVORIN</h1><p class="ident">{C["brand"]["identity"]}</p><span class="rule"></span>

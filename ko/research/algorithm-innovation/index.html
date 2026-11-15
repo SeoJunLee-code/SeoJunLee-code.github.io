@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>알고리즘 혁신 — 캐시 라인 하나로 읽는 근사 멤버십 필터 · AEVORIN</title><meta name="description" content="독립 AI 연구 및 엔지니어링. Beyond What Exists. 지능의 경계를 탐구합니다."><meta name="theme-color" content="#03060d">
+<link rel="icon" href="../../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="en" href="../../../research/algorithm-innovation/"><link rel="alternate" hreflang="ko" href="./">
+<link rel="stylesheet" href="../../../assets/css/fonts.css"><link rel="stylesheet" href="../../../assets/css/site.css">
+</head>
+<body class="inner">
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><div class="nav-in">
+<a class="logo" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
+<nav id="menu" class="menu" aria-label="Main"><a href="../../">홈</a><a href="../" aria-current="page">연구</a><a href="../../projects/">프로젝트</a><a href="../../about/">소개</a><a href="../../contact/">연락</a></nav><div class="lang" role="group" aria-label="Language"><a class="" href="../../../research/algorithm-innovation/" hreflang="en" lang="en">EN</a><a class="on" href="./" hreflang="ko" lang="ko">KR</a></div>
+</div></header>
+<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>알고리즘 혁신</h1><p class="subh">캐시 라인 하나로 읽는 근사 멤버십 필터</p><div class="meta"><span class="badge b-mixed">혼합 결과</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>같은 메모리에서, 블록 부하에 따라 지문 길이를 바꾸는 삽입 전용 필터가 캐시 라인 하나만 읽고도 blocked Bloom과 Prefix filter를 실용적인 비용으로 이길 수 있는가?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>혼합 결과입니다.</b> 같은 메모리에서 오탐률은 blocked Bloom보다 낮지만 속도는 더 느리고, 핵심 메커니즘은 이미 발표된 것(TinySet, 2015)이며, 후속 속도 연구는 끝나지 않았습니다.</div>
+<h2>질문</h2>
+<p>근사 멤버십 필터는 “이 키가 집합에 있는가?”에 약간의 오탐을 허용하며 답합니다. blocked Bloom 필터는 질의마다 캐시 라인 하나를 읽습니다. 이 연구는 블록이 얼마나 찼는지에 따라 지문 길이를 정하고 넘치면 자르는 필터가, 캐시 라인 하나만 읽으면서도 같은 메모리에서 오탐을 줄일 수 있는지 묻습니다.</p>
+<h2>방법</h2>
+<ul><li>필터의 C++17 헤더 구현(확증 실험 전에 고정한 EPF-nc 변형). 외부 코드를 내려받을 수 없어서 기준선은 모두 직접 구현했습니다</li><li>오탐률: n = 3,984,588개 키에서 보류 시드 10개, n = 31,876,710개에서 시드 3개. 셀마다 음성 질의 5×10⁷개</li><li>비용: 명령어 수와 캐시 시뮬레이터(cachegrind, 마지막 수준 캐시 256 KB로 모사), 그리고 공유 머신의 벽시계 시간</li><li>가설 H1, H1b, H2, H3, H4와 통과 기준은 저장소의 계획·검토 문서에 따르면 확증 실험 전에 계획서에 적었습니다. 여기서 볼 수 있는 복제본은 커밋이 1개라서 커밋 순서는 확인하지 못했습니다</li></ul>
+<h2>H1 — 같은 메모리에서의 오탐 <span class="ev ev-m">실측</span></h2>
+<div class="tw-scroll"><table><thead><tr><th>키당 비트</th><th>오탐률 비 (EPF-nc ÷ blocked Bloom)</th><th>이긴 시드</th></tr></thead><tbody><tr><td>8.42</td><td>0.695</td><td>10 / 10</td></tr><tr><td>10.53</td><td>0.487</td><td>10 / 10</td></tr><tr><td>12.63</td><td>0.350</td><td>10 / 10</td></tr><tr><td>14.74</td><td>0.256</td><td>10 / 10</td></tr><tr><td>16.84</td><td>0.192</td><td>10 / 10</td></tr><tr><td>21.05</td><td>0.117</td><td>10 / 10</td></tr></tbody></table></div>
+<p>n = 3,984,588에서 모든 지점, 모든 시드에서 비가 1보다 작습니다. 키당 8.42비트에서 0.695, 21.05비트에서 0.117까지 내려갑니다. H1은 12개 지점(두 크기) 모두 통과했습니다.</p>
+<h2>H1b — 목표 오류율에 필요한 메모리 <span class="ev ev-m">실측</span></h2>
+<div class="tw-scroll"><table><thead><tr><th>목표 오탐률</th><th>blocked Bloom (비트/키)</th><th>EPF-nc (비트/키)</th><th>절감</th></tr></thead><tbody><tr><td>1e-2</td><td>9.92</td><td>8.91</td><td>1.01</td></tr><tr><td>1e-3</td><td>15.56</td><td>12.82</td><td>2.74</td></tr><tr><td>1e-4</td><td>&gt; 21.05</td><td>17.19</td><td>&ge; 3.86</td></tr></tbody></table></div>
+<h2>비용, 그리고 실패한 것 <span class="ev ev-m">실측</span></h2>
+<div class="tw-scroll"><table><thead><tr><th>가설</th><th>측정</th><th>한도</th><th>판정</th></tr></thead><tbody><tr><td>H4a — instructions per negative query</td><td>83.9 ÷ 30.0 = 2.80×</td><td>≤ 3.0×</td><td>통과</td></tr><tr><td>H4b — last-level cache misses per negative query</td><td>0.958 (Cuckoo 1.924)</td><td>≤ 1.05, Cuckoo보다 적음</td><td>통과</td></tr><tr><td>H4c — instructions per insert</td><td>486.8 ÷ 198.0 = 2.46×</td><td>≤ 2.0×</td><td><b>기각</b></td></tr><tr><td>H2 — against the Prefix filter</td><td>검증 못 함: 참조 구현 없음</td><td>–</td><td>–</td></tr></tbody></table></div>
+<ul><li>벽시계: 음성 질의 시간이 blocked Bloom의 3.14배, Cuckoo의 1.70배, Prefix식 재구현의 1.81배입니다(보고서가 이 필터를 느리다고 적습니다). 결정적 지표는 명령어 수와 미스 수이고, 밀리초는 공유 머신에서 잡음이 있습니다</li><li>신규성은 <b>확보하지 못했습니다</b>: 보고서에 따르면 핵심 메커니즘이 TinySet(Einziger &amp; Friedman, 2015/2017)과 같습니다. 작업이 시작된 뒤 선행연구 확인에서 알게 되었고, 추가한 개선은 표준 기법이며 효과는 키당 약 0.2비트입니다</li><li>질의 속도에 대한 2차 연구를 시작했지만 끝나지 않았습니다. 결과 파일 judged_run2.csv가 비어 있고(0바이트) 판정이 없어서 여기에는 싣지 않습니다</li></ul>
+<h2>한계</h2>
+<ul><li>직접 구현한 기준선만 측정했습니다. TinySet 원본, Prefix filter, VQF, Morton filter는 측정하지 않았고 Prefix식 필터는 기억에 의존한 재구현입니다</li><li>속도는 공유 머신 한 대에서 독립 질의 루프로만 측정했고, 캐시 미스가 지배하는 조건은 벽시계로 재지 못했습니다</li><li>큰 n의 실행은 시드가 3개뿐이고, 필터는 삽입 전용입니다</li><li>선행연구 확인에서 논문 본문은 읽지 않았고 저자들의 소스 코드와 초록에 의존했습니다</li></ul>
+<h2>검증과 AI 활용</h2>
+<p>위 수치는 저장소의 결과 파일과 직접 대조했습니다. 저장소의 검토 문서는 AI 검토 에이전트가 쓴 것으로, 차단할 지적이 없다고 하고 세 가지 우려를 수용합니다. 독립적인 사람 검토는 기록되어 있지 않습니다. 저장소에는 AI 활용 선언이 없고, 로그에는 조율자와 하위 에이전트 역할(탐색, 선행연구 확인, 기준선, 검토자)이 적혀 있습니다. AI 보조 구현입니다. 저장소에 라이선스 파일은 없습니다.</p></article></main>
+<footer class="foot"><div class="foot-in">
+<a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<p class="tag">A new era begins with a question.</p>
+<div class="foot-links"><a href="https://github.com/SeoJunLee-code" rel="noopener">GitHub <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a><a href="../../contact/">연락 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg></a></div>
+</div></footer>
+<script src="../../../assets/js/site.js" defer></script>
+</body></html>

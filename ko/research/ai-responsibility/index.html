@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 책임 — 구조적 AI 책임 · AEVORIN</title><meta name="description" content="독립 AI 연구 및 엔지니어링. Beyond What Exists. 지능의 경계를 탐구합니다."><meta name="theme-color" content="#03060d">
+<link rel="icon" href="../../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="en" href="../../../research/ai-responsibility/"><link rel="alternate" hreflang="ko" href="./">
+<link rel="stylesheet" href="../../../assets/css/fonts.css"><link rel="stylesheet" href="../../../assets/css/site.css">
+</head>
+<body class="inner">
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><div class="nav-in">
+<a class="logo" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
+<nav id="menu" class="menu" aria-label="Main"><a href="../../">홈</a><a href="../" aria-current="page">연구</a><a href="../../projects/">프로젝트</a><a href="../../about/">소개</a><a href="../../contact/">연락</a></nav><div class="lang" role="group" aria-label="Language"><a class="" href="../../../research/ai-responsibility/" hreflang="en" lang="en">EN</a><a class="on" href="./" hreflang="ko" lang="ko">KR</a></div>
+</div></header>
+<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>AI 책임</h1><p class="subh">구조적 AI 책임</p><div class="meta"><span class="badge b-refuted">가설 반증</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>의식이나 도덕적 지위를 전제하지 않고, AI 에이전트와 제도적 구조의 결합이 책임의 기능을 실제로 수행하게 만들 수 있는가?</div></div></section><article class="wrap narrow prose"><div class="note n-bad"><b>논지는 처음 적은 형태로는 기각됩니다.</b> 저장소 스스로의 결론입니다. AI 에이전트와 구조의 결합이 (응보를 제외한) 책임의 기능을 수행하게 만들 수 있다는 논지는 서론에 적은 형태로는 기각됩니다. 이 글은 완성본이 아니라 작업 중인 초안입니다.</div>
+<h2>질문</h2>
+<p>AI가 의식이 있거나 도덕적 지위를 가진다고 가정하지 않고, AI 에이전트가 제도적 구조와 결합해 책임이 하는 일, 곧 피해자 보상, 기록, 권한 회수를 수행할 수 있는가?</p>
+<h2>방법</h2>
+<ul><li>스카우트 4명(학술 DB 접근 차단)으로 한 웹 기반 문헌 조사. Crossref, arXiv, 스탠퍼드 철학 백과로 대조</li><li>닿을 수 있었던 출처에 대한 인용·귀속 주장 대조</li><li>파이썬 참조 구현과, 별도의 레드팀 에이전트의 공격</li><li>책임 체제 모형과, LLM 피험자를 쓴 행동 실험</li></ul>
+<h2>결과 <span class="ev ev-m">실측</span></h2>
+<div class="tw-scroll"><table><thead><tr><th>항목</th><th>개수</th></tr></thead><tbody><tr><td>후보 출처 (A / B / C 등급)</td><td>201 (61 / 106 / 34)</td></tr><tr><td>레지스트리 대조: 확인 / 못 찾음 / 불일치 / 미확인</td><td>160 / 27 / 10 / 4</td></tr><tr><td>BibTeX 항목</td><td>166</td></tr><tr><td>귀속 주장 대조: 지지 / 부분 / 지지 안 됨 / 접근 불가</td><td>43 / 18 / 3 / 1 (총 65개)</td></tr><tr><td>첫 참조 구현에 대한 레드팀</td><td>공격 49개 중 37개 성공</td></tr></tbody></table></div>
+<ul><li>초록 수준에서의 “지지”는 초록이 그렇게 말한다는 뜻이지 논문을 읽었다는 뜻이 아닙니다. 인용 대조 문서는 지지되지 않은 3건을 고쳐야 할 항목으로 적습니다</li><li>보강한 뒤 구현 자체의 공격 테스트는 62개 중 58개를 통과하고, 4개는 코드로 막을 수 없는 설계 한계입니다. 새로 다시 공격하지는 않았습니다</li><li>행동 실험에서 차이는 행동을 지목하고 불이익을 건 헌장에서만 나타났습니다(검증 수행 6/8 대 0/8). 그것이 지분의 효과인지는 가를 수 없었고, 구조를 서술만 한 조건에서는 차이가 없었습니다</li><li>남은 것: 보상, 기록, 권한 회수는 에이전트 없이도 배포자의 책임과 제도가 수행합니다. 모형에서 보상의 이득은 대부분 지분이 아니라 귀속의 확실성과 엄격 책임에서 나왔습니다. 에이전트가 있어야만 되는 것이 있는지는 보이지 못했습니다</li></ul>
+<h2>한계</h2>
+<ul><li>유료이거나 막힌 출처는 읽지 못했습니다. 검증은 메타데이터와 초록 수준이며, 확보해야 할 원문은 목록으로만 남아 있습니다</li><li>실험은 한 모델, 한 과제, 한 지시문이고 조건 사이에 여러 요인이 섞여 있습니다</li><li>같은 계열의 모델이 쓰고, 공격하고, 채점하고, 검토했으며, 검토 뒤 재검토는 없었습니다</li><li>체제 모형은 가정을 다시 서술한 것이고, 부정 논증의 분류는 읽지 못한 원문에 달려 있어 잠정적입니다</li><li>우리가 돌려 보지 않은 것: 저장소의 테스트와 재현 명령</li></ul>
+<h2>검증과 AI 활용</h2>
+<p><b>연구는 AI가 수행했습니다.</b> 저장소 README는 조사, 설계, 구현, 실험, 집필을 AI(Claude)가 했고, 공격자·피험자·채점자·검토자도 같은 계열의 모델이며, 사람이 내린 결정은 네 번이고, 사람이 원문을 읽거나 원고를 검토한 적은 없다고 적습니다. 위 개수는 저장소의 감사·인용 대조 파일과 대조했고, 나머지는 README와 보고서를 인용했습니다. 독립적인 검토는 없습니다.</p></article></main>
+<footer class="foot"><div class="foot-in">
+<a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<p class="tag">A new era begins with a question.</p>
+<div class="foot-links"><a href="https://github.com/SeoJunLee-code" rel="noopener">GitHub <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a><a href="../../contact/">연락 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg></a></div>
+</div></footer>
+<script src="../../../assets/js/site.js" defer></script>
+</body></html>

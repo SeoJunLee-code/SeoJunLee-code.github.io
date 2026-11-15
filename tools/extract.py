@@ -87,6 +87,61 @@ data = {
    "causal_layers_positive_after_2sd": "none for maze; empty at 12000 and 24000 steps: layer L2 only",
  },
 }
+
+# ---------------------------------------------------------------- four newer research projects (read 2026-11-15)
+CR = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else "/home/user/repos2/AI-Creativity-Research")
+if (CR / "results/exp1_ideas.json").exists():
+    import statistics as _st, collections as _co
+    def _means(rows, key):
+        g = _co.defaultdict(lambda: [[], [], []])
+        for x in rows:
+            o = _st.mean(v[0] for v in x["scores"].values()); q = _st.mean(v[1] for v in x["scores"].values()); g[x[key]][0].append(o); g[x[key]][1].append(q)
+            if "retention" in x: g[x[key]][2].append(_st.mean(x["retention"].values()))
+        return {k: {"originality": round(_st.mean(v[0]), 2), "quality": round(_st.mean(v[1]), 2), "n": len(v[0]),
+                    **({"retention": round(_st.mean(v[2]), 2)} if v[2] else {})} for k, v in g.items()}
+    exp1 = _means(json.load(open(CR / "results/exp1_ideas.json", encoding="utf-8")), "cond")
+    exp2 = _means(json.load(open(CR / "results/exp2_developed.json", encoding="utf-8"))["developed"], "arm")
+else:
+    exp1 = exp2 = None
+data["creativity"] = {
+  "source": "AI-Creativity-Research/REPORT.md (read 2026-11-15); exp1/exp2 means recomputed from results/exp1_ideas.json and results/exp2_developed.json (mean of two LLM judges)",
+  "exp1_recomputed": exp1, "exp2_recomputed": exp2,
+  "exp1_report_extra": {  # REPORT.md table: yield (originality>=6 and quality>=6, of 20) and embedding diversity
+     "iid": {"yield": 1.31, "diversity": 0.078}, "list": {"yield": 1.62, "diversity": 0.177}, "cot": {"yield": 3.25, "diversity": 0.180},
+     "deny": {"yield": 4.12, "diversity": 0.172}, "box": {"yield": 3.56, "diversity": 0.170}, "stim": {"yield": 3.25, "diversity": 0.173},
+     "doxa": {"yield": 3.94, "diversity": 0.160}},
+  "ideas": 2240, "tasks": 8, "conditions": 7, "per_cell": 320, "proposals_exp2": 72,
+  "h5": {"quality_diff": 1.42, "originality_diff": -1.60, "retention_from": 5.00, "retention_to": 1.88},
+  "h6": {"originality_diff": 0.33, "originality_p": 0.05, "quality_diff": -0.08, "anchor_quality_ge_refine": 4, "of": 24},
+  "h2": {"vs_cot": 0.55, "vs_deny": -0.01, "vs_box": -0.67, "vs_stim": -0.48},
+  "exploratory_top10": {"doxa_slots": 31.3, "uniform_slots": 11.4},
+}
+data["forgetting"] = {
+  "source": "AI-Forgetting-Review-Research/output/data-analysis/study_a/REPORT.md (read 2026-11-15)",
+  "rho": 0.2, "h1": {"learnedneed": 70.5, "lru": 51.0, "diff": 19.45, "ci": [16.60, 22.40], "min_pp": 3},
+  "h1b_vs_random": {"LRU": [6.5, 4.8, 8.2], "LFU": [-14.8, -16.9, -12.8], "Ebbinghaus": [3.7, 1.8, 5.7], "ACT-R": [-2.8, -4.8, -0.8]},
+  "learnedneed_minus": {"Random": [26.0, 23.4, 28.6], "FIFO": [19.8, 16.9, 22.5], "LRU": [19.5, 16.6, 22.4], "LFU": [40.8, 38.5, 43.1],
+                        "Ebbinghaus": [22.3, 19.8, 25.0], "ACT-R": [28.8, 26.7, 31.2], "GA-proxy": [3.9, 2.5, 5.4]},
+  "selfcheck_fail": {"random_seed_sd_pp": 3.31, "margin_pp": 3.0, "se_pp": 1.48}, "result_rows": 2600, "conversations": 10, "bootstrap": 10000,
+}
+data["algorithm"] = {
+  "source": "Algorithm-Innovation-Research/output/results.md and output/report.md (read 2026-11-15)",
+  "n": 3984588, "seeds": 10, "n_large": 31876710, "seeds_large": 3,
+  "h1": [[8.42, 0.695], [10.53, 0.487], [12.63, 0.350], [14.74, 0.256], [16.84, 0.192], [21.05, 0.117]],
+  "h1b": [{"target": "1e-2", "bbf": 9.92, "epf": 8.91, "saving": 1.01}, {"target": "1e-3", "bbf": 15.56, "epf": 12.82, "saving": 2.74},
+          {"target": "1e-4", "bbf_gt": 21.05, "epf": 17.19, "saving_ge": 3.86}],
+  "h4a": {"epf": 83.9, "bbf": 30.0, "ratio": 2.80, "limit": 3.0}, "h4b": {"epf": 0.958, "cuckoo": 1.924, "limit": 1.05},
+  "h4c": {"epf": 486.8, "cuckoo": 198.0, "ratio": 2.46, "limit": 2.0},
+  "wallclock_negative_query": {"vs_blocked_bloom": 3.14, "vs_cuckoo": 1.70, "vs_prefix_style": 1.81},
+  "novelty_gain_bits_per_key": 0.2, "phase2_result_file_bytes": 0,
+}
+data["responsibility"] = {
+  "source": "AI-Responsibility-Research README.md, input/bibliography/{audit-log,claim-check}*, output/reports/2026-11-13-phase1-final-report.md (read 2026-11-15)",
+  "sources": {"total": 201, "A": 61, "B": 106, "C": 34}, "registry": {"verified": 160, "not_found": 27, "mismatch": 10, "not_checked": 4}, "bibtex_entries": 166,
+  "claim_check": {"total": 65, "supported": 43, "partly": 18, "not_supported": 3, "unreachable": 1},
+  "red_team": {"attacks": 49, "succeeded": 37, "tests_after": 62, "tests_passed_after": 58, "design_limits": 4},
+  "behaviour": {"verified_charter": "6/8", "verified_other": "0/8"}, "human_decisions": 4,
+}
 out.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
 print("wrote", out)
 for c in conds: print(c["dataset"], c["model"], c["backfire"], c["ci"], c["n_nondegenerate"], "gap", c["gap"], c["gap_ci"], "cap", c["cap_share"])

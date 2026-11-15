@@ -23,7 +23,7 @@ class Site(unittest.TestCase):
     def test_page_sets_match(self):
         en = {str(p.relative_to(ROOT)) for p in PAGES if "ko" not in p.parts}
         ko = {str(p.relative_to(ROOT / "ko")) for p in PAGES if "ko" in p.parts}
-        self.assertEqual(en, ko); self.assertEqual(len(en), 10)
+        self.assertEqual(en, ko); self.assertEqual(len(en), 14)
 
     def test_no_forbidden_strings(self):
         if not _private_terms(): print("WARNING: private forbidden-term list not found; only generic terms checked", file=sys.stderr)
@@ -59,8 +59,9 @@ class Site(unittest.TestCase):
             if isinstance(o, dict): [walk(v) for v in o.values()]
             elif isinstance(o, list): [walk(v) for v in o]
             elif isinstance(o, float):
-                for d in (2, 3, 4): allowed.add(f"{o:.{d}f}")
-                allowed.add(f"{o*100:.1f}"); allowed.add(f"{o*100:.0f}")
+                for v in (o, abs(o)):                       # sign is compared separately by the reader; magnitudes must come from data
+                    for d in (2, 3, 4): allowed.add(f"{v:.{d}f}")
+                    allowed.add(f"{v*100:.1f}"); allowed.add(f"{v*100:.0f}")
         walk(data)
         extra = {"0.50", "0.5", "0.8", "0.7", "0.000", "0.0005"}  # thresholds quoted from decision rules / prose
         for p in PAGES:

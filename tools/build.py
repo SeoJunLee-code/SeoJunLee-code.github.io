@@ -9,7 +9,7 @@ from intro import intro_html  # noqa: E402
 
 D = json.load(open(ROOT / "data/research.json", encoding="utf-8"))
 LANGS = ("en", "ko")
-PAGES = ["", "research/", "projects/", "about/", "contact/"] + [f"research/{i}/" for i in ("algorithm-innovation", "ai-responsibility", "ai-forgetting-review", "ai-creativity", "kore", "h1", "paper5", "llm-internal-computing", "world-model")]
+PAGES = ["", "research/", "projects/", "about/", "contact/"] + [f"research/{i}/" for i in ("context-compaction", "algorithm-innovation", "ai-responsibility", "ai-forgetting-review", "ai-creativity", "kore", "h1", "paper5", "llm-internal-computing", "world-model")]
 REPO = {"llm-internal-computing": "https://github.com/SeoJunLee-code/llm-internal-computing"}  # KORE repo link intentionally omitted
 # Links are switched on only after the repository is verified public (see tools/public_repos.json).
 PUBLIC = json.load(open(ROOT / "tools/public_repos.json")) if (ROOT / "tools/public_repos.json").exists() else {}

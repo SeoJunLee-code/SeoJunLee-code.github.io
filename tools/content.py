@@ -75,10 +75,19 @@ def build(lang, D):
           blurb="Exploratory results, three seeds, no significance tests." if en else "탐색적 결과. 시드 3개, 유의성 검정 없음."),
     ]
 
-    # ------------------------------------------------------------------ four newer projects (newest first)
+    # ------------------------------------------------------------------ newer projects (newest first)
     Al, Fo, Cr, Rs = D["algorithm"], D["forgetting"], D["creativity"], D["responsibility"]
     cx1, cx2 = Cr["exp1_recomputed"], Cr["exp2_recomputed"]
+    Cx_rel = [v[0] for lab, pk, c in D["context"]["rel_g0"] if lab.startswith("Sonnet") for k, v in c.items() if k != "G0F"]
+    Cx_lo, Cx_hi = min(Cx_rel), max(Cx_rel); Cx_hk = next(c["G5"][0] for lab, pk, c in D["context"]["rel_g0"] if lab == "Haiku T3")
     R = [
+     dict(id="context-compaction", badge="mixed", title="Context Compaction" if en else "컨텍스트 압축",
+          sub="Does compaction save Claude Code usage?" if en else "압축이 Claude Code 사용량을 줄이는가",
+          q=("Does compacting the conversation context reduce Claude Code subscription usage without hurting task quality?" if en
+             else "대화 컨텍스트를 압축하면 작업 품질을 해치지 않고 Claude Code 구독 사용량을 줄일 수 있는가?"),
+          one=(f"No saving on Sonnet 5.5 ({Cx_lo:.2f}–{Cx_hi:.2f}× full history); {Cx_hk:.2f}× on Haiku 5.5 above 100K tokens. Trimming the fixed per-call context mattered more." if en
+               else f"Sonnet 5.5에서는 절감이 없었고(전체 기록 대비 {Cx_lo:.2f}~{Cx_hi:.2f}배), 100K 토큰을 넘는 Haiku 5.5에서는 {Cx_hk:.2f}배였습니다. 호출마다 붙는 고정 컨텍스트를 줄이는 쪽이 더 컸습니다."),
+          blurb="83 graded runs on three Claude models; one pre-registered prediction falsified." if en else "Claude 모델 3종, 채점된 실행 83회. 사전등록 예측 하나는 반증."),
      dict(id="algorithm-innovation", badge="mixed", title="Algorithm Innovation" if en else "알고리즘 혁신",
           sub="A cache-line approximate membership filter" if en else "캐시 라인 하나로 읽는 근사 멤버십 필터",
           q=("With equal memory, can an insert-only filter that reads one cache line, with fingerprint length following block load, beat blocked Bloom and Prefix filter at a practical cost?" if en
@@ -109,8 +118,8 @@ def build(lang, D):
           blurb="2,240 ideas scored by two LLM judges; no human rating." if en else "LLM 심사자 2명이 매긴 아이디어 2,240개. 사람 평가 없음."),
     ] + R
     C["research"] = R
-    C["research_intro"] = ("Nine lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
-                           else "아홉 가지 연구입니다. 최신순으로 늘어놓았고, 각 페이지는 무엇을 쟀는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지를 적습니다.")
+    C["research_intro"] = ("Ten lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
+                           else "열 가지 연구입니다. 최신순으로 늘어놓았고, 각 페이지는 무엇을 쟀는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지를 적습니다.")
     C["home_research_lead"] = ("We explore fundamental questions in AI, from collective decision-making to what models represent inside. Every page states what failed and what was not checked." if en
                                else "집단 의사결정부터 모델 내부 표현까지, AI의 근본 질문을 탐구합니다. 모든 페이지에 실패한 것과 확인하지 못한 것을 함께 적습니다.")
 
@@ -526,6 +535,107 @@ def build(lang, D):
      ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
      ("p", ("The experiment-1 and experiment-2 means were recomputed from the raw score files and match the report; p-values were not recomputed. Idea generation and judging are done by LLMs by design. AI-assisted implementation; the repository does not say how much of the code and report was AI-written. No independent review, and no human rating." if en
             else "실험 1과 실험 2의 평균은 원점수 파일에서 다시 계산했고 보고서와 일치합니다. p값은 다시 계산하지 않았습니다. 아이디어 생성과 심사는 설계상 LLM이 합니다. AI 보조 구현이며, 코드와 보고서 중 얼마나 AI가 썼는지는 저장소에 적혀 있지 않습니다. 독립적인 검토도, 사람 평가도 없습니다.")),
+    ]
+
+    # ================================================================== Context Compaction
+    Cx = D["context"]; ov, sh, p4, cr = Cx["overhead"], Cx["cost_share_pct"], Cx["phase4"], Cx["criteria"]
+    def cxcell(v, bold=False):
+        s = f"{v[0]:.2f} ({v[1]:.2f}–{v[2]:.2f})"; return f"<b>{s}</b>" if bold else s
+    cxrows = [[(f"{lab} ({pk}K)" if en else f"{lab} ({pk}K)"), *[(cxcell(c[k], (k == "G0F") or c[k][0] < 0.5) if k in c else "–") for k in ("G1", "G5", "GN", "G0F")]] for lab, pk, c in Cx["rel_g0"]]
+    t5 = next(c for lab, pk, c in Cx["rel_g0"] if lab == "Sonnet T5"); hk3 = next(c for lab, pk, c in Cx["rel_g0"] if lab == "Haiku T3")
+    s3 = next(c for lab, pk, c in Cx["rel_g0"] if lab == "Sonnet T3"); s4c = next(c for lab, pk, c in Cx["rel_g0"] if lab == "Sonnet T4")
+    o3 = next(c for lab, pk, c in Cx["rel_g0"] if lab == "Opus T3")
+    pl = Cx["pilot_rel_g0"]; A = lambda u, t: f'<a href="{u}" rel="noopener">{t}</a>'
+    pages["context-compaction"] = [
+     ("note", (f"<b>Mixed results. Recommendation: adopt with conditions.</b> Deliberate compaction did not reduce cost on Sonnet or Opus 5.5 at these task sizes, and a pre-registered prediction that it would pay off above {p4['threshold_k']}K tokens was falsified. It did pay off on Haiku 5.5, whose price rises above {Cx['haiku_tier']['above_k']}K tokens. Cutting the fixed context sent with every call was the larger saving." if en
+               else f"<b>혼합 결과입니다. 권고: 조건부 채택.</b> 이번 과제 크기에서 일부러 압축해도 Sonnet·Opus 5.5의 비용은 줄지 않았고, {p4['threshold_k']}K 토큰을 넘으면 이득이 난다는 사전등록 예측은 반증되었습니다. {Cx['haiku_tier']['above_k']}K 토큰을 넘으면 가격이 오르는 Haiku 5.5에서는 이득이 있었습니다. 더 큰 절감은 호출마다 함께 보내는 고정 컨텍스트를 줄이는 데서 나왔습니다."), "warn"),
+     ("h2", "What this was based on" if en else "무엇을 보고 실험했나"),
+     ("p", ("The starting point was NVIDIA's paper <i>You Don't Need Long Context</i> (Belcak et al., November 2026). It reports that compacting an agent's context often, replacing the history with a short brief and continuing in a fresh context, keeps accuracy while cutting cost. Its cost figures are modelled, not billed: the paper builds them from GPU throughput measurements and an assumed per-token price that rises with context length. Anthropic's prices for Sonnet and Opus 5.5 do not rise with context length, and Claude Code relies heavily on prompt caching, so it was unclear whether the saving carries over to a Claude Code subscription." if en
+            else "출발점은 NVIDIA의 논문 <i>You Don't Need Long Context</i>(Belcak 외, 2026년 11월)입니다. 이 논문은 에이전트의 컨텍스트를 자주 압축하면, 곧 기록을 짧은 요약으로 바꾸고 새 컨텍스트에서 이어 가면, 정확도를 지키면서 비용을 줄일 수 있다고 보고합니다. 다만 비용 수치는 실제 청구액이 아니라 모형입니다. GPU 처리량 측정과, 컨텍스트가 길수록 토큰 단가가 오른다는 가정 가격으로 계산했습니다. Anthropic의 Sonnet·Opus 5.5 가격은 컨텍스트 길이에 따라 오르지 않고 Claude Code는 프롬프트 캐시에 크게 기대기 때문에, 이 절감이 Claude Code 구독에도 그대로 옮겨 오는지는 알 수 없었습니다.")),
+     ("ul", ([f"{A('https://arxiv.org/abs/2611.05306', 'Belcak et al., <i>You Don’t Need Long Context</i>, arXiv:2611.05306')} (NVIDIA): the claim under test. Its own limitations section calls the cost numbers an estimate",
+              f"{A('https://arxiv.org/abs/2609.26779', 'CliffCompaction, Nguyen et al., arXiv:2609.26779')}: autocompaction on Terminal-Bench cut cost by “up to 50%” with performance kept, on open-weight models. The closest prior work. Its existence and the 50% figure were checked against the paper; the details of its cache accounting come from a secondary review and are unverified",
+              f"{A('https://arxiv.org/abs/2606.17016', 'TokenPilot, Xu et al., arXiv:2606.17016')}: argues that pruning which changes the prompt layout breaks prefix caching (existence checked)",
+              f"{A('https://platform.claude.com/docs/en/build-with-claude/prompt-caching', 'Anthropic prompt-caching documentation')}: cache reads cost {Cx['read_multiplier']:.2f}× the input price on Opus and Sonnet 5.5, one-hour cache writes {Cx['write_1h_multiplier']:.0f}×, and of the three models tested only Haiku 5.5 is priced higher above {Cx['haiku_tier']['above_k']}K tokens",
+              f"Claude Code documentation on {A('https://code.claude.com/docs/en/prompt-caching.md', 'prompt caching')} and {A('https://code.claude.com/docs/en/costs', 'costs')}: how /compact, /clear and the cache lifetime behave, and that /usage reports plan usage"] if en else
+             [f"{A('https://arxiv.org/abs/2611.05306', 'Belcak 외, <i>You Don’t Need Long Context</i>, arXiv:2611.05306')} (NVIDIA): 검증 대상인 주장. 논문 스스로 한계 절에서 비용 수치를 추정치라고 적습니다",
+              f"{A('https://arxiv.org/abs/2609.26779', 'CliffCompaction, Nguyen 외, arXiv:2609.26779')}: 오픈 가중치 모델로 Terminal-Bench에서 자동 압축이 성능을 지키며 비용을 “최대 50%” 줄였다고 보고합니다. 가장 가까운 선행연구입니다. 논문의 존재와 50% 수치는 원문과 대조했고, 캐시 회계의 세부는 2차 검토에서 온 것이라 확인하지 못했습니다",
+              f"{A('https://arxiv.org/abs/2606.17016', 'TokenPilot, Xu 외, arXiv:2606.17016')}: 프롬프트 배치를 바꾸는 가지치기는 프리픽스 캐시를 깨뜨린다고 주장합니다(존재 확인)",
+              f"{A('https://platform.claude.com/docs/en/build-with-claude/prompt-caching', 'Anthropic 프롬프트 캐시 문서')}: Opus·Sonnet 5.5의 캐시 읽기는 입력 가격의 {Cx['read_multiplier']:.2f}배, 1시간 캐시 쓰기는 {Cx['write_1h_multiplier']:.0f}배이고, 시험한 세 모델 중 {Cx['haiku_tier']['above_k']}K 토큰을 넘으면 가격이 오르는 것은 Haiku 5.5뿐입니다",
+              f"Claude Code의 {A('https://code.claude.com/docs/en/prompt-caching.md', '프롬프트 캐시')}·{A('https://code.claude.com/docs/en/costs', '비용')} 문서: /compact, /clear, 캐시 수명이 어떻게 동작하는지, 그리고 /usage가 요금제 사용량을 보여 준다는 점"])),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("Does compacting the context reduce Claude Code subscription usage without hurting task quality? If it does, for which model, at what context size, and with which compaction strategy?" if en
+            else "컨텍스트를 압축하면 작업 품질을 해치지 않고 Claude Code 구독 사용량이 줄어드는가? 줄어든다면 어떤 모델에서, 어느 컨텍스트 크기에서, 어떤 압축 방식으로 그런가?")),
+     ("h2", "Method" if en else "방법"),
+     ("ul", ([f"A headless Claude Code harness runs scripted multi-turn conversations on small deterministic repositories and grades the answers automatically",
+              f"Long tasks: T3 ({Cx['tasks']['T3']['turns']} turns, {Cx['tasks']['T3']['checks']} checks) and T5 ({Cx['tasks']['T5']['turns']} turns, {Cx['tasks']['T5']['checks']} checks) are coding tasks; T4 ({Cx['tasks']['T4']['turns']} turns, {Cx['tasks']['T4']['checks']} checks) is a research-analysis task. They contain facts and rules that change mid-conversation, buried requirements, and exact numbers that must be recalled at the end",
+              "Models: Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5. All conditions ran on Sonnet; Opus and Haiku ran G0 and G5",
+              f"{Cx['runs']['total']} graded runs: a {Cx['runs']['pilot']}-run pilot (1 rep, direction only), Phase 3 ({Cx['runs']['phase3']} runs) and Phase 4 ({Cx['runs']['phase4']} runs), {Cx['reps']} reps per cell in the main phases. About ${Cx['api_equiv_usd']} API-equivalent in total",
+              f"Success criteria were written before the runs: a strategy counts as better only if it saves at least {cr['min_saving_pct']}% and loses no more than {cr['max_score_drop_pts']} score points, with no loss on critical-constraint checks",
+              "Usage: plan usage was read with /usage before and after each batch. It has a resolution of one percentage point, so a single run is below resolution, and the whole study used a few percent of a weekly plan limit. Per-condition comparisons therefore use API-equivalent cost from Claude Code's cache-aware per-session cost record. This is a proxy, not plan usage; aggregate plan usage tracked it roughly linearly",
+              "A harness bug was caught and fixed: the per-call cost field is cumulative and was double-counted when a session resumed"] if en else
+             [f"헤드리스 Claude Code 하네스가 작고 결정론적인 저장소에서 미리 짠 여러 턴 대화를 돌리고 답을 자동 채점합니다",
+              f"긴 과제: T3({Cx['tasks']['T3']['turns']}턴, 검사 {Cx['tasks']['T3']['checks']}개)와 T5({Cx['tasks']['T5']['turns']}턴, 검사 {Cx['tasks']['T5']['checks']}개)는 코딩 과제, T4({Cx['tasks']['T4']['turns']}턴, 검사 {Cx['tasks']['T4']['checks']}개)는 연구 분석 과제입니다. 대화 중간에 바뀌는 사실과 규칙, 묻혀 있는 요구사항, 마지막에 떠올려야 하는 정확한 숫자가 들어 있습니다",
+              "모델: Claude Opus 5.5, Sonnet 5.5, Haiku 5.5. Sonnet은 모든 조건을, Opus와 Haiku는 G0과 G5를 돌렸습니다",
+              f"채점된 실행 {Cx['runs']['total']}회: 파일럿 {Cx['runs']['pilot']}회(반복 1회, 방향만 봄), 3단계 {Cx['runs']['phase3']}회, 4단계 {Cx['runs']['phase4']}회. 본 단계는 셀마다 {Cx['reps']}회 반복했습니다. 전체 API 환산 비용은 약 ${Cx['api_equiv_usd']}입니다",
+              f"성공 기준은 실행 전에 적었습니다. 어떤 방식이 더 낫다고 하려면 비용을 {cr['min_saving_pct']}% 이상 줄이고, 점수는 {cr['max_score_drop_pts']}점 넘게 잃지 않으며, 핵심 제약 검사에서 하나도 틀리지 않아야 합니다",
+              "사용량: 배치 전후에 /usage로 요금제 사용량을 읽었습니다. 단위가 1%p라서 실행 하나는 눈금보다 작고, 연구 전체가 주간 한도의 몇 퍼센트를 썼습니다. 그래서 조건별 비교는 Claude Code가 세션마다 남기는, 캐시를 반영한 API 환산 비용으로 했습니다. 이것은 요금제 사용량이 아니라 대리 지표이며, 전체 사용량은 이 비용과 대략 비례해 움직였습니다",
+              "하네스 버그 하나를 찾아 고쳤습니다. 호출별 비용 필드는 누적값이라 세션을 이어 갈 때 이중으로 더해졌습니다"])),
+     ("kv", ([("G0", "Full history (baseline)"), ("G1", "Free-form brief at a threshold, then a fresh session"), ("G2", "The same, aggressive (10K threshold; pilot only)"),
+              ("G3", "Single action per context (pilot only)"), ("G5", "Structured state plus a raw-history archive"), ("GN", "Claude Code's built-in /compact at the threshold"),
+              ("G6 / G0F", "Full history with the author's real CLI setup: settings, hooks, plugins, MCP servers")] if en else
+             [("G0", "전체 기록 유지(기준선)"), ("G1", "기준점에서 자유 형식 요약 후 새 세션"), ("G2", "같은 방식, 공격적(기준점 10K, 파일럿만)"),
+              ("G3", "컨텍스트 하나에 행동 하나(파일럿만)"), ("G5", "구조화된 상태와 원본 기록 보관"), ("GN", "기준점에서 Claude Code 내장 /compact"),
+              ("G6 / G0F", "저자의 실제 CLI 설정(설정, 훅, 플러그인, MCP 서버)으로 전체 기록 유지")])),
+     ("h2", f"Cost relative to full history (G0) {T('m')}" if en else f"전체 기록(G0) 대비 비용 {T('m')}"),
+     ("table", (["Model · task (G0 peak context)", "G1", "G5", "GN", "G0F (real setup)"] if en else ["모델 · 과제 (G0 최대 컨텍스트)", "G1", "G5", "GN", "G0F (실제 설정)"]), cxrows),
+     ("p", (f"Mean of {Cx['reps']} reps with a bootstrap 95% CI; below 1 is cheaper than full history. No compaction cell scored lower than G0. Sonnet T5 used a {p4['threshold_k']}K threshold. In the short pilot (1 rep), G2 cost {pl['G2']:.2f}× and single-action compaction (G3) {pl['G3']:.2f}×." if en
+            else f"{Cx['reps']}회 반복 평균과 부트스트랩 95% 구간입니다. 1보다 작으면 전체 기록보다 쌉니다. 압축한 어느 셀도 G0보다 점수가 낮지 않았습니다. Sonnet T5는 기준점 {p4['threshold_k']}K를 썼습니다. 짧은 파일럿(반복 1회)에서 G2는 {pl['G2']:.2f}배, 행동 하나마다 압축(G3)은 {pl['G3']:.2f}배였습니다.")),
+     ("h2", f"Why the saving does not carry over {T('j')}" if en else f"절감이 옮겨 오지 않는 이유 {T('j')}"),
+     ("ul", ([f"<b>Cache writes dominate.</b> In Claude Code every new token is written to the cache once at {Cx['write_1h_multiplier']:.0f}× the input price, and old history is re-read at {Cx['read_multiplier']:.2f}×. A fit of the run costs puts cache writes at about {sh['cache_write'][0]}–{sh['cache_write'][1]}% of cost, reads about {sh['cache_read']}% and output {sh['output'][0]}–{sh['output'][1]}% (Sonnet and Opus). Compaction only removes reads, so its saving is capped near the read share, about {sh['cache_read']}%, and it adds a brief-writing call, more output and a rewrite of the prefix. In T5, reads fell {Cx['t5_reads_drop_pct']}% ({Cx['t5_reads_m'][0]}M → {Cx['t5_reads_m'][1]}M tokens) and cost fell only {Cx['t5_cost_drop_pct'][0]}–{Cx['t5_cost_drop_pct'][1]}%",
+              f"<b>Prices are flat in context length.</b> NVIDIA's saving comes from a modelled price that rises with context. Sonnet and Opus 5.5 are priced flat. Haiku 5.5 is the exception: its price is {Cx['haiku_tier']['price_multiplier']}× higher above {Cx['haiku_tier']['above_k']}K tokens, and staying under that line is why G5 cost {hk3['G5'][0]:.2f}× on the 247K task",
+              f"<b>Fixed overhead is paid on every call.</b> The author's real CLI setup raised the first call from {ov['first_call_k'][0]}K to {ov['first_call_k'][1]}K tokens and cost {s3['G0F'][0]:.2f}–{s4c['G0F'][0]:.2f}× the trimmed setup, with identical scores. The interactive session used during the study started at about {ov['desktop_call_k']}K tokens per call, {ov['desktop_mcp_k']}K of them MCP tool definitions"] if en else
+             [f"<b>캐시 쓰기가 대부분입니다.</b> Claude Code에서는 새 토큰마다 입력 가격의 {Cx['write_1h_multiplier']:.0f}배로 캐시에 한 번 쓰고, 지난 기록은 {Cx['read_multiplier']:.2f}배로 다시 읽습니다. 실행 비용을 맞춰 보면 캐시 쓰기가 비용의 약 {sh['cache_write'][0]}~{sh['cache_write'][1]}%, 읽기가 약 {sh['cache_read']}%, 출력이 {sh['output'][0]}~{sh['output'][1]}%입니다(Sonnet·Opus). 압축은 읽기만 줄이므로 절감 상한은 읽기 몫인 약 {sh['cache_read']}% 근처이고, 거기에 요약을 쓰는 호출, 늘어난 출력, 프리픽스 재작성이 더해집니다. T5에서 읽기는 {Cx['t5_reads_drop_pct']}% 줄었지만({Cx['t5_reads_m'][0]}M → {Cx['t5_reads_m'][1]}M 토큰) 비용은 {Cx['t5_cost_drop_pct'][0]}~{Cx['t5_cost_drop_pct'][1]}%만 줄었습니다",
+              f"<b>가격이 컨텍스트 길이와 무관합니다.</b> NVIDIA의 절감은 컨텍스트가 길수록 오르는 모형 가격에서 나옵니다. Sonnet·Opus 5.5는 가격이 일정합니다. 예외는 Haiku 5.5로, {Cx['haiku_tier']['above_k']}K 토큰을 넘으면 가격이 {Cx['haiku_tier']['price_multiplier']}배가 됩니다. 그 선 아래에 머문 덕분에 247K 과제에서 G5가 {hk3['G5'][0]:.2f}배였습니다",
+              f"<b>고정 오버헤드는 호출마다 냅니다.</b> 저자의 실제 CLI 설정은 첫 호출을 {ov['first_call_k'][0]}K에서 {ov['first_call_k'][1]}K 토큰으로 늘렸고, 점수는 같은데 비용은 줄인 설정의 {s3['G0F'][0]:.2f}~{s4c['G0F'][0]:.2f}배였습니다. 연구 중에 쓴 대화형 세션은 호출마다 약 {ov['desktop_call_k']}K 토큰으로 시작했고, 그중 {ov['desktop_mcp_k']}K가 MCP 도구 정의였습니다"])),
+     ("h2", f"Information loss and failures {T('m')}" if en else f"정보 손실과 실패 {T('m')}"),
+     ("ul", (["No compaction-induced loss was seen in G1, G5 or GN across one or two compactions, including superseded facts (a port changed from 54329 to 54417, a cap from 37.5% to 35%), amended exclusion rules, buried requirements and exact numbers. Caveat: most runs scored at the ceiling, there were at most two compactions, and the tasks are synthetic",
+              "Single-action compaction (G3) lost the reason a design had been rejected in 1 of 2 runs and cost 4–7× full history",
+              "Haiku 5.5 failed the same feature checks with and without compaction: a capability limit, not a context effect",
+              "A grader bug was found and fixed: Korean answers such as “9개” broke word-boundary matching of numbers"] if en else
+             ["G1, G5, GN에서 한두 번의 압축으로 생긴 손실은 보이지 않았습니다. 바뀐 사실(포트 54329 → 54417, 상한 37.5% → 35%), 고친 제외 규칙, 묻힌 요구사항, 정확한 숫자까지 포함합니다. 단서: 대부분의 실행이 만점이었고, 압축은 최대 두 번이었으며, 과제는 합성입니다",
+              "행동 하나마다 압축(G3)은 2회 중 1회에서 어떤 설계를 기각한 이유를 잃었고, 비용은 전체 기록의 4~7배였습니다",
+              "Haiku 5.5는 압축 여부와 상관없이 같은 기능 검사에서 실패했습니다. 컨텍스트 효과가 아니라 능력의 한계입니다",
+              "채점기 버그 하나를 찾아 고쳤습니다. “9개” 같은 한국어 답이 단어 경계 기반 숫자 매칭을 깨뜨렸습니다"])),
+     ("h2", f"A pre-registered prediction, falsified {T('m')}" if en else f"반증된 사전등록 예측 {T('m')}"),
+     ("p", (f"Phase 3 suggested that compaction pays off only when full history would exceed about {p4['threshold_k']}K tokens. Before Phase 4 this was written down as a prediction: on a longer task (T5, peak 235K), G5 and GN with a {p4['threshold_k']}K threshold would cost at most {p4['predicted_le']}× G0 with no quality loss, and the prediction would count as falsified if both cost at least {p4['falsified_if_ge']:.2f}×. Result: G5 {t5['G5'][0]:.2f}× and GN {t5['GN'][0]:.2f}×, with all {Cx['runs']['phase4']} runs at full score. <b>The prediction is falsified</b> for Sonnet 5.5." if en
+            else f"3단계 결과는 전체 기록이 약 {p4['threshold_k']}K 토큰을 넘을 때만 압축이 이득이라고 시사했습니다. 4단계 전에 이를 예측으로 적었습니다. 더 긴 과제(T5, 최대 235K)에서 기준점 {p4['threshold_k']}K의 G5와 GN은 품질 손실 없이 G0의 {p4['predicted_le']}배 이하가 될 것이고, 둘 다 {p4['falsified_if_ge']:.2f}배 이상이면 반증으로 본다는 것입니다. 결과: G5 {t5['G5'][0]:.2f}배, GN {t5['GN'][0]:.2f}배였고 {Cx['runs']['phase4']}회 모두 만점이었습니다. Sonnet 5.5에 대해 <b>예측은 반증되었습니다</b>.")),
+     ("h2", f"Recommendation: adopt with conditions {T('j')}" if en else f"권고: 조건부 채택 {T('j')}"),
+     ("ul", ([f"Trim fixed overhead first: disable unused plugins, MCP servers and skills, and keep global instructions short. Measured: {ov['saving_pct'][0]}–{ov['saving_pct'][1]}% less cost for identical results",
+              "Sonnet and Opus: do not compact mid-task to save usage. Start a fresh session at natural task boundaries when the old context is no longer needed (this follows from the mechanism and was not tested separately)",
+              f"Haiku: keep sessions under {Cx['haiku_tier']['above_k']}K tokens, and compact with a structured brief at about 80K when work continues",
+              "When compacting, use a structured brief (rules verbatim, exact values, decisions and rejected options, file paths) and keep the raw history retrievable. G5 and the built-in /compact cost the same; never compact after every action",
+              f"Avoid long (over {p4['threshold_k']}K), subagent-heavy sessions for routine work; the author's own usage breakdown showed that most usage went there"] if en else
+             [f"고정 오버헤드부터 줄입니다. 쓰지 않는 플러그인, MCP 서버, 스킬을 끄고 전역 지침을 짧게 둡니다. 실측: 같은 결과에 비용 {ov['saving_pct'][0]}~{ov['saving_pct'][1]}% 감소",
+              "Sonnet·Opus: 사용량을 아끼려고 작업 중간에 압축하지 않습니다. 이전 컨텍스트가 더 필요 없으면 작업이 자연스럽게 끊기는 지점에서 새 세션을 시작합니다(메커니즘에서 나온 결론이며 따로 시험하지는 않았습니다)",
+              f"Haiku: 세션을 {Cx['haiku_tier']['above_k']}K 토큰 아래로 유지하고, 작업이 이어지면 약 80K에서 구조화된 요약으로 압축합니다",
+              "압축할 때는 구조화된 요약(규칙 원문, 정확한 값, 결정과 기각한 선택지, 파일 경로)을 쓰고 원본 기록을 다시 찾을 수 있게 둡니다. G5와 내장 /compact는 비용이 같습니다. 행동마다 압축하지는 않습니다",
+              f"일상 작업에서는 {p4['threshold_k']}K를 넘는, 하위 에이전트를 많이 쓰는 긴 세션을 피합니다. 저자의 사용량 내역에서 사용량 대부분이 그런 세션에서 나왔습니다"])),
+     ("h2", "Limitations" if en else "한계"),
+     ("ul", ([f"Synthetic tasks only; the findings were not validated on a real workload",
+              f"{Cx['reps']} reps per cell and wide confidence intervals on T4. Opus T3's {o3['G5'][0]:.2f}× has an interval that reaches {o3['G5'][2]:.2f}, so it is not significant",
+              "Plan usage has a one-point resolution, so per-condition results rest on API-equivalent cost. How subscription plans weigh cached tokens is not disclosed; the roughly linear tracking is consistent with, but does not prove, cost-proportional accounting",
+              "Thresholds were fixed, not adaptive, and there were at most two compactions per run, so compounding loss over many compactions is untested",
+              "One Claude Code version and three models",
+              "Novelty is limited: the cache-aware bound and the Haiku price-tier effect are useful practical findings, but CliffCompaction and TokenPilot cover similar ground. The project's own assessment is that this supports a short technical note, not a research paper"] if en else
+             ["합성 과제만 썼고, 실제 작업에서는 검증하지 않았습니다",
+              f"셀마다 {Cx['reps']}회 반복이며 T4의 신뢰구간이 넓습니다. Opus T3의 {o3['G5'][0]:.2f}배는 구간이 {o3['G5'][2]:.2f}까지 걸쳐 있어 유의하지 않습니다",
+              "요금제 사용량은 1%p 단위라서 조건별 결과는 API 환산 비용에 기댑니다. 구독 요금제가 캐시 토큰을 어떤 비중으로 세는지는 공개되어 있지 않고, 대략 비례하는 움직임은 비용 비례 계산과 맞을 뿐 그것을 증명하지는 않습니다",
+              "기준점은 고정값이었고 실행마다 압축은 최대 두 번이라, 여러 번 압축할 때 쌓이는 손실은 시험하지 않았습니다",
+              "Claude Code 버전 하나, 모델 세 개",
+              "신규성은 제한적입니다. 캐시를 고려한 상한과 Haiku 가격 구간 효과는 쓸모 있는 실용적 발견이지만, CliffCompaction과 TokenPilot이 비슷한 영역을 다룹니다. 프로젝트 스스로의 평가는 연구 논문이 아니라 짧은 기술 노트감이라는 것입니다"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", ("The table figures were copied from the project's final report and its auto-generated Phase 3 analysis, which agree; the Phase 4 ratios were re-summed from the batch result files. The analysis was not otherwise re-run. AI-assisted implementation: an AI agent (Claude Code) built the harness, ran the experiments and wrote the analysis and report; the author set the question, approved the usage budget and chose the Phase 3 design. The models under test belong to the same family as the agent that ran the study. The literature review was web-based, and only the sources marked as checked above were confirmed against the original. Code and raw data are kept private. No independent review." if en
+            else "표의 수치는 프로젝트 최종 보고서와 자동 생성된 3단계 분석 파일에서 옮겼고 둘은 일치합니다. 4단계 비율은 배치 결과 파일에서 다시 합산했습니다. 그 밖의 분석은 다시 돌리지 않았습니다. AI 보조 구현입니다. AI 에이전트(Claude Code)가 하네스를 만들고, 실험을 돌리고, 분석과 보고서를 썼으며, 저자는 질문을 정하고 사용량 예산을 승인하고 3단계 설계를 골랐습니다. 시험한 모델은 연구를 진행한 에이전트와 같은 계열입니다. 문헌 조사는 웹 기반이었고, 위에서 확인했다고 적은 출처만 원문과 대조했습니다. 코드와 원본 데이터는 비공개로 보관합니다. 독립적인 검토는 없습니다.")),
     ]
     C["pages"] = pages
     C["detail_labels"] = dict(

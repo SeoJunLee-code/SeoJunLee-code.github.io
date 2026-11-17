@@ -641,5 +641,215 @@
    "verified_other": "0/8"
   },
   "human_decisions": 4
+ },
+ "context": {
+  "source": "context-efficiency-research docs/05_final_report.md (v1.0), docs/04_pilot_results.md, results/phase3_analysis.md, docs/03_protocol.md, docs/02_literature_review.md (read 2026-11-17); Phase 4 ratios re-summed from results/batches/p4_w*.jsonl (G5 0.985, GN 0.983)",
+  "runs": {
+   "pilot": 20,
+   "phase3": 54,
+   "phase4": 9,
+   "total": 83
+  },
+  "reps": 3,
+  "api_equiv_usd": 71.6,
+  "tasks": {
+   "T3": {
+    "turns": 9,
+    "checks": 17
+   },
+   "T4": {
+    "turns": 8,
+    "checks": 15
+   },
+   "T5": {
+    "turns": 11,
+    "checks": 18
+   }
+  },
+  "rel_g0": [
+   [
+    "Sonnet T4",
+    98,
+    {
+     "G1": [
+      1.4,
+      0.9,
+      1.82
+     ],
+     "G5": [
+      1.52,
+      1.11,
+      1.88
+     ],
+     "GN": [
+      1.25,
+      0.57,
+      1.86
+     ],
+     "G0F": [
+      1.93,
+      1.62,
+      2.31
+     ]
+    }
+   ],
+   [
+    "Sonnet T3",
+    127,
+    {
+     "G1": [
+      0.96,
+      0.88,
+      1.06
+     ],
+     "G5": [
+      1.03,
+      0.93,
+      1.19
+     ],
+     "GN": [
+      1.14,
+      1.07,
+      1.24
+     ],
+     "G0F": [
+      1.66,
+      1.63,
+      1.71
+     ]
+    }
+   ],
+   [
+    "Sonnet T5",
+    235,
+    {
+     "G5": [
+      0.99,
+      0.95,
+      1.03
+     ],
+     "GN": [
+      0.98,
+      0.94,
+      1.03
+     ]
+    }
+   ],
+   [
+    "Opus T4",
+    109,
+    {
+     "G5": [
+      1.04,
+      0.93,
+      1.17
+     ]
+    }
+   ],
+   [
+    "Opus T3",
+    206,
+    {
+     "G5": [
+      0.76,
+      0.65,
+      1.01
+     ]
+    }
+   ],
+   [
+    "Haiku T4",
+    147,
+    {
+     "G5": [
+      0.73,
+      0.54,
+      1.16
+     ]
+    }
+   ],
+   [
+    "Haiku T3",
+    247,
+    {
+     "G5": [
+      0.33,
+      0.3,
+      0.36
+     ]
+    }
+   ]
+  ],
+  "pilot_rel_g0": {
+   "G1": 1.06,
+   "G2": 1.31,
+   "G5": 1.16,
+   "GN": 1.29,
+   "G3": 4.72
+  },
+  "pilot_g3_score": 0.96,
+  "cost_share_pct": {
+   "cache_write": [
+    60,
+    65
+   ],
+   "cache_read": 20,
+   "output": [
+    15,
+    20
+   ]
+  },
+  "fit_sonnet_per_m": {
+   "read": 0.1,
+   "write_1h": 4.0,
+   "output": 10.0
+  },
+  "read_multiplier": 0.05,
+  "write_1h_multiplier": 2.0,
+  "t5_reads_m": [
+   3.7,
+   2.5
+  ],
+  "t5_reads_drop_pct": 32,
+  "t5_cost_drop_pct": [
+   1,
+   2
+  ],
+  "haiku_tier": {
+   "above_k": 100,
+   "price_multiplier": 5
+  },
+  "overhead": {
+   "first_call_k": [
+    7.7,
+    31.6
+   ],
+   "saving_pct": [
+    40,
+    48
+   ],
+   "desktop_call_k": 117,
+   "desktop_mcp_k": 62
+  },
+  "criteria": {
+   "min_saving_pct": 20,
+   "max_score_drop_pts": 5
+  },
+  "phase4": {
+   "threshold_k": 150,
+   "predicted_le": 0.8,
+   "falsified_if_ge": 0.95,
+   "verdict": "falsified"
+  },
+  "superseded_facts": {
+   "port": [
+    54329,
+    54417
+   ],
+   "cap_pct": [
+    37.5,
+    35
+   ]
+  }
  }
 }

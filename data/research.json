@@ -641,5 +641,144 @@
    "verified_other": "0/8"
   },
   "human_decisions": 4
+ },
+ "updates": {
+  "source": "unmerged claude/* branches of the 4 research repositories, read 2026-11-17",
+  "forgetting_d": {
+   "file": "output/data-analysis/study_d/REPORT.md",
+   "h5": {
+    "ours": 54.5,
+    "base": "LRU",
+    "base_v": 44.8,
+    "diff": 9.7,
+    "ci": [
+     4.4,
+     14.0
+    ]
+   },
+   "h5b": {
+    "ours": 54.9,
+    "base": "FIFO",
+    "base_v": 49.7,
+    "diff": 5.1,
+    "ci": [
+     2.0,
+     8.3
+    ]
+   },
+   "h6": {
+    "diff": 13.0,
+    "ci": [
+     9.5,
+     16.6
+    ]
+   }
+  },
+  "creativity_human": {
+   "file": "results/human_eval/human_summary.md",
+   "raters": 1,
+   "items": 72,
+   "a": {
+    "n": 56,
+    "orig": 0.16,
+    "orig_p": 0.241,
+    "qual": 0.3,
+    "qual_p": 0.025
+   },
+   "b": {
+    "n": 16,
+    "orig": 0.56,
+    "orig_p": 0.025,
+    "qual": 0.23,
+    "qual_p": 0.388
+   },
+   "pair": {
+    "n": 8,
+    "orig": 1.5,
+    "orig_p": 0.172,
+    "qual": -2.0,
+    "qual_p": 0.031
+   }
+  },
+  "algorithm_p2": {
+   "file": "output/speed-report.md",
+   "targets": 6,
+   "met": 1,
+   "neg_target": 1.25,
+   "pos_target": 1.5,
+   "mispred_target": 0.2,
+   "neg_ratio_before": [
+    1.54,
+    1.69,
+    1.7
+   ],
+   "neg_ratio_new": [
+    1.81,
+    1.81,
+    1.78
+   ],
+   "pos_ratio_before": [
+    2.45,
+    2.56,
+    2.56
+   ],
+   "pos_ratio_new": [
+    3.59,
+    3.38,
+    3.4
+   ],
+   "mispred_before": 0.98,
+   "mispred_new": 0.49,
+   "hinted_neg_ns": [
+    34,
+    21.6
+   ],
+   "hinted_pos_ns": [
+    46.6,
+    24.6
+   ]
+  },
+  "responsibility_p2": {
+   "file": "input/ideas/lineage-consequence-contrast-plan.md",
+   "status": "draft, awaiting freeze",
+   "delta": 0.2,
+   "holm_family": 5,
+   "seeds": 13
+  }
+ },
+ "anc": {
+  "source": "AGI- repo, branch claude/magical-heisenberg-2wt86e, anc_research/HANDOFF.md and README.md (read 2026-11-17)",
+  "mimo_whole_run_db": 3.24,
+  "mimo_ci": [
+   2.39,
+   4.09
+  ],
+  "mimo_steady_db": -0.28,
+  "measured_plants": 16,
+  "measured_broadband_db": -0.08,
+  "measured_tonal_db": 0.73,
+  "mu": 0.4,
+  "diverged": "160/160",
+  "synthetic_envs": 8,
+  "synthetic_trials": 48,
+  "synthetic_mean_db": 5.72,
+  "tests": 74
+ },
+ "aptsx": {
+  "source": "AGI- repo, branch claude/nice-ramanujan-yts94b, APTS_X_Runtime_Risk/APTS_X_Runtime_Risk_Research_Report.md (read 2026-11-17)",
+  "sample_rows": 1000,
+  "unique_job_ids": 549,
+  "repeated_id_extra_rows": 451,
+  "seeds": 8,
+  "coverage_after_shift": {
+   "fixed_2x": 49.87,
+   "rolling_conformal_90": 88.79,
+   "aci_90": 89.83
+  },
+  "resets_per_seed": 0.625,
+  "seeds_no_reset": 3,
+  "zero_delay_from": 61.8,
+  "zero_delay_to": 76.5,
+  "tests": 35
  }
 }

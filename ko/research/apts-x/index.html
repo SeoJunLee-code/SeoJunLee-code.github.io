@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APTS-X Runtime Risk — HPC 작업 시간 상한의 온라인 보정 · AEVORIN</title><meta name="description" content="독립 AI 연구 및 엔지니어링. Beyond What Exists. 지능의 경계를 탐구합니다."><meta name="theme-color" content="#03060d">
+<link rel="icon" href="../../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="en" href="../../../research/apts-x/"><link rel="alternate" hreflang="ko" href="./">
+<link rel="stylesheet" href="../../../assets/css/fonts.css"><link rel="stylesheet" href="../../../assets/css/site.css">
+</head>
+<body class="inner">
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<header class="nav"><div class="nav-in">
+<a class="logo" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
+<nav id="menu" class="menu" aria-label="Main"><a href="../../">홈</a><a href="../" aria-current="page">연구</a><a href="../../projects/">프로젝트</a><a href="../../about/">소개</a><a href="../../contact/">연락</a></nav><div class="lang" role="group" aria-label="Language"><a class="" href="../../../research/apts-x/" hreflang="en" lang="en">EN</a><a class="on" href="./" hreflang="ko" lang="ko">KR</a></div>
+</div></header>
+<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>APTS-X Runtime Risk</h1><p class="subh">HPC 작업 시간 상한의 온라인 보정</p><div class="meta"><span class="badge b-progress">진행 중</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>작업 실행 시간 분포가 바뀔 때, 온라인으로 다시 보정한 상한이 고정 2배 규칙과 달리 초과율을 목표 근처로 지킬 수 있는가?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>연구 프로토타입입니다.</b> 스케줄러나 에너지 최적화기가 아닙니다. 공개 표본은 1,000행만 감사했고, 주된 비교는 합성 분포 변화로 했습니다.</div>
+<h2>질문</h2>
+<p>HPC 사용자는 작업마다 실행 시간 상한을 요청합니다. 너무 짧으면 작업이 강제로 끝나고, 너무 길면 스케줄러가 자리를 낭비합니다. 이 연구는 실행 시간 분포가 바뀔 때, 최근 작업으로 온라인 재보정한 상한이 “추정치의 두 배” 같은 고정 규칙과 달리 초과율을 목표 근처로 지키는지 묻습니다.</p>
+<h2>결과 <span class="ev ev-r">문서 기재</span></h2>
+<div class="tw-scroll"><table><thead><tr><th>방법 (목표 90%)</th><th>변화 후 coverage</th></tr></thead><tbody><tr><td>고정 2배</td><td>49.87%</td></tr><tr><td>롤링 conformal</td><td>88.79%</td></tr><tr><td>적응형 conformal (ACI)</td><td>89.83%</td></tr></tbody></table></div>
+<ul><li>합성 분포 변화, 시드 8개. 저장소는 결론을 conformal만의 효과가 아니라 “온라인 재보정이 고정 보정을 이긴다”로 적습니다</li><li>변화 탐지기는 시드당 평균 0.625회 재설정했고, 시드 8개 중 3개에서는 변화를 아예 놓쳤습니다</li><li>끝난 작업을 지연 없이 본다면 변화 직후 롤링 coverage가 61.8%에서 76.5%로 오릅니다. 결과 공개 지연이 하락의 큰 원인입니다</li><li>공개 표본 감사: 1,000행 중 고유 작업 ID는 549개이고, 반복되는 ID 하나가 451행을 더합니다</li></ul>
+<h2>하지 않은 것</h2>
+<ul><li>공개 trace 전체 실행, 시간 분할 평가, 같은 trace 위 짝 비교</li><li>중도 절단된 작업(시간 초과) 처리, 스케줄러 시뮬레이터나 에너지 지표와의 결합</li><li>분포가 바뀌면 교환가능성이 깨지므로, 여기의 coverage는 보장이 아니라 경험적 결과입니다</li></ul>
+<h2>검증과 AI 활용</h2>
+<p>수치는 저장소 보고서에서 인용해 대조했고, 이 페이지를 위해 다시 돌리지는 않았습니다. 저장소는 테스트 35개를 보고합니다. 앞선 버전의 “Pareto” 주장은 검토 뒤 철회됐습니다. AI 보조 구현이며 독립적인 검토는 없습니다.</p></article></main>
+<footer class="foot"><div class="foot-in">
+<a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
+<p class="tag">A new era begins with a question.</p>
+<div class="foot-links"><a href="https://github.com/SeoJunLee-code" rel="noopener">GitHub <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a><a href="../../contact/">연락 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg></a></div>
+</div></footer>
+<script src="../../../assets/js/site.js" defer></script>
+</body></html>

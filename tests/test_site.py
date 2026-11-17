@@ -23,7 +23,7 @@ class Site(unittest.TestCase):
     def test_page_sets_match(self):
         en = {str(p.relative_to(ROOT)) for p in PAGES if "ko" not in p.parts}
         ko = {str(p.relative_to(ROOT / "ko")) for p in PAGES if "ko" in p.parts}
-        self.assertEqual(en, ko); self.assertEqual(len(en), 14)
+        self.assertEqual(en, ko); self.assertEqual(len(en), 16)
 
     def test_no_forbidden_strings(self):
         if not _private_terms(): print("WARNING: private forbidden-term list not found; only generic terms checked", file=sys.stderr)

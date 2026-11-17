@@ -14,7 +14,7 @@
 <button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
 <nav id="menu" class="menu" aria-label="Main"><a href="../../">홈</a><a href="../" aria-current="page">연구</a><a href="../../projects/">프로젝트</a><a href="../../about/">소개</a><a href="../../contact/">연락</a></nav><div class="lang" role="group" aria-label="Language"><a class="" href="../../../research/ai-forgetting-review/" hreflang="en" lang="en">EN</a><a class="on" href="./" hreflang="ko" lang="ko">KR</a></div>
 </div></header>
-<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>AI 망각과 복습</h1><p class="subh">고정 예산에서 퇴출과 복습을 함께 정하는 모델</p><div class="meta"><span class="badge b-mixed">혼합 결과</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>저장·연산 예산이 고정될 때, 항목별 필요 모델 하나로 퇴출과 복습을 함께 정하는 정책이 같은 예산의 단순 기준선보다 나은가?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>혼합 결과입니다.</b> 연구 A는 실제 대화 데이터에서 주 가설을 지지합니다. 연구 B(연속학습)는 실행하지 않았고, 연구 C는 합성 트레이스를 쓴 탐색적 연구입니다.</div>
+<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>AI 망각과 복습</h1><p class="subh">고정 예산에서 퇴출과 복습을 함께 정하는 모델</p><div class="meta"><span class="badge b-mixed">혼합 결과</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>저장·연산 예산이 고정될 때, 항목별 필요 모델 하나로 퇴출과 복습을 함께 정하는 정책이 같은 예산의 단순 기준선보다 나은가?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>혼합 결과입니다.</b> 연구 A는 실제 대화 데이터에서 주 가설을 지지하고, 연구 D는 새 데이터셋에서 이를 확증합니다. 연구 B(연속학습)는 실행하지 않았고, 연구 C는 합성 트레이스를 쓴 탐색적 연구입니다.</div>
 <h2>질문</h2>
 <p>기억하는 에이전트에게는 저장과 연산 예산이 정해져 있습니다. 이 연구는 항목마다 보존 필요도를 점수로 매기고 그 점수로 퇴출과 복습을 함께 정하는 모델 하나가, 같은 예산에서 단순 기준선(무작위, 먼저 들어온 것부터, 최근·빈도 기준, 망각 곡선과 ACT-R 규칙)보다 나은지 묻습니다.</p>
 <h2>방법</h2>
@@ -28,7 +28,9 @@
 <h2>되지 않은 것, 하지 않은 것</h2>
 <ul><li>연구 A의 자체 점검 하나가 <b>실패</b>했습니다. Random의 5개 정책 시드 사이 퍼짐이 3.31%p(표준오차 1.48)로, 차이를 판단하는 데 쓴 3%p 기준과 비교됩니다</li><li>연구 B는 결과가 없습니다. 저장소에 연구 B 산출물도 MNIST 데이터도 없어서 H2–H4는 판정할 수 없습니다</li><li>연구 C는 탐색적이고 모든 트레이스가 합성이라, 진술이 트레이스 생성기에 따라 달라집니다</li><li>원고는 쓰지 않았습니다. 논문, 책, 발표 폴더는 템플릿 상태입니다</li></ul>
 <h2>검증과 AI 활용</h2>
-<p>연구 A의 수치는 저장소 보고서와 직접 대조했습니다. 연구를 다시 돌려 보지는 않았습니다. AI 보조 구현이며, 저장소 로그에는 문헌 조사에 하위 에이전트를 썼고 설계 승인을 위임으로 했다고 기록되어 있습니다. 독립적인 검토는 없습니다. LoCoMo는 Maharana 외(2024)의 데이터입니다.</p></article></main>
+<p>연구 A의 수치는 저장소 보고서와 직접 대조했습니다. 연구를 다시 돌려 보지는 않았습니다. AI 보조 구현이며, 저장소 로그에는 문헌 조사에 하위 에이전트를 썼고 설계 승인을 위임으로 했다고 기록되어 있습니다. 독립적인 검토는 없습니다. LoCoMo는 Maharana 외(2024)의 데이터입니다.</p>
+<h2>연구 D — 표본 밖 확증 <span class="ev ev-r">문서 기재</span></h2>
+<p>새 데이터셋(REALTALK)에서 사전등록한 검증입니다. 내용 기반 단어당 보존율은 54.5%로 기존 정책 중 최선(LRU) 44.8%보다 +9.7%p [+4.4, +14.0] 높아 <b>H5는 지지됩니다</b>. 새 타이밍 시드로 LoCoMo에서 재현한 결과는 FIFO 대비 +5.1%p [+2.0, +8.3](H5b 지지), H6은 +13.0%p [+9.5, +16.6]입니다. GPU 연구 E·F(H7–H11)는 사전등록만 했고 아직 돌리지 않았습니다. 출처: 병합 전 브랜치의 <code>output/data-analysis/study_d/REPORT.md</code>. 이 페이지를 위해 다시 돌리지는 않았습니다.</p></article></main>
 <footer class="foot"><div class="foot-in">
 <a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
 <p class="tag">A new era begins with a question.</p>

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Loading intro rebuilt as SVG+CSS from the reference GIF (9 frames x 0.5 s):
+Timings are compressed to about 2.4 s (CSS in site.css, SMIL below).
 sunrise -> a big thin ring is drawn -> it collapses into a tilted orbit while the metallic 'A' appears
 -> a bright arc + star -> AEVORIN wordmark -> tagline -> milky way, while the planet sinks.
 Coordinates are in 'crop units' = 3x the GIF pixels, measured on the GIF's last frame."""
@@ -38,9 +39,9 @@ def intro_html(lang):
     skip = "Skip" if lang == "en" else "건너뛰기"
     sx, sy = STAR
     o, r = ORB, RING
-    return f'''<div id="intro" class="intro" aria-hidden="true">
-<div class="in-sky"></div><div class="in-milky"></div><div class="in-photo"></div><div class="in-glow"></div>
-<svg class="in-logo" viewBox="-110 80 860 700" preserveAspectRatio="xMidYMid meet" focusable="false">
+    return f'''<div id="intro" class="intro">
+<div class="in-sky" aria-hidden="true"></div><div class="in-milky" aria-hidden="true"></div><div class="in-photo" aria-hidden="true"></div><div class="in-glow" aria-hidden="true"></div>
+<svg class="in-logo" viewBox="-110 80 860 700" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
 <defs>
 <linearGradient id="iL" x1="0" y1="0" x2="1" y2=".9"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#dfe5f2"/><stop offset=".75" stop-color="#9aa6c0"/><stop offset="1" stop-color="#6c7896"/></linearGradient>
 <linearGradient id="iR" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#e9eef9"/><stop offset=".45" stop-color="#b4bfd8"/><stop offset="1" stop-color="#7c88a6"/></linearGradient>
@@ -49,11 +50,11 @@ def intro_html(lang):
 <filter id="iF" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
 <g transform="translate({r['cx']} {r['cy']})"><g><ellipse class="in-loop" cx="0" cy="0" rx="{r['r']}" ry="{r['r']}" pathLength="1" filter="url(#iF)">
-<animate attributeName="rx" from="{r['r']}" to="{o['rx']}" begin="1.7s" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/>
-<animate attributeName="ry" from="{r['r']}" to="{o['ry']}" begin="1.7s" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/>
-<animateTransform attributeName="transform" type="rotate" from="0" to="{o['rot']}" begin="1.7s" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/>
+<animate attributeName="rx" from="{r['r']}" to="{o['rx']}" begin=".76s" dur=".45s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/>
+<animate attributeName="ry" from="{r['r']}" to="{o['ry']}" begin=".76s" dur=".45s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/>
+<animateTransform attributeName="transform" type="rotate" from="0" to="{o['rot']}" begin=".76s" dur=".45s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/>
 </ellipse></g>
-<animateTransform attributeName="transform" type="translate" from="{r['cx']} {r['cy']}" to="{o['cx']} {o['cy']}" begin="1.7s" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/></g>
+<animateTransform attributeName="transform" type="translate" from="{r['cx']} {r['cy']}" to="{o['cx']} {o['cy']}" begin=".76s" dur=".45s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".6 0 .2 1"/></g>
 <g class="in-flares"><circle cx="{r['cx']-r['r']}" cy="{r['cy']}" r="4"/><circle cx="{r['cx']+r['r']*.74}" cy="{r['cy']-r['r']*.67}" r="5"/><circle cx="{r['cx']-r['r']*.52}" cy="{r['cy']+r['r']*.85}" r="4"/></g>
 <path class="in-back" d="{TOP}" pathLength="1"/>
 <g class="in-mark">

@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KORE — Knowledge Orchestration & Retrieval Engine · AEVORIN</title><meta name="description" content="Independent AI research and engineering. Beyond What Exists. Exploring the boundaries of intelligence."><meta name="theme-color" content="#03060d">
+<title>KORE — Knowledge Orchestration &amp; Retrieval Engine · AEVORIN</title><meta name="description" content="No result yet. Nothing has been validated."><meta name="theme-color" content="#03060d">
+<link rel="canonical" href="https://seojunlee-code.github.io/research/kore/">
+<link rel="alternate" hreflang="en" href="https://seojunlee-code.github.io/research/kore/"><link rel="alternate" hreflang="ko" href="https://seojunlee-code.github.io/ko/research/kore/"><link rel="alternate" hreflang="x-default" href="https://seojunlee-code.github.io/research/kore/">
+<meta property="og:site_name" content="AEVORIN"><meta property="og:title" content="KORE — Knowledge Orchestration &amp; Retrieval Engine · AEVORIN"><meta property="og:description" content="No result yet. Nothing has been validated."><meta property="og:url" content="https://seojunlee-code.github.io/research/kore/"><meta property="og:type" content="article"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="ko_KR"><meta property="og:image" content="https://seojunlee-code.github.io/assets/img/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
-<link rel="alternate" hreflang="en" href="./"><link rel="alternate" hreflang="ko" href="../../ko/research/kore/">
 <link rel="stylesheet" href="../../assets/css/fonts.css"><link rel="stylesheet" href="../../assets/css/site.css">
 </head>
 <body class="inner">
@@ -12,24 +14,24 @@
 <header class="nav"><div class="nav-in">
 <a class="logo" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
 <button class="burger" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span></span><span></span></button>
-<nav id="menu" class="menu" aria-label="Main"><a href="../../">Home</a><a href="../" aria-current="page">Research</a><a href="../../projects/">Projects</a><a href="../../about/">About</a><a href="../../contact/">Contact</a></nav><div class="lang" role="group" aria-label="Language"><a class="on" href="./" hreflang="en" lang="en">EN</a><a class="" href="../../ko/research/kore/" hreflang="ko" lang="ko">KR</a></div>
+<nav id="menu" class="menu" aria-label="Main"><a href="../../">Home</a><a href="../" aria-current="page">Research</a><a href="../../projects/">Projects</a><a href="../../about/">About</a><a href="../../contact/">Contact</a></nav><div class="lang" role="group" aria-label="Language"><a class="on" aria-current="true" href="./" hreflang="en" lang="en">EN</a><a href="../../ko/research/kore/" hreflang="ko" lang="ko">KR</a></div>
 </div></header>
-<main id="main"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← All research</a><h1>KORE</h1><p class="subh">Knowledge Orchestration & Retrieval Engine</p><div class="meta"><span class="badge b-prototype">Prototype · Unvalidated</span><span class="pill">AI-assisted implementation</span><span class="pill">No independent review</span></div><div class="qbox"><span>Research question</span>Can a retrieval layer pick the knowledge that actually helps a language model answer, and does it beat plain RAG under identical conditions?</div></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>Nothing has been validated yet.</b> The repository's own README says so. The sample data (15 documents, 9 questions) only checks that the pipeline runs; it supports no conclusion about KORE versus plain RAG.</div>
-<h2>Question</h2>
+<main id="main" tabindex="-1"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← All research</a><h1>KORE</h1><p class="subh">Knowledge Orchestration & Retrieval Engine</p><div class="meta"><span class="badge b-prototype">Prototype · Unvalidated</span><span class="pill">AI-assisted implementation</span><span class="pill">No independent review</span></div><div class="qbox"><span>Research question</span>Can a retrieval layer pick the knowledge that actually helps a language model answer, and does it beat plain RAG under identical conditions?</div><div class="result"><span>Result</span>No result yet. Nothing has been validated.</div><nav class="toc" aria-label="Contents"><p class="toc-h">Contents</p><ol><li><a href="#s1">Background</a></li><li><a href="#s2">What exists</a></li><li><a href="#s3">What is not done</a></li><li><a href="#s4">Data</a></li><li><a href="#s5">Team and roles</a></li><li><a href="#s6">AI use</a></li><li><a href="#s7">Verification</a></li></ol></nav></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>Nothing has been validated yet.</b> The repository's own README says so. The sample data (15 documents, 9 questions) only checks that the pipeline runs; it supports no conclusion about KORE versus plain RAG.</div>
+<h2 id="s1">Background</h2>
 <p>Language models answer better with the right outside knowledge, but retrieval often returns text that looks relevant without helping. KORE is a prototype that tries to select the knowledge that actually helps, and compares it with plain RAG under identical conditions.</p>
-<h2>What exists</h2>
+<h2 id="s2">What exists</h2>
 <ul><li>Experiment skeleton and a resumable experiment runner</li><li>BM25 retrieval, a weighted selector, and evaluation code with bootstrap intervals</li><li>A generator that uses free open models, and tools for labelling how much each document contributed</li><li>Data-checking tools and tests</li></ul>
-<h2>What is not done</h2>
+<h2 id="s3">What is not done</h2>
 <ul><li>The hypotheses (H1–H3), the KORE-versus-RAG comparison and the originality claim are all untested <span class="ev ev-u">Unverified</span></li><li>No real evaluation set is approved: a 20-question draft written with AI help is waiting for human approval</li><li>Large-scale runs on GPU were not done in the environment where the code was written</li></ul>
-<h2>Data</h2>
+<h2 id="s4">Data</h2>
 <p>The repository holds a draft knowledge table. Its source log marks the licence of every entry as not yet checked, so this site does not redistribute it.</p>
-<h2>Team and roles</h2>
+<h2 id="s5">Team and roles</h2>
 <div class="tw-scroll"><table><thead><tr><th>Contributor</th><th>Role</th></tr></thead><tbody><tr><td>SeoJunLee</td><td>Development &amp; Integration</td></tr><tr><td>Contributor B</td><td>Data &amp; prior research</td></tr><tr><td>Contributor C</td><td>Evaluation &amp; reproduction</td></tr></tbody></table></div>
 <p>This is a three-person project. Teammates are credited by role.</p>
-<h2>AI use</h2>
+<h2 id="s6">AI use</h2>
 <p><b>AI-assisted development.</b> In the repository history, 24 of 32 commits are authored by an AI assistant, 6 by the author's account and 2 by a placeholder account. The history cannot show who wrote the work committed under the placeholder account. This page makes no claim of sole authorship or sole development.</p>
-<h2>Verification</h2>
-<p>Figures in the repository's own status notes (test counts, a retrieval diagnostic on 20 development questions) were not reproduced for this page, so none are shown here.</p></article></main>
+<h2 id="s7">Verification</h2>
+<p>Figures in the repository's own status notes (test counts, a retrieval diagnostic on 20 development questions) were not reproduced for this page, so none are shown here.</p><nav class="pager" aria-label="More research"><a class="pg-all" href="../">← All research</a><a class="pg-prev" rel="prev" href="../ai-creativity/"><span class="pg-l">← Previous</span><span class="pg-t">AI Creativity</span><span class="pg-s">Doxa Negation Search</span></a><a class="pg-next" rel="next" href="../h1/"><span class="pg-l">Next →</span><span class="pg-t">H1</span><span class="pg-s">Majority-vote backfire</span></a></nav></article></main>
 <footer class="foot"><div class="foot-in">
 <a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
 <p class="tag">A new era begins with a question.</p>

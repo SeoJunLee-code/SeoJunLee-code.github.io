@@ -5,6 +5,7 @@ except labels. Blocks: ("h2",t) ("p",t) ("ul",[..]) ("table",head,rows) ("note",
 def f3(x): return f"{x:.3f}"
 def ci(a): return f"[{a[0]:.3f}, {a[1]:.3f}]"
 def pct(x, d=0): return f"{x*100:.{d}f}%"
+def nw(s): return f'<span class="nw">{s}</span>'   # keeps a number range on one line
 
 BADGES = {
     "en": {"prototype": "Prototype · Unvalidated", "refuted": "Hypothesis Refuted", "progress": "In Progress",
@@ -50,7 +51,7 @@ def build(lang, D):
      dict(id="h1", badge="refuted", title="H1", sub="Majority-vote backfire" if en else "다수결 역효과",
           q="When a model sometimes answers correctly, does majority voting fail on more than half of those problems?" if en
             else "모델이 가끔 정답을 내는 문제에서, 다수결이 절반 넘게 틀리는가?",
-          one=f"Refuted in 4 of 4 conditions; backfire {pct(refute_lo)}–{pct(refute_hi)}." if en else f"4개 조건 모두 반증. 역효과 비율 {pct(refute_lo)}–{pct(refute_hi)}.",
+          one=f"Refuted in 4 of 4 conditions; backfire {nw(pct(refute_lo) + '–' + pct(refute_hi))}." if en else f"4개 조건 모두 반증. 역효과 비율 {nw(pct(refute_lo) + '–' + pct(refute_hi))}.",
           blurb="Tested whether majority voting backfires more often than it helps." if en else "다수결이 도움보다 해를 더 자주 끼치는지 시험했습니다."),
      dict(id="paper5", badge="progress", title="Paper 5",
           sub="Predicting success via internal signals" if en else "내부 신호로 성공 예측",
@@ -68,9 +69,9 @@ def build(lang, D):
           blurb="Unit-test reproduction of two upstream projects. No performance claims." if en else "두 업스트림 프로젝트의 단위 테스트 재현. 성능 주장은 없습니다."),
      dict(id="world-model", badge="exploratory", title="Study 4" if en else "연구 4",
           sub="World-model study" if en else "월드 모델 연구",
-          q=("The original report measures three things: 막힘 예측, 위치 프로브 and 인과 개입, at 3,000, 12,000 and 24,000 steps in two environments (maze, empty)." if en
+          q=("The original report measures three things, blocked-move prediction, a position probe and a causal intervention, at 3,000, 12,000 and 24,000 steps in two environments (maze, empty)." if en
              else "원본 보고서는 두 환경(maze, empty)에서 3,000·12,000·24,000스텝의 막힘 예측, 위치 프로브, 인과 개입 세 가지를 측정합니다."),
-          one=(f"maze 3000스텝 위치 프로브 {f3(m['probe3000'])}, 미학습 {f3(m['probe3000_untrained'])} (미학습이 설명하는 몫 {m['untrained_share_pct']}%)." if en
+          one=(f"maze at 3000 steps: position probe {f3(m['probe3000'])}, untrained network {f3(m['probe3000_untrained'])} (share explained by the untrained network: {m['untrained_share_pct']}%)." if en
                else f"maze 3000스텝 위치 프로브 {f3(m['probe3000'])}, 미학습 {f3(m['probe3000_untrained'])} (미학습이 설명하는 몫 {m['untrained_share_pct']}%)."),
           blurb="Exploratory results, three seeds, no significance tests." if en else "탐색적 결과. 시드 3개, 유의성 검정 없음."),
     ]
@@ -85,15 +86,15 @@ def build(lang, D):
           sub="Does compaction save Claude Code usage?" if en else "압축이 Claude Code 사용량을 줄이는가",
           q=("Does compacting the conversation context reduce Claude Code subscription usage without hurting task quality?" if en
              else "대화 컨텍스트를 압축하면 작업 품질을 해치지 않고 Claude Code 구독 사용량을 줄일 수 있는가?"),
-          one=(f"No saving on Sonnet 5.5 ({Cx_lo:.2f}–{Cx_hi:.2f}× full history); {Cx_hk:.2f}× on Haiku 5.5 above 100K tokens. Trimming the fixed per-call context mattered more." if en
-               else f"Sonnet 5.5에서는 절감이 없었고(전체 기록 대비 {Cx_lo:.2f}~{Cx_hi:.2f}배), 100K 토큰을 넘는 Haiku 5.5에서는 {Cx_hk:.2f}배였습니다. 호출마다 붙는 고정 컨텍스트를 줄이는 쪽이 더 컸습니다."),
+          one=(f"No saving on Sonnet 5.5 ({nw(f'{Cx_lo:.2f}–{Cx_hi:.2f}×')} full history); {Cx_hk:.2f}× on Haiku 5.5 above 100K tokens. Trimming the fixed per-call context mattered more." if en
+               else f"Sonnet 5.5에서는 절감이 없었고(전체 기록 대비 {nw(f'{Cx_lo:.2f}~{Cx_hi:.2f}배')}), 100K 토큰을 넘는 Haiku 5.5에서는 {Cx_hk:.2f}배였습니다. 호출마다 붙는 고정 컨텍스트를 줄이는 쪽이 더 컸습니다."),
           blurb="83 graded runs on three Claude models; one pre-registered prediction falsified." if en else "Claude 모델 3종, 채점된 실행 83회. 사전등록 예측 하나는 반증."),
      dict(id="algorithm-innovation", badge="mixed", title="Algorithm Innovation" if en else "알고리즘 혁신",
           sub="A cache-line approximate membership filter" if en else "캐시 라인 하나로 읽는 근사 멤버십 필터",
           q=("With equal memory, can an insert-only filter that reads one cache line, with fingerprint length following block load, beat blocked Bloom and Prefix filter at a practical cost?" if en
              else "같은 메모리에서, 블록 부하에 따라 지문 길이를 바꾸는 삽입 전용 필터가 캐시 라인 하나만 읽고도 blocked Bloom과 Prefix filter를 실용적인 비용으로 이길 수 있는가?"),
-          one=(f"False-positive rate {f3(Al['h1'][-1][1])}–{f3(Al['h1'][0][1])} of blocked Bloom at equal memory, but slower, and the core mechanism was already published (TinySet)." if en
-               else f"같은 메모리에서 오탐률이 blocked Bloom의 {f3(Al['h1'][-1][1])}~{f3(Al['h1'][0][1])}배이지만 더 느리고, 핵심 메커니즘은 이미 발표된 TinySet입니다."),
+          one=(f"False-positive rate {nw(f3(Al['h1'][-1][1]) + '–' + f3(Al['h1'][0][1]))} of blocked Bloom at equal memory, but slower, and the core mechanism was already published (TinySet)." if en
+               else f"같은 메모리에서 오탐률이 blocked Bloom의 {nw(f3(Al['h1'][-1][1]) + '~' + f3(Al['h1'][0][1]) + '배')}이지만 더 느리고, 핵심 메커니즘은 이미 발표된 TinySet입니다."),
           blurb="Pre-registered experiment with one rejected hypothesis." if en else "가설 하나가 기각된 사전등록 실험."),
      dict(id="ai-responsibility", badge="refuted", title="AI Responsibility" if en else "AI 책임",
           sub="Structural responsibility for AI agents" if en else "구조적 AI 책임",
@@ -120,8 +121,8 @@ def build(lang, D):
     C["research"] = R
     C["research_intro"] = ("Ten lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
                            else "열 가지 연구입니다. 최신순으로 늘어놓았고, 각 페이지는 무엇을 쟀는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지를 적습니다.")
-    C["home_research_lead"] = ("We explore fundamental questions in AI, from collective decision-making to what models represent inside. Every page states what failed and what was not checked." if en
-                               else "집단 의사결정부터 모델 내부 표현까지, AI의 근본 질문을 탐구합니다. 모든 페이지에 실패한 것과 확인하지 못한 것을 함께 적습니다.")
+    C["home_research_lead"] = ("We explore fundamental questions in AI, from retrieval and majority voting to memory, creativity and what models represent inside. Every page states what failed and what was not checked." if en
+                               else "검색과 다수결부터 기억, 창의성, 모델 내부 표현까지, AI의 근본 질문을 탐구합니다. 모든 페이지에 실패한 것과 확인하지 않은 것을 함께 적습니다.")
 
     # ------------------------------------------------------------------ roles / AI use blocks
     def ai_use(extra_en, extra_ko):
@@ -134,7 +135,7 @@ def build(lang, D):
     pages["kore"] = [
      ("note", ("<b>Nothing has been validated yet.</b> The repository's own README says so. The sample data (15 documents, 9 questions) only checks that the pipeline runs; it supports no conclusion about KORE versus plain RAG." if en
                else "<b>아직 검증된 것은 없습니다.</b> 저장소 README가 직접 그렇게 밝힙니다. 샘플 데이터(문서 15개, 질문 9개)는 파이프라인이 도는지만 확인하며, KORE와 단순 RAG의 비교에 대해 어떤 결론도 뒷받침하지 않습니다."), "warn"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("Language models answer better with the right outside knowledge, but retrieval often returns text that looks relevant without helping. KORE is a prototype that tries to select the knowledge that actually helps, and compares it with plain RAG under identical conditions." if en
             else "언어모델은 알맞은 외부 지식이 있으면 더 잘 답하지만, 검색은 관련 있어 보이기만 하고 도움이 되지 않는 글을 가져오기도 합니다. KORE는 실제로 도움이 되는 지식을 고르려는 프로토타입이며, 같은 조건에서 단순 RAG와 비교합니다.") ),
      ("h2", "What exists" if en else "있는 것"),
@@ -182,7 +183,7 @@ def build(lang, D):
     pages["h1"] = [
      ("note", (f"Refuted in all {len(h['conditions'])} conditions by the decision rule written in the experiment code." if en
                else f"실험 코드에 적힌 판정 규칙에 따라 {len(h['conditions'])}개 조건 모두에서 반증되었습니다."), "bad"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("Asking a model to solve the same problem many times and taking the most common answer (majority voting) usually raises accuracy. But on a problem where the right answer shows up only sometimes, a wrong answer can become the majority. We call that <b>backfire</b>. H1 says: among problems where the model is sometimes right, majority voting is wrong on <b>more than half</b>." if en
             else "같은 문제를 여러 번 풀게 하고 가장 많이 나온 답을 고르는 다수결은 보통 정확도를 올립니다. 그러나 정답이 가끔만 나오는 문제에서는 오답이 다수가 될 수 있습니다. 이를 <b>backfire(역효과)</b>라고 부릅니다. H1은 “모델이 가끔 정답을 내는 문제 가운데 다수결이 틀리는 비율이 <b>절반을 넘는다</b>”입니다.")),
      ("h2", "Method" if en else "방법"),
@@ -230,7 +231,7 @@ def build(lang, D):
     pages["paper5"] = [
      ("note", ("<b>In progress.</b> The pre-registered next step (1j) has not been run. So far the data do not support reading the signal as “confidence”." if en
                else "<b>진행 중입니다.</b> 사전 고정한 다음 단계(1j)는 아직 실행하지 않았습니다. 지금까지의 데이터는 이 신호를 ‘자신감’으로 읽는 해석을 뒷받침하지 않습니다."), "warn"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("A reinforcement-learning agent scores every action with a Q value. Its maximum, maxQ, roughly says how good the agent thinks the situation is. Can the maxQ over the first five steps predict whether the agent later reaches a key? And is that signal really “confidence”, or just how well the agent was trained (the training setting k)?" if en
             else "강화학습 에이전트는 모든 행동에 Q 값으로 점수를 매깁니다. 그 최댓값 maxQ는 에이전트가 지금 상황을 얼마나 좋게 보는지에 가깝습니다. 처음 5걸음의 maxQ로 에이전트가 나중에 열쇠에 닿을지 예측할 수 있는가? 그 신호는 정말 ‘자신감’인가, 아니면 학습 정도(학습 설정 k)일 뿐인가?")),
      ("h2", "Method" if en else "방법"),
@@ -261,7 +262,7 @@ def build(lang, D):
               "Hypotheses H-B1 and H-B2 were not re-tested in Phase 2b",
               "Code for steps 1b–1h lives only in notebooks, so its hashes are not available"] if en else
              ["사전 고정한 단계는 1f뿐이고 원문은 보관되어 있지 않아(해시만 있음) 가설 문장과 대조할 수 없습니다",
-              "Phase 2b는 앞선 본 실험의 결과를 본 뒤에 설계했습니다. 사전 등록은 새 시드를 돌리기 전에 잠갔고, 판정은 미리 정한 한 줄만 따릅니다",
+              "Phase 2b는 앞선 본 실험의 결과를 본 뒤에 설계했습니다. 사전등록은 새 시드를 돌리기 전에 잠갔고, 판정은 미리 정한 한 줄만 따릅니다",
               "환경과 에이전트는 재구현본입니다. 결과는 이 환경에 대한 것이며 다른 설정으로 일반화되지 않습니다",
               "1c 단계는 여러 신호와 조건을 한꺼번에 봤고, 다중 비교 보정 기록이 없습니다",
               "Phase 2b에서는 가설 H-B1, H-B2를 다시 시험하지 않았습니다",
@@ -276,7 +277,7 @@ def build(lang, D):
     pages["llm-internal-computing"] = [
      ("note", ("<b>Reproduction only.</b> This work runs the unit tests of two upstream projects at pinned commits. It reports pass and fail counts and causes. It contains no performance figures, and the upstream projects' claims about circuits, riscv-tests and benchmarks were not reproduced." if en
                else "<b>재현만 했습니다.</b> 두 업스트림 프로젝트의 단위 테스트를 고정 커밋에서 돌렸습니다. 통과·실패 개수와 원인만 보고하며 성능 수치는 없습니다. 업스트림이 주장하는 회로, riscv-tests, 벤치마크는 재현하지 않았습니다."), "warn"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("Two open projects, QwenPU and Qwenputer, embed a deterministic computer inside a language model. Before building on them, do their own unit tests pass at a fixed version?" if en
             else "공개 프로젝트 QwenPU와 Qwenputer는 언어모델 안에 결정론적 컴퓨터를 넣습니다. 이를 바탕으로 무언가 만들기 전에, 고정한 버전에서 그들의 단위 테스트가 통과하는지 확인했습니다.")),
      ("h2", "Attribution" if en else "출처 표기"),
@@ -310,46 +311,49 @@ def build(lang, D):
     # ------------------------------------------------------------------ Study 4
     mz, em = s4["maze"], s4["empty"]
     pr, j2 = s4["probe"], s4["j2"]
-    G = (lambda ko, gl: f"{ko} <span class=\"gloss\">({gl})</span>") if en else (lambda ko, gl: ko)
+    U = "untrained" if en else "미학습"
     pages["world-model"] = [
-     ("note", ("<b>Exploratory.</b> 시드 3개, 유의성 검정 없음. The report uses its own terms; they are kept as written, with a plain English gloss in brackets. This page adds no interpretation beyond the report's own judgment rules." if en
+     ("note", ("<b>Exploratory.</b> Three seeds, no significance tests. Terms are translated from the Korean report, and the report's file name is kept in Korean. This page adds no interpretation beyond the report's own judgment rules." if en
                else "<b>탐색적 결과입니다.</b> 시드 3개, 유의성 검정 없음. 이 페이지는 보고서의 용어를 그대로 쓰며, 보고서의 판정 규칙 밖의 해석을 덧붙이지 않습니다."), "warn"),
      ("h2", "What the report covers" if en else "보고서가 다루는 것"),
-     ("p", ("Source: Drive report “연구4_원본코드_확장_산출보고서” (auto-generated 2026-10-27). Code: the project's original experiment script with the CPU tier setting, changing only the step count and the output folder. The 3,000-step rows were not retrained in that run; they are original results stored earlier (Drive wm_results)." if en
+     ("p", ("Source: Drive report <span lang=\"ko\">「연구4_원본코드_확장_산출보고서」</span> (auto-generated 2026-10-27). Code: the project's original experiment script (TIER=CPU setting), changing only the step count and the output folder. The 3000-step rows were not retrained in that run; they are original results stored earlier (Drive wm_results)." if en
             else "출처: Drive 보고서 「연구4_원본코드_확장_산출보고서」(2026-10-27 자동 생성). 코드: 프로젝트의 원본 실험 스크립트(TIER=CPU 설정)에서 스텝 수와 저장 폴더만 바꾼 것입니다. 3000스텝 행은 그 실행에서 새로 학습한 것이 아니라 이전에 저장해 둔(Drive wm_results) 원본 결과입니다.")),
-     ("ul", ([f"{G('A. 막힘 예측', 'blocked-move prediction')} — {G('헤드룸 달성률', 'headroom attained')} = (모델 − 6-gram) / (1 − 6-gram)",
-              f"{G('B. 위치 프로브', 'position probe')} — 행동 후 위치 pos_after 분류, 선형 프로브가 최고인 층",
-              f"{G('C. 인과 개입', 'causal intervention')} — 층별 순효과 = 로짓 방향 제거한 평균차 방향 flip − 같은 α의 랜덤 방향 flip"] if en else
+     ("ul", (["A. Blocked-move prediction — headroom attained = (model − 6-gram) / (1 − 6-gram)",
+              "B. Position probe — classify the position after the action (pos_after); the layer where the linear probe scores highest",
+              "C. Causal intervention — per-layer net effect = flip along the mean-difference direction with the logit direction removed − flip along a random direction at the same α"] if en else
              ["A. 막힘 예측 — 헤드룸 달성률 = (모델 − 6-gram) / (1 − 6-gram)",
               "B. 위치 프로브 — 행동 후 위치 pos_after 분류, 선형 프로브가 최고인 층",
               "C. 인과 개입 — 층별 순효과 = 로짓 방향 제거한 평균차 방향 flip − 같은 α의 랜덤 방향 flip"])),
-     ("h2", f"A. 막힘 예측 {T('m')}"),
-     ("table", ["환경", "스텝", "시드", "정확도", "헤드룸 달성률", "6-gram"],
+     ("h2", f"A. Blocked-move prediction {T('m')}" if en else f"A. 막힘 예측 {T('m')}"),
+     ("table", (["Environment", "Steps", "Seeds", "Accuracy", "Headroom attained", "6-gram"] if en else ["환경", "스텝", "시드", "정확도", "헤드룸 달성률", "6-gram"]),
       [["maze", "3000", "3", f"{mz['steps3000']['acc']:.4f} ± {mz['steps3000']['acc_sd']:.4f}", f"{mz['steps3000']['headroom_pct']:.1f}% ± {mz['steps3000']['headroom_sd']:.1f}", f"{mz['ngram6']:.4f}"],
        ["maze", "12000", "3", f"{mz['steps12000']['acc']:.4f}", f"{mz['steps12000']['headroom_pct']:.1f}%", f"{mz['ngram6']:.4f}"],
        ["maze", "24000", "3", f"{mz['steps24000']['acc']:.4f}", f"{mz['steps24000']['headroom_pct']:.1f}%", f"{mz['ngram6']:.4f}"],
        ["empty", "3000", "3", f"{em['steps3000']['acc']:.4f}", f"{em['steps3000']['headroom_pct']:.1f}%", f"{em['ngram6']:.4f}"],
        ["empty", "12000", "3", f"{s4['empty_more']['steps12000']['acc']:.4f}", f"{s4['empty_more']['steps12000']['headroom_pct']:.1f}%", f"{em['ngram6']:.4f}"],
        ["empty", "24000", "3", f"{s4['empty_more']['steps24000']['acc']:.4f}", f"{s4['empty_more']['steps24000']['headroom_pct']:.1f}%", f"{em['ngram6']:.4f}"]]),
-     ("h2", f"B. 위치 프로브 {T('m')}"),
-     ("table", ["환경", "스텝", "선형·전체 스텝", "미학습이 설명하는 몫", "선형·지름길 배제 서브셋", "MLP(같은 층)"],
-      [["maze", "3000", f"{pr['maze3000']['full']:.3f} ± {pr['maze3000']['full_sd']:.3f} (미학습 {pr['maze3000']['untrained']:.3f})", f"{pr['maze3000']['untrained_share_pct']}%",
-        f"{pr['maze3000']['subset']:.3f} ± {pr['maze3000']['subset_sd']:.3f} (미학습 {pr['maze3000']['subset_untrained']:.3f}, {pr['maze3000']['subset_ratio']:.2f}×)", f"{pr['maze3000']['mlp']:.3f} ± {pr['maze3000']['mlp_sd']:.3f}"],
-       ["maze", "24000", f"{pr['maze24000']['full']:.3f} (미학습 {pr['maze24000']['untrained']:.3f})", f"{pr['maze24000']['untrained_share_pct']}%",
+     ("h2", f"B. Position probe {T('m')}" if en else f"B. 위치 프로브 {T('m')}"),
+     ("table", (["Environment", "Steps", "Linear · all steps", "Untrained share", "Linear · no-shortcut subset", "MLP (same layer)"] if en
+                else ["환경", "스텝", "선형·전체 스텝", "미학습이 설명하는 몫", "선형·지름길 배제 서브셋", "MLP(같은 층)"]),
+      [["maze", "3000", f"{pr['maze3000']['full']:.3f} ± {pr['maze3000']['full_sd']:.3f} ({U} {pr['maze3000']['untrained']:.3f})", f"{pr['maze3000']['untrained_share_pct']}%",
+        f"{pr['maze3000']['subset']:.3f} ± {pr['maze3000']['subset_sd']:.3f} ({U} {pr['maze3000']['subset_untrained']:.3f}, {pr['maze3000']['subset_ratio']:.2f}×)", f"{pr['maze3000']['mlp']:.3f} ± {pr['maze3000']['mlp_sd']:.3f}"],
+       ["maze", "24000", f"{pr['maze24000']['full']:.3f} ({U} {pr['maze24000']['untrained']:.3f})", f"{pr['maze24000']['untrained_share_pct']}%",
         f"{pr['maze24000']['subset']:.3f} ({pr['maze24000']['subset_ratio']:.2f}×)", "–"]]),
-     ("h2", f"C. 인과 개입 {T('m')}"),
-     ("p", ("판정 규칙 [J3] (실행 전에 고정, n=3이라 sd 비교일 뿐 검정이 아니다): 순효과 평균 − 2×sd > 0 인 층. 결과: maze는 3000·12000·24000스텝 모두 <b>없음</b>. empty는 3000스텝 없음, 12000·24000스텝 <b>L2</b>." if en
-            else "판정 규칙 [J3] (실행 전에 고정, n=3이라 sd 비교일 뿐 검정이 아니다): 순효과 평균 − 2×sd > 0 인 층. 결과: maze는 3000·12000·24000스텝 모두 <b>없음</b>. empty는 3000스텝 없음, 12000·24000스텝 <b>L2</b>.")),
-     ("h2", f"[J2] 학습 신호 {T('m')}"),
-     ("p", (f"maze: 서브셋 선형 정확도의 학습−미학습 격차 3000스텝 +{j2['maze']['gap3000']:.3f} → 12000스텝 +{j2['maze']['gap12000']:.3f}, 차이 +{j2['maze']['diff']:.3f}, 기준 2×sd {j2['maze']['two_sd']:.3f} → 수렴하자 신호가 강해졌다. "
+     ("h2", f"C. Causal intervention {T('m')}" if en else f"C. 인과 개입 {T('m')}"),
+     ("p", ("Decision rule [J3] (fixed before the run; with n=3 it is only a comparison with the sd, not a test): a layer where mean net effect − 2×sd > 0. Result: maze, <b>none</b> at 3000, 12000 and 24000 steps. empty, none at 3000 steps and <b>L2</b> at 12000 and 24000 steps." if en
+            else "판정 규칙 [J3] (실행 전에 고정, n=3이라 sd 비교일 뿐 검정이 아닙니다): 순효과 평균 − 2×sd > 0 인 층. 결과: maze는 3000·12000·24000스텝 모두 <b>없음</b>. empty는 3000스텝 없음, 12000·24000스텝 <b>L2</b>.")),
+     ("h2", f"[J2] Learning signal {T('m')}" if en else f"[J2] 학습 신호 {T('m')}"),
+     ("p", (f"maze: the trained−untrained gap in subset linear accuracy went from +{j2['maze']['gap3000']:.3f} at 3000 steps to +{j2['maze']['gap12000']:.3f} at 12000 steps, a difference of +{j2['maze']['diff']:.3f} against a 2×sd criterion of {j2['maze']['two_sd']:.3f}, so the signal grew stronger as training converged. "
+            f"empty: +{j2['empty']['gap3000']:.3f} → +{j2['empty']['gap12000']:.3f}, a difference of +{j2['empty']['diff']:.3f} against a 2×sd criterion of {j2['empty']['two_sd']:.3f}, so the change is within the sd range." if en
+            else f"maze: 서브셋 선형 정확도의 학습−미학습 격차 3000스텝 +{j2['maze']['gap3000']:.3f} → 12000스텝 +{j2['maze']['gap12000']:.3f}, 차이 +{j2['maze']['diff']:.3f}, 기준 2×sd {j2['maze']['two_sd']:.3f} → 수렴하자 신호가 강해졌습니다. "
             f"empty: +{j2['empty']['gap3000']:.3f} → +{j2['empty']['gap12000']:.3f}, 차이 +{j2['empty']['diff']:.3f}, 기준 2×sd {j2['empty']['two_sd']:.3f} → 변화가 sd 범위 안.")),
      ("h2", "Limitations (from the report)" if en else "보고서의 해석 주의"),
-     ("ul", (["시드 3개, 유의성 검정 없음",
-              "이 셀이 보지 않은 것: N=7·T=64 GPU 설정, 지름길 상한 정의 변경, 24000스텝 초과",
-              "평균차 방향은 원본 정의대로 ‘행동 전 위치 클래스 평균’의 차이다. 시점 t와 위치가 섞여 있으므로 L0(임베딩) 효과는 시점 정보를 건드린 결과일 수 있다"] if en else
+     ("ul", (["Three seeds, no significance tests",
+              "Not covered by this cell: the N=7 · T=64 GPU setting, a changed definition of the shortcut cap, runs beyond 24000 steps",
+              "The mean-difference direction is, as originally defined, the difference between ‘class means of the position before the action’. Time step t and position are mixed in it, so the L0 (embedding) effect may come from touching time-step information"] if en else
              ["시드 3개, 유의성 검정 없음",
               "이 셀이 보지 않은 것: N=7·T=64 GPU 설정, 지름길 상한 정의 변경, 24000스텝 초과",
-              "평균차 방향은 원본 정의대로 ‘행동 전 위치 클래스 평균’의 차이다. 시점 t와 위치가 섞여 있으므로 L0(임베딩) 효과는 시점 정보를 건드린 결과일 수 있다"])),
+              "평균차 방향은 원본 정의대로 ‘행동 전 위치 클래스 평균’의 차이입니다. 시점 t와 위치가 섞여 있으므로 L0(임베딩) 효과는 시점 정보를 건드린 결과일 수 있습니다"])),
      ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
      ("p", ("The figures were checked by hand against the original report file. AI-assisted implementation. No independent review." if en
             else "수치는 원본 보고서 파일과 직접 대조했습니다. AI 보조 구현. 독립적인 검토는 없습니다.")),
@@ -360,7 +364,7 @@ def build(lang, D):
     pages["algorithm-innovation"] = [
      ("note", ("<b>Mixed results.</b> The filter beats blocked Bloom on false-positive rate at equal memory, but it is slower, its core mechanism was already published (TinySet, 2015), and the follow-up speed study is incomplete." if en
                else "<b>혼합 결과입니다.</b> 같은 메모리에서 오탐률은 blocked Bloom보다 낮지만 속도는 더 느리고, 핵심 메커니즘은 이미 발표된 것(TinySet, 2015)이며, 후속 속도 연구는 끝나지 않았습니다."), "warn"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("An approximate membership filter answers “is this key in the set?” with some false positives. Blocked Bloom filters read one cache line per query. This study asks whether a filter that sizes each key's fingerprint by how full its block is, and truncates on overflow, can use one cache line and still give fewer false positives at the same memory." if en
             else "근사 멤버십 필터는 “이 키가 집합에 있는가?”에 약간의 오탐을 허용하며 답합니다. blocked Bloom 필터는 질의마다 캐시 라인 하나를 읽습니다. 이 연구는 블록이 얼마나 찼는지에 따라 지문 길이를 정하고 넘치면 자르는 필터가, 캐시 라인 하나만 읽으면서도 같은 메모리에서 오탐을 줄일 수 있는지 묻습니다.")),
      ("h2", "Method" if en else "방법"),
@@ -380,10 +384,10 @@ def build(lang, D):
      ("table", (["Target false-positive rate", "Blocked Bloom (bits/key)", "EPF-nc (bits/key)", "Saving"] if en else ["목표 오탐률", "blocked Bloom (비트/키)", "EPF-nc (비트/키)", "절감"]), [[r["target"], (f"{r['bbf']:.2f}" if "bbf" in r else f"&gt; {r['bbf_gt']:.2f}"), f"{r['epf']:.2f}", (f"{r['saving']:.2f}" if "saving" in r else f"&ge; {r['saving_ge']:.2f}")] for r in Al["h1b"]]),
      ("h2", f"Cost, and what failed {T('m')}" if en else f"비용, 그리고 실패한 것 {T('m')}"),
      ("table", (["Hypothesis", "Measured", "Limit", "Verdict"] if en else ["가설", "측정", "한도", "판정"]),
-      [["H4a — instructions per negative query", f"{Al['h4a']['epf']} ÷ {Al['h4a']['bbf']} = {Al['h4a']['ratio']:.2f}×", f"≤ {Al['h4a']['limit']:.1f}×", "Pass" if en else "통과"],
-       ["H4b — last-level cache misses per negative query", f"{Al['h4b']['epf']:.3f} (Cuckoo {Al['h4b']['cuckoo']:.3f})", f"≤ {Al['h4b']['limit']:.2f}, fewer than Cuckoo" if en else f"≤ {Al['h4b']['limit']:.2f}, Cuckoo보다 적음", "Pass" if en else "통과"],
-       ["H4c — instructions per insert", f"{Al['h4c']['epf']} ÷ {Al['h4c']['cuckoo']} = {Al['h4c']['ratio']:.2f}×", f"≤ {Al['h4c']['limit']:.1f}×", "<b>Rejected</b>" if en else "<b>기각</b>"],
-       ["H2 — against the Prefix filter", "not testable: no reference implementation" if en else "검증 못 함: 참조 구현 없음", "–", "–"]]),
+      [["H4a — instructions per negative query" if en else "H4a — 음성 질의당 명령어 수", f"{Al['h4a']['epf']} ÷ {Al['h4a']['bbf']} = {Al['h4a']['ratio']:.2f}×", f"≤ {Al['h4a']['limit']:.1f}×", "Pass" if en else "통과"],
+       ["H4b — last-level cache misses per negative query" if en else "H4b — 음성 질의당 마지막 단계 캐시 미스 수", f"{Al['h4b']['epf']:.3f} (Cuckoo {Al['h4b']['cuckoo']:.3f})", f"≤ {Al['h4b']['limit']:.2f}, fewer than Cuckoo" if en else f"≤ {Al['h4b']['limit']:.2f}, Cuckoo보다 적음", "Pass" if en else "통과"],
+       ["H4c — instructions per insert" if en else "H4c — 삽입당 명령어 수", f"{Al['h4c']['epf']} ÷ {Al['h4c']['cuckoo']} = {Al['h4c']['ratio']:.2f}×", f"≤ {Al['h4c']['limit']:.1f}×", "<b>Rejected</b>" if en else "<b>기각</b>"],
+       ["H2 — against the Prefix filter" if en else "H2 — Prefix filter와 비교", "not testable: no reference implementation" if en else "검증 못 함: 참조 구현 없음", "–", "–"]]),
      ("ul", ([f"Wall-clock: negative queries take {Al['wallclock_negative_query']['vs_blocked_bloom']:.2f}× the time of blocked Bloom, {Al['wallclock_negative_query']['vs_cuckoo']:.2f}× Cuckoo and {Al['wallclock_negative_query']['vs_prefix_style']:.2f}× the Prefix-style reimplementation (the report calls the filter slow). Instruction and miss counts are the deterministic metrics; milliseconds are noisy on a shared machine",
               f"Novelty is <b>not achieved</b>: the report states the core mechanism is TinySet (Einziger &amp; Friedman, 2015/2017), found by a prior-art check after the work began, and the added improvements are standard techniques worth about {Al['novelty_gain_bits_per_key']} bits per key",
               "A second study on query speed was started but is incomplete: its result file judged_run2.csv is empty (0 bytes) and there is no verdict, so nothing from it is reported here"] if en else
@@ -409,7 +413,7 @@ def build(lang, D):
     pages["ai-responsibility"] = [
      ("note", ("<b>Thesis rejected as stated.</b> The repository's own conclusion: the thesis that AI agents combined with structure can make the functions of responsibility (except retribution) be performed is rejected in the form written in its introduction. This is a working draft, not a finished manuscript." if en
                else "<b>논지는 처음 적은 형태로는 기각됩니다.</b> 저장소 스스로의 결론입니다. AI 에이전트와 구조의 결합이 (응보를 제외한) 책임의 기능을 수행하게 만들 수 있다는 논지는 서론에 적은 형태로는 기각됩니다. 이 글은 완성본이 아니라 작업 중인 초안입니다."), "bad"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("Without assuming that AI is conscious or has moral status, can an AI agent, combined with institutional structure, perform what responsibility does: compensating victims, keeping records, withdrawing authority?" if en
             else "AI가 의식이 있거나 도덕적 지위를 가진다고 가정하지 않고, AI 에이전트가 제도적 구조와 결합해 책임이 하는 일, 곧 피해자 보상, 기록, 권한 회수를 수행할 수 있는가?")),
      ("h2", "Method" if en else "방법"),
@@ -457,7 +461,7 @@ def build(lang, D):
     pages["ai-forgetting-review"] = [
      ("note", ("<b>Mixed results.</b> Study A supports the main hypothesis on real conversation data. Study B (continual learning) was not run. Study C is exploratory and uses synthetic traces." if en
                else "<b>혼합 결과입니다.</b> 연구 A는 실제 대화 데이터에서 주 가설을 지지합니다. 연구 B(연속학습)는 실행하지 않았고, 연구 C는 합성 트레이스를 쓴 탐색적 연구입니다."), "warn"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("An agent that remembers has a fixed budget for storage and compute. This work asks whether one model that scores each item's need to be kept, and uses that score to decide both what to evict and what to review, does better than simple baselines (random, first-in-first-out, least recently or frequently used, forgetting-curve and ACT-R rules) at the same budget." if en
             else "기억하는 에이전트에게는 저장과 연산 예산이 정해져 있습니다. 이 연구는 항목마다 보존 필요도를 점수로 매기고 그 점수로 퇴출과 복습을 함께 정하는 모델 하나가, 같은 예산에서 단순 기준선(무작위, 먼저 들어온 것부터, 최근·빈도 기준, 망각 곡선과 ACT-R 규칙)보다 나은지 묻습니다.")),
      ("h2", "Method" if en else "방법"),
@@ -503,7 +507,7 @@ def build(lang, D):
     pages["ai-creativity"] = [
      ("note", ("<b>The pre-registered core hypothesis was rejected.</b> The proposed method did not make ideas more original than the controls. All scores come from two LLM judges of the same family as the generator; no human rated anything." if en
                else "<b>사전등록한 핵심 가설은 기각됐습니다.</b> 제안한 방법이 대조군보다 독창적인 아이디어를 만들지 못했습니다. 모든 점수는 생성 모델과 같은 계열인 LLM 심사자 2명의 것이며, 사람이 평가한 것은 없습니다."), "bad"),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("Idea generators tend to produce the same ideas. Doxa Negation Search extracts the assumption that most of the existing ideas silently share, drops it, and asks for ideas that only make sense without it. The study asks whether this makes AI-generated ideas more original, and what happens when AI develops an idea further." if en
             else "아이디어 생성기는 같은 아이디어를 되풀이하는 경향이 있습니다. Doxa Negation Search는 기존 아이디어 대부분이 말없이 공유하는 가정을 추출해 버리고, 그 가정 없이야 성립하는 아이디어를 요청합니다. 이 연구는 그렇게 하면 AI가 만든 아이디어가 더 독창적이 되는지, 그리고 AI가 아이디어를 더 발전시킬 때 무슨 일이 일어나는지 묻습니다.")),
      ("h2", "Method" if en else "방법"),
@@ -562,7 +566,7 @@ def build(lang, D):
               f"{A('https://arxiv.org/abs/2606.17016', 'TokenPilot, Xu 외, arXiv:2606.17016')}: 프롬프트 배치를 바꾸는 가지치기는 프리픽스 캐시를 깨뜨린다고 주장합니다(존재 확인)",
               f"{A('https://platform.claude.com/docs/en/build-with-claude/prompt-caching', 'Anthropic 프롬프트 캐시 문서')}: Opus·Sonnet 5.5의 캐시 읽기는 입력 가격의 {Cx['read_multiplier']:.2f}배, 1시간 캐시 쓰기는 {Cx['write_1h_multiplier']:.0f}배이고, 시험한 세 모델 중 {Cx['haiku_tier']['above_k']}K 토큰을 넘으면 가격이 오르는 것은 Haiku 5.5뿐입니다",
               f"Claude Code의 {A('https://code.claude.com/docs/en/prompt-caching.md', '프롬프트 캐시')}·{A('https://code.claude.com/docs/en/costs', '비용')} 문서: /compact, /clear, 캐시 수명이 어떻게 동작하는지, 그리고 /usage가 요금제 사용량을 보여 준다는 점"])),
-     ("h2", "Question" if en else "질문"),
+     ("h2", "Background" if en else "배경"),
      ("p", ("Does compacting the context reduce Claude Code subscription usage without hurting task quality? If it does, for which model, at what context size, and with which compaction strategy?" if en
             else "컨텍스트를 압축하면 작업 품질을 해치지 않고 Claude Code 구독 사용량이 줄어드는가? 줄어든다면 어떤 모델에서, 어느 컨텍스트 크기에서, 어떤 압축 방식으로 그런가?")),
      ("h2", "Method" if en else "방법"),
@@ -601,7 +605,7 @@ def build(lang, D):
      ("ul", (["No compaction-induced loss was seen in G1, G5 or GN across one or two compactions, including superseded facts (a port changed from 54329 to 54417, a cap from 37.5% to 35%), amended exclusion rules, buried requirements and exact numbers. Caveat: most runs scored at the ceiling, there were at most two compactions, and the tasks are synthetic",
               "Single-action compaction (G3) lost the reason a design had been rejected in 1 of 2 runs and cost 4–7× full history",
               "Haiku 5.5 failed the same feature checks with and without compaction: a capability limit, not a context effect",
-              "A grader bug was found and fixed: Korean answers such as “9개” broke word-boundary matching of numbers"] if en else
+              "A grader bug was found and fixed: Korean answers such as “<span lang=\"ko\">9개</span>” broke word-boundary matching of numbers"] if en else
              ["G1, G5, GN에서 한두 번의 압축으로 생긴 손실은 보이지 않았습니다. 바뀐 사실(포트 54329 → 54417, 상한 37.5% → 35%), 고친 제외 규칙, 묻힌 요구사항, 정확한 숫자까지 포함합니다. 단서: 대부분의 실행이 만점이었고, 압축은 최대 두 번이었으며, 과제는 합성입니다",
               "행동 하나마다 압축(G3)은 2회 중 1회에서 어떤 설계를 기각한 이유를 잃었고, 비용은 전체 기록의 4~7배였습니다",
               "Haiku 5.5는 압축 여부와 상관없이 같은 기능 검사에서 실패했습니다. 컨텍스트 효과가 아니라 능력의 한계입니다",
@@ -655,10 +659,15 @@ def build(lang, D):
                   repo="https://github.com/SeoJunLee-code/hard-takeoff")])
 
     # ------------------------------------------------------------------ about
+    n_st = len(R)
+    about_first = (f"AEVORIN publishes {n_st} independent AI studies, on retrieval, majority voting, agent signals, LLM internals, world models, membership filters, AI responsibility, memory, creativity and Claude Code usage." if en
+                   else f"AEVORIN은 독립 AI 연구 {n_st}개를 공개합니다. 다루는 분야는 검색, 다수결, 에이전트 신호, LLM 내부, 월드 모델, 필터, AI 책임, 망각, 창의성, Claude Code 사용량입니다.")
     C["about"] = [
      ("h2", "AEVORIN"),
+     ("p", about_first + (" Every study page states what failed and what was not checked." if en
+                          else " 모든 연구 페이지에 실패한 것과 확인하지 않은 것을 적습니다.")),
      ("p", ("<b>Independent AI Research &amp; Engineering.</b> Aevorin is a coined name, not an existing word. It joins <i>Aevo</i>, inspired by <i>aevum</i> (an age, a long span of time), with <i>Orin</i>, which suggests <i>origin</i>. The meaning we take from it: explore a new era of intelligence, and build possibilities beyond what already exists." if en
-            else "<b>Independent AI Research &amp; Engineering.</b> Aevorin은 기존 단어를 가져온 것이 아니라 만든 조어입니다. <i>aevum</i>(시대, 긴 시간)에서 영감을 얻은 <i>Aevo</i>와 <i>origin</i>(기원)을 떠올리게 하는 <i>Orin</i>을 결합했습니다. 담은 뜻은 이렇습니다. 지능의 새로운 시대를 탐구하고, 기존에 존재하는 것 너머의 가능성을 직접 구축한다.")),
+            else "<b lang=\"en\">Independent AI Research &amp; Engineering.</b> Aevorin은 기존 단어를 가져온 것이 아니라 만든 조어입니다. <i>aevum</i>(시대, 긴 시간)에서 영감을 얻은 <i>Aevo</i>와 <i>origin</i>(기원)을 떠올리게 하는 <i>Orin</i>을 결합했습니다. 담은 뜻은 이렇습니다. 지능의 새로운 시대를 탐구하고, 기존에 존재하는 것 너머의 가능성을 직접 구축한다.")),
      ("h2", "Philosophy" if en else "철학"),
      ("kv", [("Discover", "We look for what is not yet known." if en else "아직 알려지지 않은 것을 찾아냅니다."),
              ("Construct", "We build the thing itself, not only a description of it." if en else "설명에 그치지 않고 직접 만들어 냅니다."),
@@ -680,6 +689,31 @@ def build(lang, D):
       title="Contact" if en else "연락",
       body=("For now, GitHub is the contact channel." if en else "현재는 GitHub이 연락 창구입니다."),
       link_label="github.com/SeoJunLee-code")
-    C["title"] = dict(home="AEVORIN — Independent AI Research & Engineering", research="Research", projects="Projects", about="About", contact="Contact")
+    C["title"] = (dict(home="AEVORIN — Independent AI Research & Engineering", research="Research", projects="Projects", about="About", contact="Contact", notfound="Page not found") if en
+                  else dict(home="AEVORIN — Independent AI Research & Engineering", research="연구", projects="프로젝트", about="소개", contact="연락", notfound="페이지를 찾을 수 없습니다"))
     C["desc"] = "Independent AI research and engineering. Beyond What Exists. Exploring the boundaries of intelligence." if en else "독립 AI 연구 및 엔지니어링. Beyond What Exists. 지능의 경계를 탐구합니다."
+    # per-page meta descriptions (detail pages use each study's result sentence `one`; see build.py)
+    C["descs"] = {"": C["desc"], "research/": C["research_intro"], "projects/": C["projects"]["intro"],
+                  "about/": about_first, "contact/": C["contact"]["body"]}
+    # accessible names (not rendered with the web fonts)
+    C["aria"] = (dict(menu="Menu", lang="Language", main="Main", scroll="Go to research", pager="More research") if en
+                 else dict(menu="메뉴", lang="언어", main="주 메뉴", scroll="연구로 이동", pager="다른 연구"))
+    # status labels: one definition per badge kind (same keys as BADGES)
+    C["badge_legend"] = ({"mixed": "Some hypotheses held, others did not or were not run.",
+                          "refuted": "The main hypothesis or thesis did not hold as stated.",
+                          "prototype": "Built and runs; nothing validated yet.",
+                          "progress": "Work continues; results are not final.",
+                          "partial": "Re-runs others' work; only part reproduced.",
+                          "exploratory": "Exploratory, three seeds, no significance tests."} if en else
+                         {"mixed": "일부 가설은 지지됐고, 나머지는 지지되지 않았거나 실행하지 않았습니다.",
+                          "refuted": "주 가설이나 논지가 처음 적은 형태로는 성립하지 않았습니다.",
+                          "prototype": "만들었고 돌아가지만, 아직 검증된 것은 없습니다.",
+                          "progress": "작업이 이어지고 있으며 결과는 확정되지 않았습니다.",
+                          "partial": "다른 사람의 작업을 다시 돌렸고, 일부만 재현했습니다.",
+                          "exploratory": "탐색적 결과, 시드 3개, 유의성 검정 없음."})
+    C["labels"] = (dict(result="Result", contents="Contents", prev="Previous", next="Next", all="All research", legend="Status labels",
+                        studies=lambda n: f"{n} studies", research="Research", kicker="RESEARCH",
+                        nf_body="This page does not exist or has moved.", nf_ko="페이지를 찾을 수 없습니다.", nf_home="Home", nf_ko_link="한국어") if en else
+                   dict(result="결과", contents="목차", prev="이전 연구", next="다음 연구", all="연구 목록", legend="상태 표시",
+                        studies=lambda n: f"연구 {n}개", research="연구", kicker="연구"))
     return C

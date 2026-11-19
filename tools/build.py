@@ -293,12 +293,19 @@ def subset_fonts():
     chars |= set(json.dumps(D, ensure_ascii=False))
     txt = src.parent / "chars.txt"; txt.write_text("".join(sorted(chars)), encoding="utf-8")
     fonts = {"AEV Serif": ("CormorantGaramond", "serif"), "AEV Sans": ("Inter", "sans"), "AEV Serif KR": ("NotoSerifKR", "serif-kr"), "AEV Sans KR": ("NotoSansKR", "sans-kr")}
+    # A family whose source TTFs are absent keeps its current woff2 files and @font-face lines,
+    # so the Korean fonts can be re-subset without the Latin sources (and vice versa).
+    old_css = (ROOT / "assets/css/fonts.css").read_text(encoding="utf-8").splitlines()
     css = []
     for fam, (prefix, key) in fonts.items():
-        for p in sorted(src.glob(prefix + "_*.ttf")):
+        srcs = sorted(src.glob(prefix + "_*.ttf"))
+        if not srcs:
+            css += [l for l in old_css if f'font-family:"{fam}";' in l]
+            continue
+        for p in srcs:
             w = TTFont(p)["OS/2"].usWeightClass
             out = ROOT / f"assets/fonts/{key}-{w}.woff2"
-            subprocess.run(["pyftsubset", str(p), f"--text-file={txt}", "--flavor=woff2", f"--output-file={out}", "--layout-features=*", "--no-hinting"], check=True)
+            subprocess.run([sys.executable, "-m", "fontTools.subset", str(p), f"--text-file={txt}", "--flavor=woff2", f"--output-file={out}", "--layout-features=*", "--no-hinting"], check=True)
             css.append(f'@font-face{{font-family:"{fam}";font-weight:{w};font-style:normal;font-display:swap;src:url("../fonts/{out.name}") format("woff2")}}')
     (ROOT / "assets/css/fonts.css").write_text("\n".join(css) + "\n", encoding="utf-8")
 

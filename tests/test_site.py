@@ -192,7 +192,16 @@ class Structure(unittest.TestCase):
             self.assertNotIn(key, seen, f"repeated in the same context: {key}"); seen.add(key)
 
     def test_visible_chars_in_font_subset(self):
+        # Latin fonts cannot be re-subset (sources absent): non-Hangul text must stay inside tools/font_chars.txt.
+        # Korean fonts are re-subset from tools/fontsrc: every Hangul syllable must be in the KR woff2 files.
         allowed = set((ROOT / "tools/font_chars.txt").read_text(encoding="utf-8"))
+        try:
+            from fontTools.ttLib import TTFont
+            sets = [{chr(c) for c in TTFont(ROOT / f"assets/fonts/{f}.woff2").getBestCmap() if 0xAC00 <= c <= 0xD7A3}
+                    for f in ("sans-kr-400", "sans-kr-500", "serif-kr-500")]
+            allowed = {c for c in allowed if not 0xAC00 <= ord(c) <= 0xD7A3} | set.intersection(*sets)
+        except ImportError:
+            self.skipTest("fontTools/brotli not installed; cannot read the KR woff2 subsets")
         for p in PAGES + [ROOT / "404.html"]:
             t = re.sub(r"<title>.*?</title>", "", p.read_text(encoding="utf-8"), flags=re.S)
             t = re.sub(r"<script.*?</script>|<style.*?</style>", "", t, flags=re.S)

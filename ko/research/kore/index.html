@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KORE — Knowledge Orchestration &amp; Retrieval Engine · AEVORIN</title><meta name="description" content="아직 결과 없음. 검증된 것은 없습니다."><meta name="theme-color" content="#03060d">
+<title>KORE — Knowledge Orchestration &amp; Retrieval Engine · AEVORIN</title><meta name="description" content="아직 결과가 없으며, 검증된 것도 없습니다."><meta name="theme-color" content="#03060d">
 <link rel="canonical" href="https://seojunlee-code.github.io/ko/research/kore/">
 <link rel="alternate" hreflang="en" href="https://seojunlee-code.github.io/research/kore/"><link rel="alternate" hreflang="ko" href="https://seojunlee-code.github.io/ko/research/kore/"><link rel="alternate" hreflang="x-default" href="https://seojunlee-code.github.io/research/kore/">
-<meta property="og:site_name" content="AEVORIN"><meta property="og:title" content="KORE — Knowledge Orchestration &amp; Retrieval Engine · AEVORIN"><meta property="og:description" content="아직 결과 없음. 검증된 것은 없습니다."><meta property="og:url" content="https://seojunlee-code.github.io/ko/research/kore/"><meta property="og:type" content="article"><meta property="og:locale" content="ko_KR"><meta property="og:locale:alternate" content="en_US"><meta property="og:image" content="https://seojunlee-code.github.io/assets/img/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:site_name" content="AEVORIN"><meta property="og:title" content="KORE — Knowledge Orchestration &amp; Retrieval Engine · AEVORIN"><meta property="og:description" content="아직 결과가 없으며, 검증된 것도 없습니다."><meta property="og:url" content="https://seojunlee-code.github.io/ko/research/kore/"><meta property="og:type" content="article"><meta property="og:locale" content="ko_KR"><meta property="og:locale:alternate" content="en_US"><meta property="og:image" content="https://seojunlee-code.github.io/assets/img/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../../../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../assets/fonts/sans-kr-400.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../assets/fonts/serif-kr-500.woff2">
 <link rel="stylesheet" href="../../../assets/css/fonts.css"><link rel="stylesheet" href="../../../assets/css/site.css">
@@ -17,22 +17,22 @@
 <button class="burger" aria-expanded="false" aria-controls="menu" aria-label="메뉴"><span></span><span></span></button>
 <nav id="menu" class="menu" aria-label="주 메뉴"><a href="../../">홈</a><a href="../" aria-current="page">연구</a><a href="../../projects/">프로젝트</a><a href="../../about/">소개</a><a href="../../contact/">연락</a></nav><div class="lang" role="group" aria-label="언어"><a href="../../../research/kore/" hreflang="en" lang="en">EN</a><a class="on" aria-current="true" href="./" hreflang="ko" lang="ko">KR</a></div>
 </div></header>
-<main id="main" tabindex="-1"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>KORE</h1><p class="subh">Knowledge Orchestration & Retrieval Engine</p><div class="meta"><span class="badge b-prototype">프로토타입 · 미검증</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>언어모델이 답하는 데 실제로 도움이 되는 지식을 골라 주는 검색 계층이, 같은 조건에서 단순 RAG보다 나은가?</div><div class="result"><span>결과</span>아직 결과 없음. 검증된 것은 없습니다.</div><nav class="toc" aria-label="목차"><p class="toc-h">목차</p><ol><li><a href="#s1">배경</a></li><li><a href="#s2">있는 것</a></li><li><a href="#s3">하지 않은 것</a></li><li><a href="#s4">데이터</a></li><li><a href="#s5">팀과 역할</a></li><li><a href="#s6">AI 활용</a></li><li><a href="#s7">검증 상태</a></li></ol></nav></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>아직 검증된 것은 없습니다.</b> 저장소 README가 직접 그렇게 밝힙니다. 샘플 데이터(문서 15개, 질문 9개)는 파이프라인이 도는지만 확인하며, KORE와 단순 RAG의 비교에 대해 어떤 결론도 뒷받침하지 않습니다.</div>
+<main id="main" tabindex="-1"><section class="phead"><div class="wrap narrow"><a class="back" href="../">← 연구 목록</a><h1>KORE</h1><p class="subh">Knowledge Orchestration & Retrieval Engine</p><div class="meta"><span class="badge b-prototype">프로토타입 · 미검증</span><span class="pill">AI 보조 구현</span><span class="pill">독립 검토 없음</span></div><div class="qbox"><span>연구 질문</span>언어모델의 답변에 실제로 도움이 되는 지식을 골라 주는 검색 계층은 같은 조건에서 단순 RAG보다 나을까?</div><div class="result"><span>결과</span>아직 결과가 없으며, 검증된 것도 없습니다.</div><nav class="toc" aria-label="목차"><p class="toc-h">목차</p><ol><li><a href="#s1">배경</a></li><li><a href="#s2">만들어 둔 것</a></li><li><a href="#s3">아직 하지 않은 것</a></li><li><a href="#s4">데이터</a></li><li><a href="#s5">팀과 역할</a></li><li><a href="#s6">AI 활용</a></li><li><a href="#s7">검증 상태</a></li></ol></nav></div></section><article class="wrap narrow prose"><div class="note n-warn"><b>아직 검증된 것은 없습니다.</b> 저장소 README에도 그렇게 적혀 있습니다. 샘플 데이터(문서 15개, 질문 9개)는 파이프라인이 동작하는지만 확인할 뿐, KORE와 단순 RAG의 비교에 관해서는 어떤 결론도 뒷받침하지 않습니다.</div>
 <h2 id="s1">배경</h2>
-<p>언어모델은 알맞은 외부 지식이 있으면 더 잘 답하지만, 검색은 관련 있어 보이기만 하고 도움이 되지 않는 글을 가져오기도 합니다. KORE는 실제로 도움이 되는 지식을 고르려는 프로토타입이며, 같은 조건에서 단순 RAG와 비교합니다.</p>
-<h2 id="s2">있는 것</h2>
-<ul><li>실험 골격과 중단 후 이어 하는 실험 실행기</li><li>BM25 검색, 가중 점수 선택기, 부트스트랩 구간이 있는 평가 코드</li><li>무료 오픈 모델 생성기와 문서 기여도 라벨링 도구</li><li>데이터 점검 도구와 테스트</li></ul>
-<h2 id="s3">하지 않은 것</h2>
-<ul><li>가설(H1–H3), KORE와 RAG의 비교, 독창성 주장은 모두 시험하지 않았습니다 <span class="ev ev-u">미검증</span></li><li>승인된 실제 평가 세트가 없습니다. AI의 도움으로 쓴 20문항 초안이 사람의 승인을 기다리고 있습니다</li><li>코드를 쓴 환경에서는 GPU 대규모 실행을 하지 못했습니다</li></ul>
+<p>언어모델은 알맞은 외부 지식이 주어지면 더 잘 답하지만, 검색은 관련 있어 보일 뿐 실제로는 도움이 되지 않는 글을 가져오기도 합니다. KORE는 실제로 도움이 되는 지식을 골라내려는 프로토타입이며, 같은 조건에서 단순 RAG와 비교합니다.</p>
+<h2 id="s2">만들어 둔 것</h2>
+<ul><li>실험 골격, 그리고 중단한 지점부터 다시 이어 갈 수 있는 실험 실행기</li><li>BM25 검색, 가중 점수 선택기, 부트스트랩 구간이 있는 평가 코드</li><li>무료 오픈 모델을 쓰는 생성기와, 문서별 기여도를 라벨링하는 도구</li><li>데이터 점검 도구와 테스트</li></ul>
+<h2 id="s3">아직 하지 않은 것</h2>
+<ul><li>가설(H1–H3), KORE와 RAG의 비교, 독창성 주장은 모두 아직 시험하지 않았습니다 <span class="ev ev-u">미검증</span></li><li>승인된 실제 평가 세트가 없습니다. AI의 도움을 받아 작성한 20문항 초안이 사람의 승인을 기다리고 있습니다</li><li>코드를 작성한 환경에서는 GPU를 쓰는 대규모 실행을 하지 못했습니다</li></ul>
 <h2 id="s4">데이터</h2>
-<p>저장소에는 지식 표 초안이 있습니다. 출처 기록에서 모든 항목의 라이선스가 아직 확인되지 않은 상태라서, 이 사이트는 그 데이터를 재배포하지 않습니다.</p>
+<p>저장소에는 지식 표 초안이 있습니다. 출처 기록에 모든 항목의 라이선스가 ‘아직 확인 안 됨’으로 표시되어 있어, 이 사이트에서는 그 데이터를 재배포하지 않습니다.</p>
 <h2 id="s5">팀과 역할</h2>
 <div class="tw-scroll"><table><thead><tr><th>기여자</th><th>역할</th></tr></thead><tbody><tr><td>SeoJunLee</td><td>개발 및 통합</td></tr><tr><td>기여자 B</td><td>데이터 및 선행 연구</td></tr><tr><td>기여자 C</td><td>평가 및 재현</td></tr></tbody></table></div>
-<p>3인 공동 프로젝트입니다. 팀원은 역할로 표기합니다.</p>
+<p>세 명이 함께한 공동 프로젝트입니다. 팀원은 역할로 표기했습니다.</p>
 <h2 id="s6">AI 활용</h2>
-<p><b>AI 보조 개발입니다.</b> 저장소 이력에서 32개 커밋 중 24개는 AI 어시스턴트, 6개는 저자 계정, 2개는 자리표시자 계정의 커밋입니다. 자리표시자 계정으로 커밋된 작업을 누가 썼는지는 이력만으로 알 수 없습니다. 이 페이지는 단독 저작이나 단독 개발을 주장하지 않습니다.</p>
+<p><b>AI의 도움을 받아 개발했습니다.</b> 저장소 이력의 커밋 32개 중 24개는 AI 어시스턴트, 6개는 저자 계정, 2개는 플레이스홀더 계정으로 커밋되었습니다. 플레이스홀더 계정으로 커밋된 작업을 실제로 누가 썼는지는 이력만으로는 알 수 없습니다. 이 페이지는 단독 저작이나 단독 개발을 주장하지 않습니다.</p>
 <h2 id="s7">검증 상태</h2>
-<p>저장소 자체 현황 문서의 수치(테스트 개수, 개발 질문 20개에 대한 검색 진단)는 이 페이지를 위해 재현하지 않았으므로 여기에 싣지 않습니다.</p><nav class="pager" aria-label="다른 연구"><a class="pg-all" href="../">← 연구 목록</a><a class="pg-prev" rel="prev" href="../ai-creativity/"><span class="pg-l">← 이전 연구</span><span class="pg-t">AI 창의성</span><span class="pg-s">Doxa Negation Search (가정 부정 탐색)</span></a><a class="pg-next" rel="next" href="../h1/"><span class="pg-l">다음 연구 →</span><span class="pg-t">H1</span><span class="pg-s">다수결 역효과</span></a></nav></article></main>
+<p>저장소의 현황 문서에 있는 수치(테스트 개수, 개발용 질문 20개에 대한 검색 진단)는 이 페이지를 위해 재현하지 않았으므로 싣지 않았습니다.</p><nav class="pager" aria-label="다른 연구"><a class="pg-all" href="../">← 연구 목록</a><a class="pg-prev" rel="prev" href="../ai-creativity/"><span class="pg-l">← 이전 연구</span><span class="pg-t">AI 창의성</span><span class="pg-s">Doxa Negation Search (가정 부정 탐색)</span></a><a class="pg-next" rel="next" href="../h1/"><span class="pg-l">다음 연구 →</span><span class="pg-t">H1</span><span class="pg-s">다수결 역효과</span></a></nav></article></main>
 <footer class="foot"><div class="foot-in">
 <a class="logo sm" href="../../" aria-label="AEVORIN"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="mk m1" d="M10 56 L32 8 L54 56"/><path class="mk m2" d="M19 41 H45"/><path class="mk m3" d="M5 56 H17 M47 56 H59"/><circle class="star" cx="32" cy="7" r="2.2"/></svg><span class="wm">AEVORIN</span></a>
 <p class="tag" lang="en">A new era begins with a question.</p>

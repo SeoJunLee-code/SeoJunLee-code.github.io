@@ -447,10 +447,42 @@
   "exploratory_top10": {
    "doxa_slots": 31.3,
    "uniform_slots": 11.4
+  },
+  "human": {
+   "source": "AI-Creativity-Research branch claude/inspiring-cray-vva7tj, results/human_eval/human_summary.md and REPORT.md section 9 (read 2026-11-20)",
+   "raters": 1,
+   "items": 72,
+   "rho_a_orig": [
+    0.16,
+    0.241
+   ],
+   "rho_a_qual": [
+    0.3,
+    0.025
+   ],
+   "rho_b_orig": [
+    0.56,
+    0.025
+   ],
+   "orig_means": {
+    "iid": 5.38,
+    "deny": 5.19,
+    "box": 5.81,
+    "doxa": 4.88
+   },
+   "doxa_top10_human": 1,
+   "anchor_vs_refine_quality": [
+    -2.0,
+    0.031
+   ],
+   "anchor_vs_refine_orig": [
+    1.5,
+    0.172
+   ]
   }
  },
  "forgetting": {
-  "source": "AI-Forgetting-Review-Research/output/data-analysis/study_a/REPORT.md (read 2026-11-15)",
+  "source": "AI-Forgetting-Review-Research output/data-analysis/study_{a,b,d,e,f}/REPORT.md, study_a/token_budget.md, study_d/length_control.md, study_e/length_control.md (read 2026-11-20); intervals re-derived from the stored result CSVs by output/article/make_figures.py (10,000-resample bootstrap) and agree with the reports",
   "rho": 0.2,
   "h1": {
    "learnedneed": 70.5,
@@ -528,7 +560,191 @@
   },
   "result_rows": 2600,
   "conversations": 10,
-  "bootstrap": 10000
+  "bootstrap": 10000,
+  "ablation": {
+   "random": 44.5,
+   "ga_proxy": 66.6,
+   "content_only": 69.6,
+   "usage_only": 30.7,
+   "full": 70.5,
+   "usage_only_minus_random": [
+    -13.8,
+    -16.1,
+    -11.6
+   ]
+  },
+  "unit": {
+   "item_longest_minus_lru": [
+    8.6,
+    5.5,
+    11.8
+   ],
+   "word_longest_minus_lru": [
+    -12.3,
+    -16.6,
+    -7.9
+   ],
+   "word_content_minus_lru": [
+    1.7,
+    -1.6,
+    4.8
+   ],
+   "word_perword_minus_lru": [
+    4.7,
+    1.2,
+    8.3
+   ]
+  },
+  "d": {
+   "h5": {
+    "perword": 54.5,
+    "lru": 44.8,
+    "diff": [
+     9.7,
+     4.4,
+     14.0
+    ]
+   },
+   "h5b": {
+    "perword": 54.9,
+    "fifo": 49.7,
+    "diff": [
+     5.1,
+     2.0,
+     8.3
+    ]
+   },
+   "h6": [
+    13.0,
+    9.5,
+    16.6
+   ],
+   "vs_shortest": {
+    "realtalk": [
+     19.2,
+     14.4,
+     23.6
+    ],
+    "locomo": [
+     33.1,
+     31.3,
+     34.9
+    ]
+   },
+   "conversations_positive": {
+    "realtalk": 8,
+    "locomo": 6,
+    "of": 10
+   },
+   "realtalk_turns": 8944,
+   "realtalk_questions": 624
+  },
+  "e": {
+   "h7": [
+    2.1,
+    -1.7,
+    5.7
+   ],
+   "h8": [
+    9.6,
+    4.1,
+    14.2
+   ],
+   "h9": [
+    68.8,
+    64.8,
+    72.8
+   ],
+   "shortest_first": 92.8,
+   "perword": 91.8,
+   "perword_minus_shortest": [
+    -1.0,
+    -2.8,
+    0.8
+   ],
+   "content_undivided": 1.9,
+   "random": 21.9,
+   "answers_in_user_turns": 94.0,
+   "user_word_share": 13.8,
+   "questions": 479
+  },
+  "b": {
+   "seeds": 10,
+   "m": 500,
+   "h2": {
+    "split": [
+     0.06,
+     -1.54,
+     1.52
+    ],
+    "perm": [
+     -0.12,
+     -0.36,
+     0.08
+    ]
+   },
+   "h3": {
+    "split": [
+     0.25,
+     -0.82,
+     1.33
+    ],
+    "perm": [
+     -1.46,
+     -1.96,
+     -1.05
+    ]
+   },
+   "h4": {
+    "split": [
+     -10.48,
+     -25.59,
+     -1.97
+    ],
+    "perm": [
+     -0.09,
+     -0.25,
+     0.07
+    ]
+   },
+   "h4_split_mean": 75.44,
+   "h4_split_sd": 23.47,
+   "oracle_perm": [
+    0.36,
+    0.1,
+    0.61
+   ]
+  },
+  "f": {
+   "seeds": 5,
+   "m": 2000,
+   "acc": {
+    "uniform": 14.17,
+    "retention": 13.96,
+    "oracle": 12.81,
+    "staleloss": 10.65
+   },
+   "h10": [
+    -0.21,
+    -0.85,
+    0.84
+   ],
+   "h11": [
+    -1.36,
+    -2.51,
+    0.19
+   ],
+   "staleloss_minus": [
+    -3.52,
+    -4.35,
+    -2.68
+   ],
+   "buffer_error": {
+    "uniform": 20.02,
+    "retention": 12.64,
+    "oracle": 1.29
+   }
+  }
  },
  "algorithm": {
   "source": "Algorithm-Innovation-Research/output/results.md and output/report.md (read 2026-11-15)",
@@ -605,7 +821,54 @@
    "vs_prefix_style": 1.81
   },
   "novelty_gain_bits_per_key": 0.2,
-  "phase2_result_file_bytes": 0
+  "phase2": {
+   "source": "Algorithm-Innovation-Research branch claude/eager-galileo-4uzbxz (open pull request, not merged), output/speed-report.md, output/speed-results.md, docs/HANDOFF.md (read 2026-11-20)",
+   "n": 3984588,
+   "mb": 6.3,
+   "neg_before": [
+    33.8,
+    35.4
+   ],
+   "neg_after": [
+    21.5,
+    21.7
+   ],
+   "pos_before": [
+    45.6,
+    47.7
+   ],
+   "pos_after": 24.6,
+   "mispredicts": [
+    0.98,
+    0.49
+   ],
+   "instructions": [
+    118,
+    70
+   ],
+   "limit_cuckoo_neg": 1.25,
+   "s2a": [
+    1.81,
+    1.81,
+    1.78
+   ],
+   "s2c": [
+    4.11,
+    3.96,
+    4.14
+   ],
+   "s3": [
+    3.59,
+    3.38,
+    3.4
+   ],
+   "sweep_vs_cuckoo": {
+    "2": 2.3,
+    "6": 1.68,
+    "50": 1.18,
+    "403": 0.87
+   }
+  }
  },
  "responsibility": {
   "source": "AI-Responsibility-Research README.md, input/bibliography/{audit-log,claim-check}*, output/reports/2026-11-13-phase1-final-report.md (read 2026-11-15)",
@@ -640,7 +903,17 @@
    "verified_charter": "6/8",
    "verified_other": "0/8"
   },
-  "human_decisions": 4
+  "human_decisions": 4,
+  "phase2_plan": {
+   "source": "AI-Responsibility-Research branch claude/trusting-clarke-772ukg, phase-2 design and plan (read 2026-11-20); plan status draft, nothing run",
+   "conditions": 5,
+   "runs_per_condition": 16,
+   "seeds": 16,
+   "runs_main": 80,
+   "runs_total": 100,
+   "delta": 0.2,
+   "holm_family": 5
+  }
  },
  "context": {
   "source": "context-efficiency-research docs/05_final_report.md (v1.0), docs/04_pilot_results.md, results/phase3_analysis.md, docs/03_protocol.md, docs/02_literature_review.md (read 2026-11-17); Phase 4 ratios re-summed from results/batches/p4_w*.jsonl (G5 0.985, GN 0.983)",

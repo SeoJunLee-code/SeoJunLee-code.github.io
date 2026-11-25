@@ -23,7 +23,7 @@ class Site(unittest.TestCase):
     def test_page_sets_match(self):
         en = {str(p.relative_to(ROOT)) for p in PAGES if "ko" not in p.parts}
         ko = {str(p.relative_to(ROOT / "ko")) for p in PAGES if "ko" in p.parts}
-        self.assertEqual(en, ko); self.assertEqual(len(en), 15)
+        self.assertEqual(en, ko); self.assertEqual(len(en), 17)
 
     def _scan(self, terms):
         for p in TEXTS:
@@ -176,12 +176,12 @@ class Structure(unittest.TestCase):
             self.assertTrue(0 < len(H.unescape(d)) <= 200, f"description length on {p}")
             self.assertNotRegex(d, r"<|&lt;|&amp;amp;", f"tag or double escape in description on {p}")
             descs["ko" if p in KO_PAGES else "en"].add(d)
-        self.assertEqual(len(descs["en"]), 15); self.assertEqual(len(descs["ko"]), 15)
+        self.assertEqual(len(descs["en"]), 17); self.assertEqual(len(descs["ko"]), 17)
 
     def test_sitemap_robots(self):
         sm = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
         locs = re.findall(r"<loc>([^<]+)</loc>", sm)
-        self.assertEqual(sorted(locs), sorted(page_url(p) for p in PAGES)); self.assertEqual(len(locs), 30)
+        self.assertEqual(sorted(locs), sorted(page_url(p) for p in PAGES)); self.assertEqual(len(locs), 34)
         for block in re.findall(r"<url>(.*?)</url>", sm):
             self.assertEqual(len(re.findall(r'<xhtml:link rel="alternate" hreflang="(en|ko|x-default)"', block)), 3)
         self.assertIn(f"Sitemap: {SITE}/sitemap.xml", (ROOT / "robots.txt").read_text(encoding="utf-8"))
@@ -248,7 +248,7 @@ class Structure(unittest.TestCase):
             for a, b in zip(levels, levels[1:]): self.assertLessEqual(b - a, 1, f"heading h{a} -> h{b} on {p}")
 
     def test_detail_structure(self):
-        self.assertEqual(len(DETAIL), 20)
+        self.assertEqual(len(DETAIL), 24)
         for p in DETAIL:
             t = p.read_text(encoding="utf-8")
             self.assertIn('class="result"', t, p); self.assertIn('class="pager"', t, p)

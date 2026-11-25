@@ -1124,5 +1124,40 @@
     35
    ]
   }
+ },
+ "anc": {
+  "source": "AGI- repo, branch claude/magical-heisenberg-2wt86e, anc_research/HANDOFF.md and README.md (read 2026-11-17)",
+  "mimo_whole_run_db": 3.24,
+  "mimo_ci": [
+   2.39,
+   4.09
+  ],
+  "mimo_steady_db": -0.28,
+  "measured_plants": 16,
+  "measured_broadband_db": -0.08,
+  "measured_tonal_db": 0.73,
+  "mu": 0.4,
+  "diverged": "160/160",
+  "synthetic_envs": 8,
+  "synthetic_trials": 48,
+  "synthetic_mean_db": 5.72,
+  "tests": 74
+ },
+ "aptsx": {
+  "source": "AGI- repo, branch claude/nice-ramanujan-yts94b, APTS_X_Runtime_Risk/APTS_X_Runtime_Risk_Research_Report.md (read 2026-11-17)",
+  "sample_rows": 1000,
+  "unique_job_ids": 549,
+  "repeated_id_extra_rows": 451,
+  "seeds": 8,
+  "coverage_after_shift": {
+   "fixed_2x": 49.87,
+   "rolling_conformal_90": 88.79,
+   "aci_90": 89.83
+  },
+  "resets_per_seed": 0.625,
+  "seeds_no_reset": 3,
+  "zero_delay_from": 61.8,
+  "zero_delay_to": 76.5,
+  "tests": 35
  }
 }

@@ -78,6 +78,7 @@ def build(lang, D):
 
     # ------------------------------------------------------------------ newer projects (newest first)
     Al, Fo, Cr, Rs = D["algorithm"], D["forgetting"], D["creativity"], D["responsibility"]
+    An, Ap = D["anc"], D["aptsx"]
     cx1, cx2 = Cr["exp1_recomputed"], Cr["exp2_recomputed"]
     Cx_rel = [v[0] for lab, pk, c in D["context"]["rel_g0"] if lab.startswith("Sonnet") for k, v in c.items() if k != "G0F"]
     Cx_lo, Cx_hi = min(Cx_rel), max(Cx_rel); Cx_hk = next(c["G5"][0] for lab, pk, c in D["context"]["rel_g0"] if lab == "Haiku T3")
@@ -89,6 +90,20 @@ def build(lang, D):
           one=(f"No saving on Sonnet 5.5 ({nw(f'{Cx_lo:.2f}–{Cx_hi:.2f}×')} full history); {Cx_hk:.2f}× on Haiku 5.5 above 100K tokens. Trimming the fixed per-call context mattered more." if en
                else f"Sonnet 5.5에서는 절감 효과가 없었고(전체 기록 대비 {nw(f'{Cx_lo:.2f}~{Cx_hi:.2f}배')}), Haiku 5.5에서는 100K 토큰을 넘는 경우 {Cx_hk:.2f}배였습니다. 호출마다 붙는 고정 컨텍스트를 줄이는 편이 효과가 더 컸습니다."),
           blurb="83 graded runs on three Claude models; one pre-registered prediction falsified." if en else "Claude 모델 3종으로 채점된 실행 83회를 진행했고, 사전등록한 예측 하나는 반증됐습니다."),
+     dict(id="anc-fxapa", badge="progress", title="Low-order FxAPA for ANC" if en else "능동소음제어용 저차 FxAPA",
+          sub="Active noise control, simulation and measured room responses" if en else "능동소음제어, 시뮬레이션과 실측 방 응답",
+          q=("Does a low-order affine-projection filter (FxAPA, K = 2) cancel noise better than a tuned FxNLMS, and does the gain survive measured acoustic paths?" if en
+             else "저차 아핀 투영 필터(FxAPA, K = 2)가 튜닝된 FxNLMS보다 소음을 더 잘 지우는가, 그리고 그 이득이 실측 음향 경로에서도 남는가?"),
+          one=(f"On simulated plants it converges faster (+{An['mimo_whole_run_db']:.2f} dB over the whole run) but ends about level; on {An['measured_plants']} measured room responses the broadband gain is {An['measured_broadband_db']:+.2f} dB." if en
+               else f"시뮬레이션 플랜트에서는 더 빨리 수렴하지만(전체 구간 +{An['mimo_whole_run_db']:.2f} dB) 정상상태는 비슷하고, 실측 방 응답 {An['measured_plants']}개에서 광대역 이득은 {An['measured_broadband_db']:+.2f} dB입니다."),
+          blurb="A simulation study; no physical hardware was tested." if en else "시뮬레이션 연구이며, 실제 장비로는 실험하지 않았습니다."),
+     dict(id="apts-x", badge="progress", title="APTS-X Runtime Risk",
+          sub="Online calibration of HPC job walltime limits" if en else "HPC 작업 시간 상한의 온라인 보정",
+          q=("When job runtimes drift, can an online-recalibrated upper bound keep the overrun rate near its target where a fixed 2× rule cannot?" if en
+             else "작업 실행 시간 분포가 바뀔 때, 온라인으로 다시 보정한 상한이 고정 2배 규칙과 달리 초과율을 목표 근처로 지킬 수 있는가?"),
+          one=(f"In a synthetic drift test ({Ap['seeds']} seeds), coverage after the shift was {Ap['coverage_after_shift']['fixed_2x']:.2f}% for fixed 2× and {Ap['coverage_after_shift']['aci_90']:.2f}% for adaptive conformal (target 90%). The full public trace was not run." if en
+               else f"합성 분포 변화 실험(시드 {Ap['seeds']}개)에서 변화 후 coverage는 고정 2배 {Ap['coverage_after_shift']['fixed_2x']:.2f}%, 적응형 conformal {Ap['coverage_after_shift']['aci_90']:.2f}%(목표 90%)였습니다. 공개 trace 전체는 돌리지 않았습니다."),
+          blurb="A research prototype on synthetic drift and a 1,000-row public sample." if en else "합성 분포 변화와 공개 표본 1,000행으로 만든 연구 프로토타입입니다."),
      dict(id="algorithm-innovation", badge="mixed", title="Algorithm Innovation" if en else "알고리즘 혁신",
           sub="A cache-line approximate membership filter" if en else "캐시 라인 하나만 읽는 근사 멤버십 필터",
           q=("With equal memory, can an insert-only filter that reads one cache line, with fingerprint length following block load, beat blocked Bloom and Prefix filter at a practical cost?" if en
@@ -119,8 +134,8 @@ def build(lang, D):
           blurb="2,240 ideas scored by two LLM judges; one human rater checked 72 of them." if en else "아이디어 2,240개를 LLM 심사 모델 2개가 채점했고, 사람 평가자 한 명이 그중 72개를 확인했습니다."),
     ] + R
     C["research"] = R
-    C["research_intro"] = ("Ten lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
-                           else "연구 10건을 최신순으로 정리했습니다. 각 페이지에는 무엇을 측정했는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지 적었습니다.")
+    C["research_intro"] = ("Twelve lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
+                           else "연구 12건을 최신순으로 정리했습니다. 각 페이지에는 무엇을 측정했는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지 적었습니다.")
     C["home_research_lead"] = ("We explore fundamental questions in AI, from retrieval and majority voting to memory, creativity and what models represent inside. Every page states what failed and what was not checked." if en
                                else "검색과 다수결에서 기억, 창의성, 모델의 내부 표현까지 AI의 근본적인 질문을 다룹니다. 모든 페이지에는 실패한 것과 확인하지 않은 것도 함께 적었습니다.")
 
@@ -707,6 +722,62 @@ def build(lang, D):
      ("p", ("The table figures were copied from the project's final report and its auto-generated Phase 3 analysis, which agree; the Phase 4 ratios were re-summed from the batch result files. The analysis was not otherwise re-run. AI-assisted implementation: an AI agent (Claude Code) built the harness, ran the experiments and wrote the analysis and report; the author set the question, approved the usage budget and chose the Phase 3 design. The models under test belong to the same family as the agent that ran the study. The literature review was web-based, and only the sources marked as checked above were confirmed against the original. Code and raw data are kept private. No independent review." if en
             else "표의 수치는 프로젝트 최종 보고서와 자동 생성된 3단계 분석 파일에서 옮겼으며, 두 자료의 값은 일치합니다. 4단계 비율은 배치 결과 파일에서 다시 합산했습니다. 그 밖의 분석은 재실행하지 않았습니다. 구현에는 AI의 도움을 받았습니다. AI 에이전트(Claude Code)가 하네스를 만들고 실험을 실행했으며 분석과 보고서를 작성했습니다. 저자는 연구 질문을 정하고, 사용량 예산을 승인하고, 3단계 설계를 선택했습니다. 시험 대상 모델은 연구를 수행한 에이전트와 같은 계열입니다. 문헌 조사는 웹 기반으로 했고, 위에서 확인했다고 적은 출처만 원문과 대조했습니다. 코드와 원본 데이터는 비공개로 보관합니다. 독립적인 검토는 받지 않았습니다.")),
     ]
+    # ================================================================== ANC FxAPA
+    pages["anc-fxapa"] = [
+     ("note", ("<b>Simulation only.</b> No headphone, car or real-time audio hardware was tested. The measured data are room impulse responses, not headphone paths." if en
+               else "<b>시뮬레이션만 했습니다.</b> 헤드폰, 차량, 실시간 오디오 장비로 시험하지 않았습니다. 실측 데이터는 헤드폰 경로가 아니라 방 임펄스 응답입니다."), "warn"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("Active noise control plays an anti-noise signal through a speaker, and the adaptive filter that shapes it decides how fast and how well noise is cancelled. FxNLMS is the usual choice. This study asks whether a low-order affine-projection variant (FxAPA with K = 2) does better, and whether any gain holds on measured acoustic paths." if en
+            else "능동소음제어는 스피커로 반대 위상의 소리를 내보내고, 그 신호를 만드는 적응 필터가 소음을 얼마나 빨리, 얼마나 잘 지우는지를 정합니다. 보통은 FxNLMS를 씁니다. 이 연구는 저차 아핀 투영 변형(K = 2인 FxAPA)이 더 나은지, 그리고 그 이득이 실측 음향 경로에서도 남는지 묻습니다.")),
+     ("h2", f"Results {T('r')}" if en else f"결과 {T('r')}"),
+     ("ul", ([f"Randomized simulated MIMO plants: +{An['mimo_whole_run_db']:.2f} dB [{An['mimo_ci'][0]:.2f}, {An['mimo_ci'][1]:.2f}] over the whole run against best-grid FxNLMS, but about 0 in steady state (median {An['mimo_steady_db']:.2f} dB). The advantage is convergence speed, not final attenuation",
+              f"{An['measured_plants']} measured room responses: {An['measured_broadband_db']:+.2f} dB for broadband noise and {An['measured_tonal_db']:+.2f} dB for tonal noise. The default step size of {An['mu']} diverged in {An['diverged']} trials, so it must not be shipped as a default",
+              f"An earlier synthetic set ({An['synthetic_envs']} environments, {An['synthetic_trials']} trials) averaged +{An['synthetic_mean_db']:.2f} dB; the repository says the later verification overrides it"] if en else
+             [f"무작위 시뮬레이션 MIMO 플랜트: 그리드 최적 FxNLMS 대비 전체 구간 +{An['mimo_whole_run_db']:.2f} dB [{An['mimo_ci'][0]:.2f}, {An['mimo_ci'][1]:.2f}], 정상상태는 약 0(중앙값 {An['mimo_steady_db']:.2f} dB). 이점은 최종 감쇠가 아니라 수렴 속도입니다",
+              f"실측 방 응답 {An['measured_plants']}개: 광대역 소음 {An['measured_broadband_db']:+.2f} dB, 톤 소음 {An['measured_tonal_db']:+.2f} dB. 기본 스텝 크기 {An['mu']}는 {An['diverged']} 시행에서 발산해서 기본값으로 쓰면 안 됩니다",
+              f"앞선 합성 실험({An['synthetic_envs']}개 환경, {An['synthetic_trials']}회)은 평균 +{An['synthetic_mean_db']:.2f} dB였지만, 저장소는 뒤의 검증 결과가 우선한다고 적습니다"])),
+     ("h2", "Limitations" if en else "한계"),
+     ("ul", (["The FxNLMS baseline picks its step size per trial from the full result, which is an oracle-level baseline",
+              "Measured responses come from one room and one head angle, with a 2 ms preview imposed by the study",
+              "Open items recorded in the repository: a truncation bug in the secondary-path estimate and an acceptance check for the online nonlinear model"] if en else
+             ["기준선 FxNLMS는 시행마다 전체 결과를 보고 스텝을 고르므로 오라클 수준의 기준선입니다",
+              "실측 응답은 방 하나, 머리 각도 하나에서 나왔고, 2 ms 프리뷰는 연구에서 임의로 넣었습니다",
+              "저장소에 남은 과제: 2차 경로 추정의 잘림 버그, 온라인 비선형 모델의 수락 검사"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", (f"Figures are quoted from the repository's handoff and README and checked against them; not re-run for this page. The repository reports {An['tests']} passing tests. AI-assisted implementation with multi-agent review recorded in the commit history. No independent review." if en
+            else f"수치는 저장소의 인계 문서와 README에서 인용해 대조했고, 이 페이지를 위해 다시 돌리지는 않았습니다. 저장소는 테스트 {An['tests']}개 통과를 보고합니다. 구현에는 AI의 도움을 받았고, 커밋 이력에 멀티 에이전트 검토가 기록되어 있습니다. 독립적인 검토는 받지 않았습니다.")),
+    ]
+
+    # ================================================================== APTS-X
+    cv = Ap["coverage_after_shift"]
+    pages["apts-x"] = [
+     ("note", ("<b>Research prototype.</b> It is not a scheduler or an energy optimizer. Only a 1,000-row public sample was audited; the main comparison uses synthetic drift." if en
+               else "<b>연구 프로토타입입니다.</b> 스케줄러나 에너지 최적화기가 아닙니다. 공개 표본은 1,000행만 감사했고, 주된 비교는 합성 분포 변화로 했습니다."), "warn"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("HPC users request a walltime limit for each job. If the limit is too tight the job is killed; if too loose the scheduler wastes room. This study asks whether a bound recalibrated online from recent jobs keeps the overrun rate near a target when runtimes drift, where a fixed rule such as “twice the estimate” does not." if en
+            else "HPC 사용자는 작업마다 실행 시간 상한을 요청합니다. 너무 짧으면 작업이 강제로 끝나고, 너무 길면 스케줄러가 자리를 낭비합니다. 이 연구는 실행 시간 분포가 바뀔 때, 최근 작업으로 온라인 재보정한 상한이 “추정치의 두 배” 같은 고정 규칙과 달리 초과율을 목표 근처로 지키는지 묻습니다.")),
+     ("h2", f"Results {T('r')}" if en else f"결과 {T('r')}"),
+     ("table", (["Method (target 90%)", "Coverage after the shift"] if en else ["방법 (목표 90%)", "변화 후 coverage"]),
+      [["Fixed 2×" if en else "고정 2배", f"{cv['fixed_2x']:.2f}%"], ["Rolling conformal" if en else "롤링 conformal", f"{cv['rolling_conformal_90']:.2f}%"], ["Adaptive conformal (ACI)" if en else "적응형 conformal (ACI)", f"{cv['aci_90']:.2f}%"]]),
+     ("ul", ([f"Synthetic drift, {Ap['seeds']} seeds. The repository states the conclusion as “online recalibration beats fixed calibration”, not an effect unique to conformal methods",
+              f"The change detector reset on average {Ap['resets_per_seed']:.3f} times per seed and missed the change entirely in {Ap['seeds_no_reset']} of {Ap['seeds']} seeds",
+              f"With no delay in seeing finished jobs, rolling coverage right after the change rose from {Ap['zero_delay_from']}% to {Ap['zero_delay_to']}%: delayed feedback explains much of the dip",
+              f"Public sample audit: of {Ap['sample_rows']:,} rows only {Ap['unique_job_ids']} job IDs are unique; one repeated ID adds {Ap['repeated_id_extra_rows']} rows"] if en else
+             [f"합성 분포 변화, 시드 {Ap['seeds']}개. 저장소는 결론을 conformal만의 효과가 아니라 “온라인 재보정이 고정 보정을 이긴다”로 적습니다",
+              f"변화 탐지기는 시드당 평균 {Ap['resets_per_seed']:.3f}회 재설정했고, 시드 {Ap['seeds']}개 중 {Ap['seeds_no_reset']}개에서는 변화를 아예 놓쳤습니다",
+              f"끝난 작업을 지연 없이 본다면 변화 직후 롤링 coverage가 {Ap['zero_delay_from']}%에서 {Ap['zero_delay_to']}%로 오릅니다. 결과 공개 지연이 하락의 큰 원인입니다",
+              f"공개 표본 감사: {Ap['sample_rows']:,}행 중 고유 작업 ID는 {Ap['unique_job_ids']}개이고, 반복되는 ID 하나가 {Ap['repeated_id_extra_rows']}행을 더합니다"])),
+     ("h2", "Not done" if en else "하지 않은 것"),
+     ("ul", (["The full public trace, a time-split evaluation and paired comparisons on the same trace",
+              "Handling of censored jobs (timeouts) and coupling to a scheduler simulator or energy metrics",
+              "Under drift, exchangeability fails, so coverage here is empirical, not a guarantee"] if en else
+             ["공개 trace 전체 실행, 시간 분할 평가, 같은 trace 위 짝 비교",
+              "중도 절단된 작업(시간 초과) 처리, 스케줄러 시뮬레이터나 에너지 지표와의 결합",
+              "분포가 바뀌면 교환가능성이 깨지므로, 여기의 coverage는 보장이 아니라 경험적 결과입니다"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", (f"Figures are quoted from the repository's report and checked against it; not re-run for this page. The repository reports {Ap['tests']} tests. An earlier “Pareto” claim was withdrawn after review. AI-assisted implementation; no independent review." if en
+            else f"수치는 저장소 보고서에서 인용해 대조했고, 이 페이지를 위해 다시 돌리지는 않았습니다. 저장소는 테스트 {Ap['tests']}개를 보고합니다. 앞선 버전의 “Pareto” 주장은 검토 뒤 철회됐습니다. 구현에는 AI의 도움을 받았으며, 독립적인 검토는 받지 않았습니다.")),
+    ]
     C["pages"] = pages
     C["detail_labels"] = dict(
         status="Status" if en else "상태", repo="Repository" if en else "저장소",
@@ -715,14 +786,49 @@ def build(lang, D):
     # ------------------------------------------------------------------ projects
     C["projects"] = dict(
       title="Projects" if en else "프로젝트",
-      intro=("Things built, not research results. Other projects stay private." if en else "연구 결과가 아니라 직접 만든 결과물입니다. 그 밖의 프로젝트는 비공개입니다."),
+      intro=("Things built, not research results. Repositories are private unless linked." if en else "연구 결과가 아니라 직접 만든 결과물입니다. 링크가 없는 저장소는 비공개입니다."),
       items=[dict(title="Hard Takeoff",
                   sub="AI-lab management simulation" if en else "AI 연구소 경영 시뮬레이션",
                   body=("A browser game (Korean UI, 48 months) in which the laws of intelligence differ from world to world, plus a Python reference simulation (180 months). It is a game, not a research paper, and has no hypothesis document." if en
                         else "세계마다 지능의 법칙이 다른 브라우저 게임(한국어 UI, 48개월)과 파이썬 참조 시뮬레이션(180개월)입니다. 연구 논문이 아니라 게임이며, 가설 문서도 없습니다."),
                   ai=("AI-assisted implementation; no per-file breakdown is recorded. Figures in its README were not re-run and are not shown here." if en
                       else "구현에는 AI의 도움을 받았으며, 파일별로 구분한 기록은 없습니다. README의 수치는 재실행하지 않았으므로 여기에 싣지 않았습니다."),
-                  repo="https://github.com/SeoJunLee-code/hard-takeoff")])
+                  repo="https://github.com/SeoJunLee-code/hard-takeoff"),
+             dict(title="LOSS CURVE",
+                  sub="AI-startup management game (desktop build)" if en else "AI 스타트업 경영 게임 (데스크톱 빌드)",
+                  body=("Grow a garage startup into a frontier lab; the good ending needs a model that scores 90 and is safe. Scaling rules and the best data mix are hidden per seed and estimated through in-game experiments. Playable from title to ending, packaged as a Windows executable; only the Steam store steps remain. A fresh take on the Hard Takeoff theme, sharing no code." if en
+                        else "차고 스타트업을 프론티어 연구소로 키우는 게임으로, 좋은 결말을 보려면 종합 90점이면서 안전한 모델이 필요합니다. 스케일링 법칙과 최적 데이터 배합은 시드마다 숨겨져 있고 게임 속 실험으로 추정합니다. 타이틀부터 엔딩까지 플레이할 수 있고 Windows 실행 파일로 패키징했으며, Steam 등록 절차만 남았습니다. Hard Takeoff와 주제가 같지만 코드를 공유하지 않는 새 해석입니다."),
+                  ai=("AI-assisted implementation. Balance figures come from bots, not human playtests, so they are not shown here." if en
+                      else "구현에는 AI의 도움을 받았습니다. 밸런스 수치는 사람 플레이테스트가 아니라 봇에서 나왔으므로 여기에 싣지 않습니다."),
+                  repo="https://github.com/SeoJunLee-code/loss-curve"),
+             dict(title="AI Era Systems Lab",
+                  sub="Six local-first tools for AI-centred work" if en else "AI 중심 작업을 위한 로컬 우선 도구 6종",
+                  body=("ContextOS, Executable Docs, ReproCase, an Agent Execution Gateway, an Incident Workspace and an evidence-based assessment tool, as MVPs (v0.4.1). After a multi-agent review pass, a secret canary in ReproCase leaked in 0 of 15 live runs instead of 8 of 15." if en
+                        else "ContextOS, Executable Docs, ReproCase, 에이전트 실행 게이트웨이, 장애 대응 작업 공간, 근거 기반 평가 도구를 MVP(v0.4.1)로 만들었습니다. 멀티 에이전트 검토 뒤 ReproCase의 비밀정보 canary 유출이 실제 실행 15회 중 8회에서 0회로 줄었습니다."),
+                  ai=("AI-assisted implementation. No controlled benchmark against a baseline yet, so no productivity claim. The gateway is not an OS sandbox." if en
+                      else "구현에는 AI의 도움을 받았습니다. 기준선과 비교한 통제 벤치마크가 아직 없어 생산성 주장은 하지 않습니다. 게이트웨이는 OS 샌드박스가 아닙니다."),
+                  repo="https://github.com/SeoJunLee-code/AGI-"),
+             dict(title="GRILL ME 5.0",
+                  sub="Simulation of an AI-native delivery pipeline" if en else "AI 중심 개발 파이프라인 시뮬레이션",
+                  body=("A discrete-event model of pull requests flowing through CI, human review and a merge train, with a rework loop. In the model, human review is the bottleneck at every load, and risk-based routing buys throughput at the cost of more latent defects reaching main." if en
+                        else "PR이 CI, 사람 리뷰, 머지 트레인을 지나고 수정 루프를 도는 과정을 이산 사건으로 모델링했습니다. 모델 안에서는 모든 부하에서 사람 리뷰가 병목이었고, 위험도 라우팅은 처리량을 얻는 대신 main에 들어가는 잠복 결함을 늘렸습니다."),
+                  ai=("All figures come from synthetic assumptions, not from a real repository. AI-assisted implementation." if en
+                      else "모든 수치는 실제 저장소가 아니라 합성 가정에서 나옵니다. 구현에는 AI의 도움을 받았습니다."),
+                  repo="https://github.com/SeoJunLee-code/AGI-"),
+             dict(title="ExamShield",
+                  sub="Multi-sensor check for AI smart glasses in exam rooms (research v0)" if en else "시험장 AI 스마트 안경 다중 센서 점검 (연구용 v0)",
+                  body=("Combines an optical lens sweep, BLE, Wi-Fi header patterns and a visual check into one of three advisories for an invigilator, and always states which device types the checks performed cannot detect. It does not judge cheating, jam signals, read traffic or recognise faces." if en
+                        else "광학 렌즈 스윕, BLE, Wi-Fi 헤더 패턴, 육안 검사를 묶어 감독관에게 세 단계 권고 중 하나를 주고, 이번 검사로 원리상 잡을 수 없는 기기 유형을 항상 함께 알립니다. 부정행위 판정, 전파 방해, 통신 내용 수집, 얼굴 인식은 하지 않습니다."),
+                  ai=("Validated on synthetic data only; no real-device measurement yet. AI-assisted implementation." if en
+                      else "합성 데이터로만 검증했고 실기기 측정은 아직 없습니다. 구현에는 AI의 도움을 받았습니다."),
+                  repo="https://github.com/SeoJunLee-code/examshield"),
+             dict(title="Saenggiro" if en else "생기로",
+                  sub="Evidence finder for Korean school records" if en else "생활기록부 근거 문장 검출 서비스",
+                  body=("Upload a school record and it detects the sentences that serve as evidence, then helps find study directions from that evidence. It does not write finished submissions for the user. The code is at beta level; the legal steps (terms of service, privacy officer, legal review) are not done, so it is not open." if en
+                        else "생활기록부를 올리면 근거가 되는 문장을 검출하고, 그 근거에서 탐구 방향을 함께 찾습니다. 제출용 완성 결과물을 대신 써 주지는 않습니다. 코드는 베타 수준이지만 법적 절차(이용약관, 보호책임자, 법률 검토)를 마치지 않아 공개하지 않았습니다."),
+                  ai=("AI-assisted implementation. Test counts in its status notes were not re-run for this page." if en
+                      else "구현에는 AI의 도움을 받았습니다. 현황 문서의 테스트 개수는 이 페이지를 위해 다시 돌리지 않았습니다."),
+                  repo="https://github.com/SeoJunLee-code/saenggiro")])
 
     # ------------------------------------------------------------------ about
     n_st = len(R)

@@ -14,7 +14,7 @@ from intro import intro_html  # noqa: E402
 D = json.load(open(ROOT / "data/research.json", encoding="utf-8"))
 LANGS = ("en", "ko")
 SITE = "https://seojunlee-code.github.io"
-RIDS = ("context-compaction", "algorithm-innovation", "ai-responsibility", "ai-forgetting-review", "ai-creativity", "kore", "h1", "paper5", "llm-internal-computing", "world-model")
+RIDS = ("context-compaction", "anc-fxapa", "apts-x", "algorithm-innovation", "ai-responsibility", "ai-forgetting-review", "ai-creativity", "kore", "h1", "paper5", "llm-internal-computing", "world-model")
 PAGES = ["", "research/", "projects/", "about/", "contact/"] + [f"research/{i}/" for i in RIDS]
 # Home cards: the strongest results first (Mixed, Mixed, Refuted, Partial). The other badge kinds reach the home page
 # through the status band above the cards; every study is listed on /research/.

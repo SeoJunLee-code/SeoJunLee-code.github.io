@@ -115,14 +115,33 @@ data["creativity"] = {
   "h6": {"originality_diff": 0.33, "originality_p": 0.05, "quality_diff": -0.08, "anchor_quality_ge_refine": 4, "of": 24},
   "h2": {"vs_cot": 0.55, "vs_deny": -0.01, "vs_box": -0.67, "vs_stim": -0.48},
   "exploratory_top10": {"doxa_slots": 31.3, "uniform_slots": 11.4},
+  "human": {"source": "AI-Creativity-Research branch claude/inspiring-cray-vva7tj, results/human_eval/human_summary.md and REPORT.md section 9 (read 2026-11-20)",
+            "raters": 1, "items": 72, "rho_a_orig": [0.16, 0.241], "rho_a_qual": [0.30, 0.025], "rho_b_orig": [0.56, 0.025],
+            "orig_means": {"iid": 5.38, "deny": 5.19, "box": 5.81, "doxa": 4.88}, "doxa_top10_human": 1,
+            "anchor_vs_refine_quality": [-2.00, 0.031], "anchor_vs_refine_orig": [1.50, 0.172]},
 }
 data["forgetting"] = {
-  "source": "AI-Forgetting-Review-Research/output/data-analysis/study_a/REPORT.md (read 2026-11-15)",
+  "source": "AI-Forgetting-Review-Research output/data-analysis/study_{a,b,d,e,f}/REPORT.md, study_a/token_budget.md, study_d/length_control.md, study_e/length_control.md (read 2026-11-20); intervals re-derived from the stored result CSVs by output/article/make_figures.py (10,000-resample bootstrap) and agree with the reports",
   "rho": 0.2, "h1": {"learnedneed": 70.5, "lru": 51.0, "diff": 19.45, "ci": [16.60, 22.40], "min_pp": 3},
   "h1b_vs_random": {"LRU": [6.5, 4.8, 8.2], "LFU": [-14.8, -16.9, -12.8], "Ebbinghaus": [3.7, 1.8, 5.7], "ACT-R": [-2.8, -4.8, -0.8]},
   "learnedneed_minus": {"Random": [26.0, 23.4, 28.6], "FIFO": [19.8, 16.9, 22.5], "LRU": [19.5, 16.6, 22.4], "LFU": [40.8, 38.5, 43.1],
                         "Ebbinghaus": [22.3, 19.8, 25.0], "ACT-R": [28.8, 26.7, 31.2], "GA-proxy": [3.9, 2.5, 5.4]},
   "selfcheck_fail": {"random_seed_sd_pp": 3.31, "margin_pp": 3.0, "se_pp": 1.48}, "result_rows": 2600, "conversations": 10, "bootstrap": 10000,
+  "ablation": {"random": 44.5, "ga_proxy": 66.6, "content_only": 69.6, "usage_only": 30.7, "full": 70.5, "usage_only_minus_random": [-13.8, -16.1, -11.6]},
+  "unit": {"item_longest_minus_lru": [8.6, 5.5, 11.8], "word_longest_minus_lru": [-12.3, -16.6, -7.9],
+           "word_content_minus_lru": [1.7, -1.6, 4.8], "word_perword_minus_lru": [4.7, 1.2, 8.3]},
+  "d": {"h5": {"perword": 54.5, "lru": 44.8, "diff": [9.7, 4.4, 14.0]}, "h5b": {"perword": 54.9, "fifo": 49.7, "diff": [5.1, 2.0, 8.3]},
+        "h6": [13.0, 9.5, 16.6], "vs_shortest": {"realtalk": [19.2, 14.4, 23.6], "locomo": [33.1, 31.3, 34.9]},
+        "conversations_positive": {"realtalk": 8, "locomo": 6, "of": 10}, "realtalk_turns": 8944, "realtalk_questions": 624},
+  "e": {"h7": [2.1, -1.7, 5.7], "h8": [9.6, 4.1, 14.2], "h9": [68.8, 64.8, 72.8], "shortest_first": 92.8, "perword": 91.8,
+        "perword_minus_shortest": [-1.0, -2.8, 0.8], "content_undivided": 1.9, "random": 21.9,
+        "answers_in_user_turns": 94.0, "user_word_share": 13.8, "questions": 479},
+  "b": {"seeds": 10, "m": 500, "h2": {"split": [0.06, -1.54, 1.52], "perm": [-0.12, -0.36, 0.08]},
+        "h3": {"split": [0.25, -0.82, 1.33], "perm": [-1.46, -1.96, -1.05]}, "h4": {"split": [-10.48, -25.59, -1.97], "perm": [-0.09, -0.25, 0.07]},
+        "h4_split_mean": 75.44, "h4_split_sd": 23.47, "oracle_perm": [0.36, 0.10, 0.61]},
+  "f": {"seeds": 5, "m": 2000, "acc": {"uniform": 14.17, "retention": 13.96, "oracle": 12.81, "staleloss": 10.65},
+        "h10": [-0.21, -0.85, 0.84], "h11": [-1.36, -2.51, 0.19], "staleloss_minus": [-3.52, -4.35, -2.68],
+        "buffer_error": {"uniform": 20.02, "retention": 12.64, "oracle": 1.29}},
 }
 data["algorithm"] = {
   "source": "Algorithm-Innovation-Research/output/results.md and output/report.md (read 2026-11-15)",
@@ -133,7 +152,12 @@ data["algorithm"] = {
   "h4a": {"epf": 83.9, "bbf": 30.0, "ratio": 2.80, "limit": 3.0}, "h4b": {"epf": 0.958, "cuckoo": 1.924, "limit": 1.05},
   "h4c": {"epf": 486.8, "cuckoo": 198.0, "ratio": 2.46, "limit": 2.0},
   "wallclock_negative_query": {"vs_blocked_bloom": 3.14, "vs_cuckoo": 1.70, "vs_prefix_style": 1.81},
-  "novelty_gain_bits_per_key": 0.2, "phase2_result_file_bytes": 0,
+  "novelty_gain_bits_per_key": 0.2,
+  "phase2": {"source": "Algorithm-Innovation-Research branch claude/eager-galileo-4uzbxz (open pull request, not merged), output/speed-report.md, output/speed-results.md, docs/HANDOFF.md (read 2026-11-20)",
+             "n": 3984588, "mb": 6.3, "neg_before": [33.8, 35.4], "neg_after": [21.5, 21.7], "pos_before": [45.6, 47.7], "pos_after": 24.6,
+             "mispredicts": [0.98, 0.49], "instructions": [118, 70], "limit_cuckoo_neg": 1.25,
+             "s2a": [1.81, 1.81, 1.78], "s2c": [4.11, 3.96, 4.14], "s3": [3.59, 3.38, 3.40],
+             "sweep_vs_cuckoo": {"2": 2.30, "6": 1.68, "50": 1.18, "403": 0.87}},
 }
 data["responsibility"] = {
   "source": "AI-Responsibility-Research README.md, input/bibliography/{audit-log,claim-check}*, output/reports/2026-11-13-phase1-final-report.md (read 2026-11-15)",
@@ -141,6 +165,8 @@ data["responsibility"] = {
   "claim_check": {"total": 65, "supported": 43, "partly": 18, "not_supported": 3, "unreachable": 1},
   "red_team": {"attacks": 49, "succeeded": 37, "tests_after": 62, "tests_passed_after": 58, "design_limits": 4},
   "behaviour": {"verified_charter": "6/8", "verified_other": "0/8"}, "human_decisions": 4,
+  "phase2_plan": {"source": "AI-Responsibility-Research branch claude/trusting-clarke-772ukg, phase-2 design and plan (read 2026-11-20); plan status draft, nothing run",
+                  "conditions": 5, "runs_per_condition": 16, "seeds": 16, "runs_main": 80, "runs_total": 100, "delta": 0.20, "holm_family": 5},
 }
 # ---------------------------------------------------------------- context compaction study (read 2026-11-17)
 data["context"] = {
@@ -164,6 +190,18 @@ data["context"] = {
   "criteria": {"min_saving_pct": 20, "max_score_drop_pts": 5},
   "phase4": {"threshold_k": 150, "predicted_le": 0.8, "falsified_if_ge": 0.95, "verdict": "falsified"},
   "superseded_facts": {"port": [54329, 54417], "cap_pct": [37.5, 35]},
+}
+data["anc"] = {
+  "source": "AGI- repo, branch claude/magical-heisenberg-2wt86e, anc_research/HANDOFF.md and README.md (read 2026-11-17)",
+  "mimo_whole_run_db": 3.24, "mimo_ci": [2.39, 4.09], "mimo_steady_db": -0.28,
+  "measured_plants": 16, "measured_broadband_db": -0.08, "measured_tonal_db": 0.73, "mu": 0.4, "diverged": "160/160",
+  "synthetic_envs": 8, "synthetic_trials": 48, "synthetic_mean_db": 5.72, "tests": 74,
+}
+data["aptsx"] = {
+  "source": "AGI- repo, branch claude/nice-ramanujan-yts94b, APTS_X_Runtime_Risk/APTS_X_Runtime_Risk_Research_Report.md (read 2026-11-17)",
+  "sample_rows": 1000, "unique_job_ids": 549, "repeated_id_extra_rows": 451, "seeds": 8,
+  "coverage_after_shift": {"fixed_2x": 49.87, "rolling_conformal_90": 88.79, "aci_90": 89.83},
+  "resets_per_seed": 0.625, "seeds_no_reset": 3, "zero_delay_from": 61.8, "zero_delay_to": 76.5, "tests": 35,
 }
 out.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
 print("wrote", out)

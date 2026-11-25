@@ -78,6 +78,7 @@ def build(lang, D):
 
     # ------------------------------------------------------------------ newer projects (newest first)
     Al, Fo, Cr, Rs = D["algorithm"], D["forgetting"], D["creativity"], D["responsibility"]
+    An, Ap = D["anc"], D["aptsx"]
     cx1, cx2 = Cr["exp1_recomputed"], Cr["exp2_recomputed"]
     Cx_rel = [v[0] for lab, pk, c in D["context"]["rel_g0"] if lab.startswith("Sonnet") for k, v in c.items() if k != "G0F"]
     Cx_lo, Cx_hi = min(Cx_rel), max(Cx_rel); Cx_hk = next(c["G5"][0] for lab, pk, c in D["context"]["rel_g0"] if lab == "Haiku T3")
@@ -89,13 +90,27 @@ def build(lang, D):
           one=(f"No saving on Sonnet 5.5 ({nw(f'{Cx_lo:.2f}–{Cx_hi:.2f}×')} full history); {Cx_hk:.2f}× on Haiku 5.5 above 100K tokens. Trimming the fixed per-call context mattered more." if en
                else f"Sonnet 5.5에서는 절감 효과가 없었고(전체 기록 대비 {nw(f'{Cx_lo:.2f}~{Cx_hi:.2f}배')}), Haiku 5.5에서는 100K 토큰을 넘는 경우 {Cx_hk:.2f}배였습니다. 호출마다 붙는 고정 컨텍스트를 줄이는 편이 효과가 더 컸습니다."),
           blurb="83 graded runs on three Claude models; one pre-registered prediction falsified." if en else "Claude 모델 3종으로 채점된 실행 83회를 진행했고, 사전등록한 예측 하나는 반증됐습니다."),
+     dict(id="anc-fxapa", badge="progress", title="Low-order FxAPA for ANC" if en else "능동소음제어용 저차 FxAPA",
+          sub="Active noise control, simulation and measured room responses" if en else "능동소음제어, 시뮬레이션과 실측 방 응답",
+          q=("Does a low-order affine-projection filter (FxAPA, K = 2) cancel noise better than a tuned FxNLMS, and does the gain survive measured acoustic paths?" if en
+             else "저차 아핀 투영 필터(FxAPA, K = 2)가 튜닝된 FxNLMS보다 소음을 더 잘 지우는가, 그리고 그 이득이 실측 음향 경로에서도 남는가?"),
+          one=(f"On simulated plants it converges faster (+{An['mimo_whole_run_db']:.2f} dB over the whole run) but ends about level; on {An['measured_plants']} measured room responses the broadband gain is {An['measured_broadband_db']:+.2f} dB." if en
+               else f"시뮬레이션 플랜트에서는 더 빨리 수렴하지만(전체 구간 +{An['mimo_whole_run_db']:.2f} dB) 정상상태는 비슷하고, 실측 방 응답 {An['measured_plants']}개에서 광대역 이득은 {An['measured_broadband_db']:+.2f} dB입니다."),
+          blurb="A simulation study; no physical hardware was tested." if en else "시뮬레이션 연구이며, 실제 장비로는 실험하지 않았습니다."),
+     dict(id="apts-x", badge="progress", title="APTS-X Runtime Risk",
+          sub="Online calibration of HPC job walltime limits" if en else "HPC 작업 시간 상한의 온라인 보정",
+          q=("When job runtimes drift, can an online-recalibrated upper bound keep the overrun rate near its target where a fixed 2× rule cannot?" if en
+             else "작업 실행 시간 분포가 바뀔 때, 온라인으로 다시 보정한 상한이 고정 2배 규칙과 달리 초과율을 목표 근처로 지킬 수 있는가?"),
+          one=(f"In a synthetic drift test ({Ap['seeds']} seeds), coverage after the shift was {Ap['coverage_after_shift']['fixed_2x']:.2f}% for fixed 2× and {Ap['coverage_after_shift']['aci_90']:.2f}% for adaptive conformal (target 90%). The full public trace was not run." if en
+               else f"합성 분포 변화 실험(시드 {Ap['seeds']}개)에서 변화 후 coverage는 고정 2배 {Ap['coverage_after_shift']['fixed_2x']:.2f}%, 적응형 conformal {Ap['coverage_after_shift']['aci_90']:.2f}%(목표 90%)였습니다. 공개 trace 전체는 돌리지 않았습니다."),
+          blurb="A research prototype on synthetic drift and a 1,000-row public sample." if en else "합성 분포 변화와 공개 표본 1,000행으로 만든 연구 프로토타입입니다."),
      dict(id="algorithm-innovation", badge="mixed", title="Algorithm Innovation" if en else "알고리즘 혁신",
           sub="A cache-line approximate membership filter" if en else "캐시 라인 하나만 읽는 근사 멤버십 필터",
           q=("With equal memory, can an insert-only filter that reads one cache line, with fingerprint length following block load, beat blocked Bloom and Prefix filter at a practical cost?" if en
              else "블록 부하에 따라 지문 길이를 바꾸고 캐시 라인 하나만 읽는 삽입 전용 필터는, 같은 메모리에서 실용적인 비용으로 blocked Bloom과 Prefix filter를 이길 수 있을까?"),
-          one=(f"False-positive rate {nw(f3(Al['h1'][-1][1]) + '–' + f3(Al['h1'][0][1]))} of blocked Bloom at equal memory, but slower, and the core mechanism was already published (TinySet)." if en
-               else f"같은 메모리에서 오탐률은 blocked Bloom의 {nw(f3(Al['h1'][-1][1]) + '~' + f3(Al['h1'][0][1]) + '배')}였지만 속도는 더 느렸고, 핵심 메커니즘은 이미 TinySet으로 발표되어 있었습니다."),
-          blurb="Pre-registered experiment with one rejected hypothesis." if en else "사전등록한 실험이며, 가설 하나는 기각됐습니다."),
+          one=(f"False-positive rate {nw(f3(Al['h1'][-1][1]) + '–' + f3(Al['h1'][0][1]))} of blocked Bloom at equal memory. Prefetching cut negative queries to {Al['phase2']['neg_after'][0]}–{Al['phase2']['neg_after'][1]} ns, but most speed goals were missed; the core idea was already published (TinySet)." if en
+               else f"같은 메모리에서 오탐률은 blocked Bloom의 {nw(f3(Al['h1'][-1][1]) + '~' + f3(Al['h1'][0][1]) + '배')}였습니다. 선행 인출로 음성 질의를 {Al['phase2']['neg_before'][0]}~{Al['phase2']['neg_before'][1]}ns에서 {Al['phase2']['neg_after'][0]}~{Al['phase2']['neg_after'][1]}ns로 줄였지만 속도 목표 대부분은 놓쳤고, 핵심 아이디어는 이미 TinySet으로 발표되어 있었습니다."),
+          blurb="Two pre-registered phases; one hypothesis rejected and five of six speed goals missed." if en else "사전등록한 두 단계에서 가설 하나가 기각됐고 속도 목표 여섯 개 중 다섯 개를 달성하지 못했습니다."),
      dict(id="ai-responsibility", badge="refuted", title="AI Responsibility" if en else "AI 책임",
           sub="Structural responsibility for AI agents" if en else "AI 에이전트에 대한 구조적 책임",
           q=("Without presupposing consciousness or moral status, can AI agents combined with institutional structure perform the functions of responsibility?" if en
@@ -104,23 +119,23 @@ def build(lang, D):
                else "처음 세운 형태의 논지는 기각됐습니다. 남은 것은 에이전트가 없어도 작동하는 것들, 곧 배포자의 책임과 기록입니다."),
           blurb="A literature-based study with a reference implementation." if en else "참조 구현을 함께 만든 문헌 기반 연구입니다."),
      dict(id="ai-forgetting-review", badge="mixed", title="AI Forgetting & Review" if en else "AI 망각과 복습",
-          sub="One model for eviction and review under a fixed budget" if en else "정해진 예산 안에서 무엇을 지우고 무엇을 복습할지 함께 정하는 모델",
+          sub="Eviction under a word budget; learned rehearsal rejected" if en else "단어 예산에서의 삭제, 기각된 복습 스케줄링",
           q=("With storage and compute fixed, does one per-item need model that decides eviction and review together beat simple baselines at the same budget?" if en
              else "저장·연산 예산이 고정되어 있을 때, 항목마다 필요도를 추정하는 모델 하나로 삭제와 복습을 함께 정하면 같은 예산의 단순 기준선보다 나을까?"),
-          one=(f"Study A supports the main hypothesis (+{Fo['h1']['diff']:.2f} pp over LRU on real conversations); Study B was not run." if en
-               else f"연구 A는 주 가설을 지지했고(실제 대화에서 LRU보다 +{Fo['h1']['diff']:.2f}%p), 연구 B는 실행하지 않았습니다."),
-          blurb="Three studies; one confirmed, one not run, one exploratory." if en else "세 연구 가운데 하나는 확증됐고, 하나는 실행하지 않았으며, 하나는 탐색적 연구입니다."),
+          one=(f"Content-aware eviction beats recency on real conversations (+{Fo['d']['h5']['diff'][0]:.1f} pp out of sample, word budget); learned rehearsal gave no gain, and one large result was a length artefact." if en
+               else f"내용을 보고 지우는 방식은 실제 대화에서 최근성 기준을 이겼습니다(단어 예산, 표본 외 +{Fo['d']['h5']['diff'][0]:.1f}%p). 학습한 복습은 이득이 없었고, 큰 결과 하나는 길이 때문에 생긴 착시였습니다."),
+          blurb="Six pre-registered studies; eviction gains replicate, rehearsal does not." if en else "사전등록한 연구 여섯 건에서 삭제의 이득은 재현됐고 복습의 이득은 재현되지 않았습니다."),
      dict(id="ai-creativity", badge="refuted", title="AI Creativity" if en else "AI 창의성",
           sub="Doxa Negation Search" if en else "Doxa Negation Search (가정 부정 탐색)",
           q=("Can AI create and develop creative ideas by extracting and negating the assumptions a population of ideas silently shares?" if en
              else "여러 아이디어가 암묵적으로 공유하는 가정을 찾아내 뒤집으면, AI가 창의적인 아이디어를 만들고 발전시킬 수 있을까?"),
           one=(f"The pre-registered core hypothesis was rejected; a common critique-and-improve loop cut core retention from {cx2['expand']['retention']:.2f} to {cx2['refine']['retention']:.2f}." if en
                else f"사전등록한 핵심 가설은 기각됐고, 흔히 쓰는 비판·개선 루프는 핵심 유지도를 {cx2['expand']['retention']:.2f}에서 {cx2['refine']['retention']:.2f}로 떨어뜨렸습니다."),
-          blurb="2,240 ideas scored by two LLM judges; no human rating." if en else "아이디어 2,240개를 LLM 심사 모델 2개가 채점했고, 사람 평가는 하지 않았습니다."),
+          blurb="2,240 ideas scored by two LLM judges; one human rater checked 72 of them." if en else "아이디어 2,240개를 LLM 심사 모델 2개가 채점했고, 사람 평가자 한 명이 그중 72개를 확인했습니다."),
     ] + R
     C["research"] = R
-    C["research_intro"] = ("Ten lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
-                           else "연구 10건을 최신순으로 정리했습니다. 각 페이지에는 무엇을 측정했는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지 적었습니다.")
+    C["research_intro"] = ("Twelve lines of work, newest first. Each page states what was measured, what failed, and what was not checked." if en
+                           else "연구 12건을 최신순으로 정리했습니다. 각 페이지에는 무엇을 측정했는지, 무엇이 실패했는지, 무엇을 확인하지 않았는지 적었습니다.")
     C["home_research_lead"] = ("We explore fundamental questions in AI, from retrieval and majority voting to memory, creativity and what models represent inside. Every page states what failed and what was not checked." if en
                                else "검색과 다수결에서 기억, 창의성, 모델의 내부 표현까지 AI의 근본적인 질문을 다룹니다. 모든 페이지에는 실패한 것과 확인하지 않은 것도 함께 적었습니다.")
 
@@ -362,8 +377,8 @@ def build(lang, D):
     # ================================================================== Algorithm Innovation
     h1rows = [[f"{b:.2f}", f3(r), "10 / 10"] for b, r in Al["h1"]]
     pages["algorithm-innovation"] = [
-     ("note", ("<b>Mixed results.</b> The filter beats blocked Bloom on false-positive rate at equal memory, but it is slower, its core mechanism was already published (TinySet, 2015), and the follow-up speed study is incomplete." if en
-               else "<b>혼합 결과입니다.</b> 같은 메모리에서 오탐률은 blocked Bloom보다 낮지만 속도는 더 느립니다. 핵심 메커니즘은 이미 발표된 것(TinySet, 2015)이고, 후속 속도 연구도 끝나지 않았습니다."), "warn"),
+     ("note", ("<b>Mixed results.</b> The filter beats blocked Bloom on false-positive rate at equal memory and its core mechanism was already published (TinySet, 2015). A follow-up speed study, on an open pull request that is not merged yet, explained why the filter is slow and made queries faster, but missed five of its six pre-registered speed goals." if en
+               else "<b>혼합 결과입니다.</b> 같은 메모리에서 오탐률은 blocked Bloom보다 낮고, 핵심 메커니즘은 이미 발표된 것(TinySet, 2015)입니다. 아직 병합되지 않은 풀 리퀘스트에 있는 후속 속도 연구는 이 필터가 느린 이유를 밝히고 질의를 빠르게 만들었지만, 사전등록한 속도 목표 여섯 개 가운데 다섯 개를 달성하지 못했습니다."), "warn"),
      ("h2", "Background" if en else "배경"),
      ("p", ("An approximate membership filter answers “is this key in the set?” with some false positives. Blocked Bloom filters read one cache line per query. This study asks whether a filter that sizes each key's fingerprint by how full its block is, and truncates on overflow, can use one cache line and still give fewer false positives at the same memory." if en
             else "근사 멤버십 필터는 약간의 오탐을 허용하면서 “이 키가 집합에 있는가?”라는 질문에 답합니다. blocked Bloom 필터는 질의마다 캐시 라인 하나를 읽습니다. 이 연구는 블록이 얼마나 찼는지에 따라 키마다 지문 길이를 정하고 넘치면 잘라 내는 필터가, 캐시 라인 하나만 읽으면서도 같은 메모리에서 오탐을 줄일 수 있는지 살펴봅니다.")),
@@ -390,17 +405,30 @@ def build(lang, D):
        ["H2 — against the Prefix filter" if en else "H2 — Prefix filter와 비교", "not testable: no reference implementation" if en else "검증 불가: 참조 구현 없음", "–", "–"]]),
      ("ul", ([f"Wall-clock: negative queries take {Al['wallclock_negative_query']['vs_blocked_bloom']:.2f}× the time of blocked Bloom, {Al['wallclock_negative_query']['vs_cuckoo']:.2f}× Cuckoo and {Al['wallclock_negative_query']['vs_prefix_style']:.2f}× the Prefix-style reimplementation (the report calls the filter slow). Instruction and miss counts are the deterministic metrics; milliseconds are noisy on a shared machine",
               f"Novelty is <b>not achieved</b>: the report states the core mechanism is TinySet (Einziger &amp; Friedman, 2015/2017), found by a prior-art check after the work began, and the added improvements are standard techniques worth about {Al['novelty_gain_bits_per_key']} bits per key",
-              "A second study on query speed was started but is incomplete: its result file judged_run2.csv is empty (0 bytes) and there is no verdict, so nothing from it is reported here"] if en else
+              "The follow-up speed study (phase 2) is reported in its own section below"] if en else
              [f"경과 시간(wall-clock): 음성 질의에 걸리는 시간이 blocked Bloom의 {Al['wallclock_negative_query']['vs_blocked_bloom']:.2f}배, Cuckoo의 {Al['wallclock_negative_query']['vs_cuckoo']:.2f}배, Prefix식 재구현의 {Al['wallclock_negative_query']['vs_prefix_style']:.2f}배입니다(보고서도 이 필터가 느리다고 적습니다). 결정론적 지표는 명령어 수와 미스 수이며, 밀리초 단위 시간은 공유 머신이라 잡음이 섞입니다",
               f"신규성은 <b>확보하지 못했습니다</b>. 보고서에 따르면 핵심 메커니즘은 TinySet(Einziger &amp; Friedman, 2015/2017)과 같으며, 이 사실은 작업을 시작한 뒤 선행연구를 확인하다가 알게 되었습니다. 덧붙인 개선은 표준 기법이고 효과는 키당 약 {Al['novelty_gain_bits_per_key']}비트입니다",
-              "질의 속도에 대한 2차 연구를 시작했지만 마치지 못했습니다. 결과 파일 judged_run2.csv가 비어 있고(0바이트) 판정이 없어서 여기에는 싣지 않습니다"])),
+              "질의 속도에 대한 후속 연구(2단계)는 아래 별도 절에 적었습니다"])),
+     ("h2", f"Phase 2 — why it is slow, and a faster query path {T('m')}" if en else f"2단계 — 느린 이유와 더 빠른 질의 경로 {T('m')}"),
+     ("p", (f"A second, pre-registered study (plan written first; results on an open pull request, not merged) asked why the filter is slow although it causes about half the cache misses, and whether it can be sped up. It measures query speed only: insert speed was not re-measured. Setup: held-out seed, {Al['phase2']['mb']} MB filter at {Al['n']:,} keys, pinned to one core, three runs at different times, three loop types (independent, serial, and hinted with prefetching); no confidence intervals, only the range over the three runs." if en
+            else f"두 번째 사전등록 연구(계획서를 먼저 쓰고, 결과는 병합되지 않은 풀 리퀘스트에 있음)는 캐시 미스가 절반쯤인데도 이 필터가 왜 느린지, 빠르게 만들 수 있는지를 물었습니다. 질의 속도만 측정했고 삽입 속도는 다시 재지 않았습니다. 설정: 홀드아웃 시드, 키 {Al['n']:,}개의 {Al['phase2']['mb']}MB 필터, 코어 하나에 고정, 시점을 달리한 세 번의 실행, 세 가지 반복 방식(독립, 직렬, 선행 인출을 쓰는 힌트 방식). 신뢰구간은 없고 세 번의 범위만 있습니다.")),
+     ("ul", ([f"Cause: cache misses are cheap only when queries overlap. The filter has about {Al['phase2']['mispredicts'][0]} branch mispredictions per query (Cuckoo and blocked Bloom: none) and a long computation after the fetch, so misses do not overlap; its instruction count is {Al['phase2']['instructions'][0]} against {Al['phase2']['instructions'][1]} for Cuckoo",
+              f"Fix: with prefetching and a new query path, negative queries went from {Al['phase2']['neg_before'][0]}–{Al['phase2']['neg_before'][1]} to {Al['phase2']['neg_after'][0]}–{Al['phase2']['neg_after'][1]} ns and positive queries from {Al['phase2']['pos_before'][0]}–{Al['phase2']['pos_before'][1]} to {Al['phase2']['pos_after']} ns, with identical memory and false-positive counts. Mispredictions fell from {Al['phase2']['mispredicts'][0]} to {Al['phase2']['mispredicts'][1]}. Without hints the new path is slower than the old one, and removing all branches made it worse",
+              f"Goals: identical answers and memory were met. The other five were missed: negative query within {Al['phase2']['limit_cuckoo_neg']}× of Cuckoo (measured {Al['phase2']['s2a'][0]}, {Al['phase2']['s2a'][1]}, {Al['phase2']['s2a'][2]}×), within 2× of blocked Bloom (measured {Al['phase2']['s2c'][0]}, {Al['phase2']['s2c'][1]}, {Al['phase2']['s2c'][2]}×), positive query within 1.5× of Cuckoo (measured {Al['phase2']['s3'][0]}, {Al['phase2']['s3'][1]}, {Al['phase2']['s3'][2]}×), and the Prefix-style and misprediction goals",
+              f"Size sweep (negative queries, hinted, filter time ÷ Cuckoo time; one run per size, exploratory): 2 MB {Al['phase2']['sweep_vs_cuckoo']['2']:.2f}×, 6 MB {Al['phase2']['sweep_vs_cuckoo']['6']:.2f}×, 50 MB {Al['phase2']['sweep_vs_cuckoo']['50']:.2f}×, 403 MB {Al['phase2']['sweep_vs_cuckoo']['403']:.2f}× (the filter is faster). So “slower” depends on the filter size and holds mainly when the filter fits in cache",
+              "The phase 1 conclusions are unchanged: the false-positive advantage is the same because the bits are the same, the core idea is TinySet, and insertion still costs more than Cuckoo"] if en else
+             [f"원인: 캐시 미스는 질의가 겹칠 때만 싸집니다. 이 필터는 질의당 분기 예측 실패가 약 {Al['phase2']['mispredicts'][0]}번(Cuckoo와 blocked Bloom은 0)이고 가져온 뒤의 계산 사슬이 길어서 미스가 겹치지 않습니다. 명령어 수는 {Al['phase2']['instructions'][0]}로 Cuckoo의 {Al['phase2']['instructions'][1]}보다 많습니다",
+              f"개선: 선행 인출과 새 질의 경로로 음성 질의는 {Al['phase2']['neg_before'][0]}~{Al['phase2']['neg_before'][1]}ns에서 {Al['phase2']['neg_after'][0]}~{Al['phase2']['neg_after'][1]}ns로, 양성 질의는 {Al['phase2']['pos_before'][0]}~{Al['phase2']['pos_before'][1]}ns에서 {Al['phase2']['pos_after']}ns로 줄었고, 메모리와 오탐 수는 같습니다. 분기 예측 실패는 {Al['phase2']['mispredicts'][0]}에서 {Al['phase2']['mispredicts'][1]}로 줄었습니다. 힌트가 없으면 새 경로는 옛 경로보다 느리고, 분기를 모두 없애면 더 나빠졌습니다",
+              f"목표: 답과 메모리가 같다는 목표는 달성했습니다. 나머지 다섯 개는 달성하지 못했습니다. 음성 질의가 Cuckoo의 {Al['phase2']['limit_cuckoo_neg']}배 이내(측정 {Al['phase2']['s2a'][0]}, {Al['phase2']['s2a'][1]}, {Al['phase2']['s2a'][2]}배), blocked Bloom의 2배 이내(측정 {Al['phase2']['s2c'][0]}, {Al['phase2']['s2c'][1]}, {Al['phase2']['s2c'][2]}배), 양성 질의가 Cuckoo의 1.5배 이내(측정 {Al['phase2']['s3'][0]}, {Al['phase2']['s3'][1]}, {Al['phase2']['s3'][2]}배), 그리고 Prefix식 필터 목표와 분기 예측 실패 목표입니다",
+              f"크기별 점검(음성 질의, 힌트 방식, 필터 시간 ÷ Cuckoo 시간. 크기마다 한 번 실행, 탐색적): 2MB {Al['phase2']['sweep_vs_cuckoo']['2']:.2f}배, 6MB {Al['phase2']['sweep_vs_cuckoo']['6']:.2f}배, 50MB {Al['phase2']['sweep_vs_cuckoo']['50']:.2f}배, 403MB {Al['phase2']['sweep_vs_cuckoo']['403']:.2f}배(필터가 더 빠름). 따라서 “더 느리다”는 필터 크기에 따라 다르고, 주로 필터가 캐시에 들어갈 때 해당합니다",
+              "1단계의 결론은 그대로입니다. 비트가 같으므로 오탐 이점은 같고, 핵심 아이디어는 TinySet이며, 삽입은 여전히 Cuckoo보다 비쌉니다"])),
      ("h2", "Limitations" if en else "한계"),
      ("ul", (["Only the author's own baselines were measured: the original TinySet, the Prefix filter, VQF and Morton filter were not. The Prefix-style filter is a reimplementation from memory",
-              "Speed was measured on one shared machine with independent query loops; the regime dominated by cache misses was not tested by wall-clock",
+              "Speed was measured on one shared machine with the author's own baselines; the phase 2 size sweep has one run per size, the hints need keys known in advance, and an independent review of phase 2 has not been done",
               f"The large-n runs have only {Al['seeds_large']} seeds, and the filter is insert-only",
               "Paper bodies were not read for the prior-art check; it relied on the authors' source code and abstracts"] if en else
              ["직접 구현한 기준선만 측정했습니다. TinySet 원본, Prefix filter, VQF, Morton filter는 측정하지 않았으며, Prefix식 필터는 기억에 의존해 다시 구현한 것입니다",
-              "속도는 공유 머신 한 대에서 독립 질의 루프로만 측정했고, 캐시 미스가 지배적인 조건은 경과 시간으로 측정하지 않았습니다",
+              "속도는 공유 머신 한 대에서 직접 구현한 기준선으로 측정했습니다. 2단계의 크기별 점검은 크기마다 한 번만 실행했고, 힌트는 키를 미리 알아야 하며, 2단계에 대한 독립 검토는 아직 하지 않았습니다",
               f"큰 n의 실행은 시드가 {Al['seeds_large']}개뿐이고, 필터는 삽입 전용입니다",
               "선행연구 확인에서 논문 본문은 읽지 않았고 저자들의 소스 코드와 초록에 의존했습니다"])),
      ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
@@ -440,6 +468,17 @@ def build(lang, D):
               f"보강 이후 구현에 포함된 공격 테스트는 {rt['tests_after']}개 중 {rt['tests_passed_after']}개를 통과하며, {rt['design_limits']}개는 코드로 막을 수 없는 설계상 한계입니다. 보강 뒤 새로 공격을 시도하지는 않았습니다",
               f"행동 실험에서는 해당 행동을 명시하고 불이익을 붙인 헌장 조건에서만 차이가 나타났습니다(검증을 수행한 실행 {Rs['behaviour']['verified_charter']}회 대 {Rs['behaviour']['verified_other']}회). 이것이 이해관계(stake)를 가진 데 따른 효과인지는 분리할 수 없었고, 구조만 설명한 조건에서는 차이가 없었습니다",
               "남은 결론: 보상, 기록 유지, 권한 회수는 에이전트가 없어도 배포자의 책임과 제도로 수행됩니다. 모형에서 보상 측면의 이득은 대부분 에이전트의 이해관계가 아니라 귀속의 확실성과 엄격 책임에서 나왔습니다. 에이전트가 반드시 있어야 하는 기능이 있는지는 보여 주지 못했습니다"])),
+     ("h2", "Phase 2 — planned, not run" if en else "2단계 — 계획만 있고 실행하지 않음"),
+     ("p", ("After the thesis was rejected, a second phase was designed. The design is approved by the user, but the pre-registration plan is still a draft and is not frozen. It asks whether the effect seen in the behavioural experiment appears when a charter attaches consequences to an agent lineage without highlighting one example behaviour, for other obligations, and without lowering existing precautions." if en
+            else "논지가 기각된 뒤 두 번째 단계를 설계했습니다. 설계는 사용자가 승인했지만 사전등록 계획서는 아직 초안이며 확정되지 않았습니다. 이 단계는 헌장이 한 가지 예시 행동을 부각하지 않고 에이전트 계통에 결과를 붙일 때, 다른 의무에 대해서도, 기존의 주의를 줄이지 않고도 행동 실험에서 본 효과가 나타나는지 묻습니다.")),
+     ("ul", ([f"Design: {Rs['phase2_plan']['conditions']} conditions with {Rs['phase2_plan']['runs_per_condition']} runs each, on {Rs['phase2_plan']['seeds']} world seeds shared across conditions ({Rs['phase2_plan']['runs_main']} main runs, {Rs['phase2_plan']['runs_total']} with pilot and reserve); one model family",
+              "Allowed verdicts: rejected, not rejected on the tested criteria, or undecided. There is no “confirmed”, and the plan itself says “undecided” may be the most common outcome",
+              f"The decision rule is interval-based with a margin of {Rs['phase2_plan']['delta']*100:.0f} percentage points. A review by a same-family agent changed the verdict rule, split the tests by component and narrowed the claim; it is not an independent review",
+              "Nothing has been run: there are no pilot or main results"] if en else
+             [f"설계: 조건 {Rs['phase2_plan']['conditions']}개, 조건당 {Rs['phase2_plan']['runs_per_condition']}회 실행, 조건 사이에 공유하는 월드 시드 {Rs['phase2_plan']['seeds']}개(본 실행 {Rs['phase2_plan']['runs_main']}회, 예비 실행과 예비분을 합치면 {Rs['phase2_plan']['runs_total']}회). 모델은 한 계열입니다",
+              "허용되는 판정은 기각, 시험한 기준에서 기각되지 않음, 판정 불가입니다. “확증”은 없고, 계획서 스스로 “판정 불가”가 가장 흔한 결과일 수 있다고 적었습니다",
+              f"판정 규칙은 구간에 기반하며 기준 폭은 {Rs['phase2_plan']['delta']*100:.0f}%p입니다. 같은 계열 에이전트의 검토가 판정 규칙을 바꾸고, 시험을 구성 요소별로 나누고, 주장을 좁혔습니다. 독립적인 검토는 아닙니다",
+              "아직 아무것도 실행하지 않았습니다. 예비 실행과 본 실행 결과가 없습니다"])),
      ("h2", "Limitations" if en else "한계"),
      ("ul", (["Paid or blocked sources were not read: verification is at metadata and abstract level, and the acquisition list names sources that must be obtained by hand",
               "One model, one task and one instruction in the experiment, with several factors mixed across conditions",
@@ -458,41 +497,74 @@ def build(lang, D):
 
     # ================================================================== AI Forgetting & Review
     h1b = Fo["h1b_vs_random"]; lm = Fo["learnedneed_minus"]
+    Fu, Fd, Fe, Fb, Ff, Fa = Fo["unit"], Fo["d"], Fo["e"], Fo["b"], Fo["f"], Fo["ablation"]
+    def iv(a): return f"{a[0]:+.1f} [{a[1]:+.1f}, {a[2]:+.1f}]"
     pages["ai-forgetting-review"] = [
-     ("note", ("<b>Mixed results.</b> Study A supports the main hypothesis on real conversation data. Study B (continual learning) was not run. Study C is exploratory and uses synthetic traces." if en
-               else "<b>혼합 결과입니다.</b> 연구 A는 실제 대화 데이터에서 주 가설을 지지합니다. 연구 B(연속학습)는 실행하지 않았고, 연구 C는 합성 트레이스를 쓴 탐색적 연구입니다."), "warn"),
+     ("note", ("<b>Mixed results.</b> Content-aware eviction under a word budget beats recency on real conversations, including a dataset the model never saw. Learned rehearsal scheduling gave no gain on three benchmarks. One large pre-registered result (H9) turned out to be a length artefact." if en
+               else "<b>혼합 결과입니다.</b> 단어 예산에서 내용을 보고 지우는 방식은 실제 대화에서 최근성 기준을 이겼고, 모델이 보지 못한 데이터에서도 그랬습니다. 학습한 복습 스케줄링은 벤치마크 세 곳에서 이득이 없었습니다. 사전등록한 큰 결과 하나(H9)는 길이 때문에 생긴 착시로 드러났습니다."), "warn"),
      ("h2", "Background" if en else "배경"),
      ("p", ("An agent that remembers has a fixed budget for storage and compute. This work asks whether one model that scores each item's need to be kept, and uses that score to decide both what to evict and what to review, does better than simple baselines (random, first-in-first-out, least recently or frequently used, forgetting-curve and ACT-R rules) at the same budget." if en
             else "기억을 유지하는 에이전트에게는 저장과 연산에 쓸 수 있는 예산이 정해져 있습니다. 이 연구는 항목마다 보존할 필요도를 점수로 매기고, 그 점수로 무엇을 지울지와 무엇을 복습할지를 함께 정하는 모델 하나가 같은 예산에서 단순 기준선(무작위, 선입선출, 최근 사용·사용 빈도 기준, 망각 곡선과 ACT-R 규칙)보다 나은지 살펴봅니다.")),
      ("h2", "Method" if en else "방법"),
-     ("ul", ([f"Study A: {Fo['conversations']} real LoCoMo conversations (the data are not in the repository), memory eviction simulated; paired bootstrap over conversations ({Fo['bootstrap']:,} resamples); {Fo['result_rows']:,} result rows",
-              "Study B: continual learning on MNIST, seeds 0–9: not run",
-              "Study C: synthetic traces, seeds 0–9, exploratory: the plan registers no confirmatory hypothesis for it"] if en else
-             [f"연구 A: 실제 LoCoMo 대화 {Fo['conversations']}개(데이터는 저장소에 없음)로 메모리 삭제를 시뮬레이션. 대화 단위 대응 부트스트랩(재표본 {Fo['bootstrap']:,}회), 결과 {Fo['result_rows']:,}행",
-              "연구 B: MNIST 연속학습, 시드 0–9: 실행하지 않음",
-              "연구 C: 합성 트레이스, 시드 0–9, 탐색적: 계획서에 확증 가설을 등록하지 않았음"])),
+     ("ul", ([f"Eviction (Studies A, D, E): LoCoMo ({Fo['conversations']} conversations, not in the repository), REALTALK ({Fd['realtalk_turns']:,} turns, the model fitted on LoCoMo only and applied frozen) and LongMemEval-S ({Fe['questions']} questions). Metric: share of the turns that later questions need that are still stored, at budget ρ = {Fo['rho']}. Paired bootstrap over conversations ({Fo['bootstrap']:,} resamples)",
+              f"Rehearsal (Studies B, F): replay under a fixed compute budget on Split-MNIST and Permuted-MNIST ({Fb['seeds']} seeds) and Split-CIFAR-100 ({Ff['seeds']} seeds)",
+              "Study C: synthetic access traces, exploratory; the plan registers no confirmatory hypothesis for it",
+              "Hypotheses and pass criteria were committed before the runs that decide them. Analyses added after results were seen are marked exploratory"] if en else
+             [f"삭제(연구 A, D, E): LoCoMo(대화 {Fo['conversations']}개, 저장소에는 없음), REALTALK(턴 {Fd['realtalk_turns']:,}개, 모델은 LoCoMo로만 학습해 고정한 채 적용), LongMemEval-S(질문 {Fe['questions']}개). 지표는 예산 ρ = {Fo['rho']}에서, 나중에 질문이 필요로 하는 턴 중 아직 저장돼 있는 비율입니다. 대화 단위 대응 부트스트랩(재표본 {Fo['bootstrap']:,}회)",
+              f"복습(연구 B, F): 연산 예산을 고정한 리플레이. Split-MNIST와 Permuted-MNIST(시드 {Fb['seeds']}개), Split-CIFAR-100(시드 {Ff['seeds']}개)",
+              "연구 C: 합성 접근 트레이스, 탐색적. 계획서에 확증 가설을 등록하지 않았음",
+              "가설과 통과 기준은 판정에 쓰는 실행 전에 커밋했습니다. 결과를 본 뒤 추가한 분석은 탐색적이라고 표시했습니다"])),
      ("h2", f"Study A — H1 {T('m')}" if en else f"연구 A — H1 {T('m')}"),
-     ("p", (f"With the budget at ρ = {Fo['rho']}, the best classical baseline is LRU at {Fo['h1']['lru']:.1f}% evidence retention; the learned model reaches {Fo['h1']['learnedneed']:.1f}%. The difference is +{Fo['h1']['diff']:.2f} percentage points, 95% CI [+{Fo['h1']['ci'][0]:.2f}, +{Fo['h1']['ci'][1]:.2f}]. The pre-set criterion (CI above 0 and at least {Fo['h1']['min_pp']} points) is met: <b>H1 supported</b>." if en
-            else f"예산이 ρ = {Fo['rho']}일 때 기존 기준선 가운데 가장 좋은 것은 LRU로, 증거 보존율이 {Fo['h1']['lru']:.1f}%입니다. 학습 모델은 {Fo['h1']['learnedneed']:.1f}%에 이릅니다. 차이는 +{Fo['h1']['diff']:.2f}%p이고 95% 구간은 [+{Fo['h1']['ci'][0]:.2f}, +{Fo['h1']['ci'][1]:.2f}]입니다. 미리 정한 기준(구간 전체가 0보다 크고 차이가 {Fo['h1']['min_pp']}%p 이상)을 충족하므로 <b>H1은 지지됩니다</b>.")),
+     ("p", (f"With the budget at ρ = {Fo['rho']} counted in turns, the best classical baseline is LRU at {Fo['h1']['lru']:.1f}% evidence retention; the learned model reaches {Fo['h1']['learnedneed']:.1f}%. The difference is +{Fo['h1']['diff']:.2f} percentage points, 95% CI [+{Fo['h1']['ci'][0]:.2f}, +{Fo['h1']['ci'][1]:.2f}]. The pre-set criterion (CI above 0 and at least {Fo['h1']['min_pp']} points) is met: <b>H1 supported</b>." if en
+            else f"예산 ρ = {Fo['rho']}을 턴 수로 셀 때 기존 기준선 가운데 가장 좋은 것은 LRU로, 증거 보존율이 {Fo['h1']['lru']:.1f}%입니다. 학습 모델은 {Fo['h1']['learnedneed']:.1f}%에 이릅니다. 차이는 +{Fo['h1']['diff']:.2f}%p이고 95% 구간은 [+{Fo['h1']['ci'][0]:.2f}, +{Fo['h1']['ci'][1]:.2f}]입니다. 미리 정한 기준(구간 전체가 0보다 크고 차이가 {Fo['h1']['min_pp']}%p 이상)을 충족하므로 <b>H1은 지지됩니다</b>.")),
      ("table", (["Policy compared", "Learned model minus policy (pp)", "95% CI"] if en else ["비교 정책", "학습 모델 − 정책 (%p)", "95% 구간"]),
       [[k, f"{v[0]:+.1f}", f"[{v[1]:+.1f}, {v[2]:+.1f}]"] for k, v in lm.items()]),
-     ("p", (f"The closest competitor is GA-proxy (a generative-agents-style rule): the margin is only +{lm['GA-proxy'][0]:.1f} points [+{lm['GA-proxy'][1]:.1f}, +{lm['GA-proxy'][2]:.1f}]. GA-proxy is not part of the pre-registered set of classical baselines that H1 is judged against." if en
-            else f"가장 근접한 경쟁 정책은 GA-proxy(generative agents 방식의 규칙)로, 격차가 +{lm['GA-proxy'][0]:.1f}%p [+{lm['GA-proxy'][1]:.1f}, +{lm['GA-proxy'][2]:.1f}]에 불과합니다. GA-proxy는 H1 판정에 쓰는, 사전등록된 기존 기준선 집합에 포함되지 않습니다.")),
+     ("p", (f"The gain comes from write-time content, not from modelling use. A content-only model reaches {Fa['content_only']:.1f}%, within about one point of the full model ({Fa['full']:.1f}%). A usage-only model reaches {Fa['usage_only']:.1f}%, below random eviction ({Fa['random']:.1f}%; {iv(Fa['usage_only_minus_random'])} points). The hand-set GA-proxy rule already gets {Fa['ga_proxy']:.1f}% (it is not part of the pre-registered baseline set that H1 is judged against)." if en
+            else f"이득은 사용을 모델링해서가 아니라 작성 시점의 내용에서 나옵니다. 내용만 쓰는 모델은 {Fa['content_only']:.1f}%로 전체 모델({Fa['full']:.1f}%)과 1점쯤 차이가 납니다. 사용 기록만 쓰는 모델은 {Fa['usage_only']:.1f}%로 무작위 삭제({Fa['random']:.1f}%)보다 낮습니다({iv(Fa['usage_only_minus_random'])}%p). 손으로 정한 GA-proxy 규칙도 이미 {Fa['ga_proxy']:.1f}%를 얻습니다(H1 판정에 쓰는 사전등록 기준선 집합에는 포함되지 않습니다).")),
      ("h2", f"Study A — H1b rejected {T('m')}" if en else f"연구 A — H1b 기각 {T('m')}"),
      ("p", (f"H1b said the classical policies cannot be told apart from random eviction. It is rejected: against Random, LRU is +{h1b['LRU'][0]:.1f} pp [+{h1b['LRU'][1]:.1f}, +{h1b['LRU'][2]:.1f}], LFU {h1b['LFU'][0]:+.1f} [{h1b['LFU'][1]:+.1f}, {h1b['LFU'][2]:+.1f}] and Ebbinghaus +{h1b['Ebbinghaus'][0]:.1f} [+{h1b['Ebbinghaus'][1]:.1f}, +{h1b['Ebbinghaus'][2]:.1f}], each with an interval that excludes 0 and a size of at least 3 points. ACT-R ({h1b['ACT-R'][0]:+.1f}) is below the 3-point bar." if en
             else f"H1b는 기존 정책이 무작위 삭제와 구분되지 않는다는 가설이며, 기각됩니다. Random 대비 LRU는 +{h1b['LRU'][0]:.1f}%p [+{h1b['LRU'][1]:.1f}, +{h1b['LRU'][2]:.1f}], LFU는 {h1b['LFU'][0]:+.1f} [{h1b['LFU'][1]:+.1f}, {h1b['LFU'][2]:+.1f}], Ebbinghaus는 +{h1b['Ebbinghaus'][0]:.1f} [+{h1b['Ebbinghaus'][1]:.1f}, +{h1b['Ebbinghaus'][2]:.1f}]로, 모두 구간이 0을 포함하지 않고 크기도 3%p 이상입니다. ACT-R({h1b['ACT-R'][0]:+.1f})은 3%p 기준에 못 미칩니다.")),
+     ("h2", f"The budget unit changes the answer (exploratory) {T('m')}" if en else f"예산 단위에 따라 답이 달라집니다 (탐색적) {T('m')}"),
+     ("p", (f"Evidence turns are longer than other turns, so a budget counted in turns lets a store keep more text if it keeps long turns. A model-free rule that keeps the longest turns beats LRU by {iv(Fu['item_longest_minus_lru'])} points under a turn budget, which is part of the headline gain. When the budget counts words, the same rule loses to LRU by {iv(Fu['word_longest_minus_lru'])}, the content model's edge over LRU shrinks to {iv(Fu['word_content_minus_lru'])}, and dividing its score by turn length gives {iv(Fu['word_perword_minus_lru'])}. These analyses were added after Study A's results were seen." if en
+            else f"증거 턴은 다른 턴보다 길어서, 턴 수로 센 예산에서는 긴 턴을 남기면 더 많은 글을 저장할 수 있습니다. 모델 없이 가장 긴 턴만 남기는 규칙이 턴 예산에서 LRU를 {iv(Fu['item_longest_minus_lru'])}%p 앞서며, 이는 앞의 큰 이득 가운데 일부입니다. 예산을 단어 수로 세면 같은 규칙은 LRU에 {iv(Fu['word_longest_minus_lru'])}%p 뒤지고, 내용 모델이 LRU를 앞서는 폭은 {iv(Fu['word_content_minus_lru'])}%p로 줄며, 점수를 턴 길이로 나누면 {iv(Fu['word_perword_minus_lru'])}%p가 됩니다. 이 분석들은 연구 A의 결과를 본 뒤에 추가했습니다.")),
+     ("h2", f"Studies D and E — word budget {T('m')}" if en else f"연구 D와 E — 단어 예산 {T('m')}"),
+     ("table", (["Hypothesis (word budget, ρ = 0.2)", "Result (pp [95% CI])", "Verdict"] if en else ["가설 (단어 예산, ρ = 0.2)", "결과 (%p [95% 구간])", "판정"]),
+      [[("H5 — REALTALK, out of sample: per-word model minus LRU" if en else "H5 — REALTALK, 표본 외: 단어당 모델 − LRU"), iv(Fd['h5']['diff']), ("Supported" if en else "지지")],
+       [("H5b — LoCoMo, new timing seeds: minus FIFO" if en else "H5b — LoCoMo, 새 시점 시드: − FIFO"), iv(Fd['h5b']['diff']), ("Supported" if en else "지지")],
+       [("H6 — per word minus the same model without length division" if en else "H6 — 단어당 모델 − 길이로 나누지 않은 같은 모델"), iv(Fd['h6']), ("Supported" if en else "지지")],
+       [("H7 — embedding model minus hand-feature model" if en else "H7 — 임베딩 모델 − 손 설계 특징 모델"), iv(Fe['h7']), ("<b>Rejected</b>" if en else "<b>기각</b>")],
+       [("H8 — REALTALK with dense-retrieval access events: minus LRU" if en else "H8 — REALTALK, 밀집 검색 접근 이벤트: − LRU"), iv(Fe['h8']), ("Supported" if en else "지지")],
+       [("H9 — LongMemEval-S: minus FIFO" if en else "H9 — LongMemEval-S: − FIFO"), iv(Fe['h9']), ("Supported as written, uninformative" if en else "문면상 지지, 그러나 정보 없음")]]),
+     ("p", (f"On REALTALK, a dataset the model was never fitted on, scoring turns by predicted need per word keeps {Fd['h5']['perword']:.1f}% of the needed turns against {Fd['h5']['lru']:.1f}% for LRU. A control added afterwards shows it is not just “keep short turns”: the per-word model beats a rule that keeps the shortest turns by {iv(Fd['vs_shortest']['realtalk'])} points on REALTALK and {iv(Fd['vs_shortest']['locomo'])} on LoCoMo. The gain is uneven: it is positive in {Fd['conversations_positive']['realtalk']} of {Fd['conversations_positive']['of']} REALTALK conversations and {Fd['conversations_positive']['locomo']} of {Fd['conversations_positive']['of']} LoCoMo conversations. The LoCoMo repetition reuses data already seen, so it is a replication under new randomness, not independent evidence." if en
+            else f"모델이 한 번도 학습하지 않은 REALTALK에서, 단어당 예상 필요도로 점수를 매기면 필요한 턴의 {Fd['h5']['perword']:.1f}%를 남기며 LRU는 {Fd['h5']['lru']:.1f}%입니다. 나중에 추가한 대조로 보면 단순히 “짧은 턴을 남기는” 효과가 아닙니다. 단어당 모델은 가장 짧은 턴만 남기는 규칙을 REALTALK에서 {iv(Fd['vs_shortest']['realtalk'])}%p, LoCoMo에서 {iv(Fd['vs_shortest']['locomo'])}%p 앞섭니다. 이득은 고르지 않아서, REALTALK 대화는 {Fd['conversations_positive']['of']}개 중 {Fd['conversations_positive']['realtalk']}개, LoCoMo 대화는 {Fd['conversations_positive']['of']}개 중 {Fd['conversations_positive']['locomo']}개에서 양수입니다. LoCoMo 반복은 이미 본 데이터를 다시 쓰므로, 새 무작위성 아래의 재현이지 독립적인 증거는 아닙니다.")),
+     ("h2", f"H9 is a length artefact {T('m')}" if en else f"H9는 길이 때문에 생긴 착시입니다 {T('m')}"),
+     ("p", (f"In LongMemEval-S, {Fe['answers_in_user_turns']:.1f}% of the answer-bearing turns are user turns, and user turns hold only {Fe['user_word_share']:.1f}% of all words. A rule that keeps the shortest turns, with no model, therefore keeps almost every answer: {Fe['shortest_first']:.1f}% against {Fe['perword']:.1f}% for the registered policy ({iv(Fe['perword_minus_shortest'])} points for the policy, so no better). The model without length division scores {Fe['content_undivided']:.1f}%, below random eviction ({Fe['random']:.1f}%). The check was added after the result was seen. The lesson is that this benchmark cannot tell a model from a length rule, and that a registered effect can be large for the wrong reason when no length-only baseline is registered." if en
+            else f"LongMemEval-S에서 정답이 든 턴의 {Fe['answers_in_user_turns']:.1f}%는 사용자 턴이고, 사용자 턴은 전체 단어의 {Fe['user_word_share']:.1f}%뿐입니다. 그래서 모델 없이 가장 짧은 턴만 남기는 규칙이 거의 모든 정답을 남깁니다. 이 규칙은 {Fe['shortest_first']:.1f}%이고 사전등록한 정책은 {Fe['perword']:.1f}%입니다(정책 쪽이 {iv(Fe['perword_minus_shortest'])}%p라서 더 낫지 않습니다). 길이로 나누지 않은 모델은 {Fe['content_undivided']:.1f}%로 무작위 삭제({Fe['random']:.1f}%)보다 낮습니다. 이 점검은 결과를 본 뒤에 추가했습니다. 이 벤치마크는 모델과 길이 규칙을 구분하지 못하며, 길이만 쓰는 기준선을 등록하지 않으면 등록된 효과도 엉뚱한 이유로 클 수 있다는 교훈입니다.")),
+     ("h2", f"Rehearsal — Studies B and F rejected {T('m')}" if en else f"복습 — 연구 B와 F 기각 {T('m')}"),
+     ("table", (["Hypothesis", "Split-MNIST (pp [95% CI])", "Permuted-MNIST (pp [95% CI])", "Verdict"] if en else ["가설", "Split-MNIST (%p [95% 구간])", "Permuted-MNIST (%p [95% 구간])", "판정"]),
+      [[("H2 — RetentionSched minus uniform replay" if en else "H2 — RetentionSched − 균등 리플레이"), iv(Fb['h2']['split']), iv(Fb['h2']['perm']), ("<b>Rejected</b>" if en else "<b>기각</b>")],
+       [("H3 — RetentionJoint minus uniform replay" if en else "H3 — RetentionJoint − 균등 리플레이"), iv(Fb['h3']['split']), iv(Fb['h3']['perm']), ("<b>Rejected</b>" if en else "<b>기각</b>")],
+       [("H4 — half the replay compute, minus uniform at full compute" if en else "H4 — 리플레이 연산을 절반으로, − 전체 연산의 균등"), iv(Fb['h4']['split']), iv(Fb['h4']['perm']), ("<b>Rejected</b>" if en else "<b>기각</b>")]]),
+     ("ul", ([f"Study B ({Fb['seeds']} seeds, buffer of {Fb['m']} items, 10 replay units per step): no scheduler beats uniform replay by the 1-point bar. RetentionJoint is worse on Permuted-MNIST. The H4 failure on Split-MNIST is instability (mean {Fb['h4_split_mean']:.2f}%, standard deviation {Fb['h4_split_sd']:.2f} points). An oracle that replays every forgotten item gains only {iv(Fb['oracle_perm'])} on Permuted-MNIST, so there is almost no headroom",
+              f"Study F (Split-CIFAR-100, {Ff['seeds']} seeds, buffer of {Ff['m']:,} items, a regime chosen by a frozen rule so that stored items really are forgotten): accuracy {Ff['acc']['uniform']:.1f}% for uniform replay, {Ff['acc']['retention']:.1f}% for RetentionSched ({iv(Ff['h10'])}, H10 rejected) and {Ff['acc']['oracle']:.1f}% for the uncharged oracle ({iv(Ff['h11'])}, H11 rejected)",
+              f"The retention model lowers the share of misclassified buffer items from {Ff['buffer_error']['uniform']:.1f}% to {Ff['buffer_error']['retention']:.1f}% and the oracle to {Ff['buffer_error']['oracle']:.1f}%, yet neither improves test accuracy. With {Ff['seeds']} seeds the power is low, and a rejection is not evidence of equivalence"] if en else
+             [f"연구 B(시드 {Fb['seeds']}개, 버퍼 {Fb['m']}개, 단계당 리플레이 단위 10): 1%p 기준으로 균등 리플레이를 이기는 스케줄러는 없습니다. RetentionJoint는 Permuted-MNIST에서 더 나쁩니다. Split-MNIST의 H4 실패는 불안정성 때문입니다(평균 {Fb['h4_split_mean']:.2f}%, 표준편차 {Fb['h4_split_sd']:.2f}%p). 잊은 항목을 모두 리플레이하는 오라클도 Permuted-MNIST에서 {iv(Fb['oracle_perm'])}%p를 얻을 뿐이라, 개선 여지가 거의 없습니다",
+              f"연구 F(Split-CIFAR-100, 시드 {Ff['seeds']}개, 버퍼 {Ff['m']:,}개, 저장한 항목이 실제로 잊히도록 고정한 규칙으로 고른 조건): 정확도는 균등 리플레이 {Ff['acc']['uniform']:.1f}%, RetentionSched {Ff['acc']['retention']:.1f}%({iv(Ff['h10'])}, H10 기각), 연산을 부과하지 않은 오라클 {Ff['acc']['oracle']:.1f}%({iv(Ff['h11'])}, H11 기각)입니다",
+              f"보존 모델은 버퍼에서 오분류되는 항목의 비율을 {Ff['buffer_error']['uniform']:.1f}%에서 {Ff['buffer_error']['retention']:.1f}%로, 오라클은 {Ff['buffer_error']['oracle']:.1f}%로 낮추지만 둘 다 테스트 정확도를 높이지 못합니다. 시드가 {Ff['seeds']}개라 검정력이 낮으며, 기각이 동등하다는 증거는 아닙니다"])),
      ("h2", "What did not work or was not done" if en else "실패한 것과 하지 않은 것"),
      ("ul", ([f"One of Study A's own self-checks <b>failed</b>: the spread of random eviction across its 5 policy seeds is {Fo['selfcheck_fail']['random_seed_sd_pp']} points (standard error {Fo['selfcheck_fail']['se_pp']}), against a {Fo['selfcheck_fail']['margin_pp']:.0f}-point margin used to judge differences",
-              "Study B has no results: the repository has no Study B output and no MNIST data, so H2–H4 cannot be judged",
+              "Ten conversations per dataset; the label marks turns that annotators wrote questions about, and question times are synthetic, so the content model partly learns annotator interest",
+              "The word-budget analysis and the length controls were added after results were seen. Four 2025–26 papers on agent memory were known only from abstracts",
               "Study C is exploratory and every trace is synthetic, so its statements depend on the trace generator",
-              "No manuscript was written: the article, book and presentation folders are templates"] if en else
+              "A paper draft exists in the repository and has had no outside review"] if en else
              [f"연구 A의 자체 점검 가운데 하나가 <b>실패</b>했습니다. 무작위 삭제(Random)의 결과가 정책 시드 5개 사이에서 {Fo['selfcheck_fail']['random_seed_sd_pp']}%p(표준오차 {Fo['selfcheck_fail']['se_pp']})만큼 흩어졌는데, 차이를 판단하는 데 쓴 기준은 {Fo['selfcheck_fail']['margin_pp']:.0f}%p였습니다",
-              "연구 B는 결과가 없습니다. 저장소에 연구 B 산출물도 MNIST 데이터도 없어서 H2–H4는 판정할 수 없습니다",
+              "데이터셋마다 대화는 10개입니다. 정답 표시는 주석자가 질문을 만든 턴이고 질문 시점도 합성이어서, 내용 모델은 일부 주석자의 관심을 학습합니다",
+              "단어 예산 분석과 길이 대조는 결과를 본 뒤에 추가했습니다. 에이전트 기억에 관한 2025–26년 논문 네 편은 초록으로만 확인했습니다",
               "연구 C는 탐색적이고 모든 트레이스가 합성 데이터라서, 그 결론은 트레이스 생성기에 좌우됩니다",
-              "원고는 쓰지 않았습니다. 논문, 책, 발표 폴더에는 템플릿만 있습니다"])),
+              "저장소에 논문 초안이 있으며 외부 검토는 받지 않았습니다"])),
      ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
-     ("p", ("The Study A numbers were checked by hand against the repository's report. We did not re-run the study. AI-assisted implementation: the repository's logs record sub-agents for the literature survey and a design approval given by delegation. No independent review. LoCoMo is credited to Maharana et al. (2024)." if en
-            else "연구 A의 수치는 저장소 보고서와 직접 대조했습니다. 연구를 재실행하지는 않았습니다. 구현에는 AI의 도움을 받았으며, 저장소 로그에는 문헌 조사에 하위 에이전트를 썼고 설계 승인이 위임을 통해 이루어졌다고 기록되어 있습니다. 독립적인 검토는 받지 않았습니다. LoCoMo 데이터셋은 Maharana 외(2024)가 만든 것입니다.")),
+     ("p", ("The headline numbers of Studies A, B, D, E and F were checked against the repository's reports, and their intervals were re-derived from the stored result files by a script; the studies themselves were not re-run. AI-assisted implementation: the repository's logs record sub-agents for the literature survey and design approvals given by delegation. No independent review. LoCoMo is credited to Maharana et al. (2024), REALTALK to Lee et al. (2025) and LongMemEval to Wu et al. (2025)." if en
+            else "연구 A, B, D, E, F의 핵심 수치는 저장소 보고서와 대조했고, 구간은 저장된 결과 파일에서 스크립트로 다시 계산했습니다. 연구 자체를 다시 실행하지는 않았습니다. 구현에는 AI의 도움을 받았으며, 저장소 로그에는 문헌 조사에 하위 에이전트를 썼고 설계 승인이 위임을 통해 이루어졌다고 기록되어 있습니다. 독립적인 검토는 받지 않았습니다. LoCoMo는 Maharana 외(2024), REALTALK는 Lee 외(2025), LongMemEval은 Wu 외(2025)가 만든 것입니다.")),
     ]
 
     # ================================================================== AI Creativity
@@ -505,8 +577,8 @@ def build(lang, D):
     arms = [("expand", "expand — develop as is", "expand — 있는 그대로 발전"), ("refine", "refine — critique and improve", "refine — 비판하고 개선"), ("anchor", "anchor — develop around the core departure", "anchor — 핵심 이탈점을 고정하고 발전")]
     rows2 = [[(a if en else b), f"{cx2[k]['originality']:.2f}", f"{cx2[k]['quality']:.2f}", f"{cx2[k]['retention']:.2f}"] for k, a, b in arms]
     pages["ai-creativity"] = [
-     ("note", ("<b>The pre-registered core hypothesis was rejected.</b> The proposed method did not make ideas more original than the controls. All scores come from two LLM judges of the same family as the generator; no human rated anything." if en
-               else "<b>사전등록한 핵심 가설은 기각됐습니다.</b> 제안한 방법은 대조군보다 더 독창적인 아이디어를 만들어 내지 못했습니다. 모든 점수는 생성 모델과 같은 계열인 LLM 심사 모델 2개가 매긴 것이며, 사람이 평가한 것은 없습니다."), "bad"),
+     ("note", ("<b>The pre-registered core hypothesis was rejected.</b> The proposed method did not make ideas more original than the controls. Scores come from two LLM judges of the same family as the generator. One human rater later scored 72 of the ideas and did not reproduce the LLM ranking of the conditions." if en
+               else "<b>사전등록한 핵심 가설은 기각됐습니다.</b> 제안한 방법은 대조군보다 더 독창적인 아이디어를 만들어 내지 못했습니다. 점수는 생성 모델과 같은 계열인 LLM 심사 모델 2개가 매긴 것입니다. 나중에 사람 평가자 한 명이 아이디어 72개를 채점했는데, 조건 사이의 LLM 순위를 재현하지 못했습니다."), "bad"),
      ("h2", "Background" if en else "배경"),
      ("p", ("Idea generators tend to produce the same ideas. Doxa Negation Search extracts the assumption that most of the existing ideas silently share, drops it, and asks for ideas that only make sense without it. The study asks whether this makes AI-generated ideas more original, and what happens when AI develops an idea further." if en
             else "아이디어 생성기는 같은 아이디어를 되풀이해 내놓는 경향이 있습니다. Doxa Negation Search는 기존 아이디어 대부분이 암묵적으로 공유하는 가정을 찾아내 버리고, 그 가정이 없어야만 성립하는 아이디어를 요청합니다. 이 연구는 이렇게 하면 AI가 만든 아이디어가 더 독창적이 되는지, 그리고 AI가 아이디어를 더 발전시키면 어떤 일이 생기는지 살펴봅니다.")),
@@ -514,11 +586,11 @@ def build(lang, D):
      ("ul", ([f"Experiment 1: {Cr['tasks']} tasks × 2 random tags × {Cr['conditions']} conditions × 20 ideas = {Cr['ideas']:,} ideas ({Cr['per_cell']} per condition). The tag is not a model seed",
               "Each idea is scored blind for originality and quality by two LLM judges (an Opus-class and a Haiku-class model); the two scores are averaged",
               f"Experiment 2: 24 seed ideas developed three ways = {Cr['proposals_exp2']} proposals. Experiment 3: one open-ended run of 6 generations per arm (exploratory)",
-              "Human rating: not collected. The repository has a template and a 72-item file, and no ratings"] if en else
+              f"Human check: one rater scored {Cr['human']['items']} items (56 short ideas, 16 developed proposals) on a 1–7 scale, blind to condition, from a translated summary document"] if en else
              [f"실험 1: 과제 {Cr['tasks']}개 × 난수 태그 2개 × 조건 {Cr['conditions']}개 × 20개 = 아이디어 {Cr['ideas']:,}개(조건당 {Cr['per_cell']}개). 태그는 모델 시드가 아닙니다",
               "LLM 심사 모델 2개(Opus급, Haiku급)가 각 아이디어의 독창성과 품질을 블라인드로 채점하고, 두 점수의 평균을 씁니다",
               f"실험 2: 씨앗 아이디어 24개를 세 가지 방식으로 발전시켜 제안 {Cr['proposals_exp2']}개. 실험 3: 방식마다 6세대까지 진행한 개방형 탐색 1회(탐색적)",
-              "사람 평가: 수집하지 않았습니다. 저장소에는 평가 틀과 72개 항목 파일만 있고 평점은 없습니다"])),
+              f"사람 확인: 평가자 한 명이 항목 {Cr['human']['items']}개(짧은 아이디어 56개, 발전시킨 제안 16개)를 조건을 모른 채 1–7점으로 채점했으며, 번역된 요약 문서를 보고 채점했습니다"])),
      ("h2", f"Experiment 1 {T('m')}" if en else f"실험 1 {T('m')}"),
      ("table", (["Condition", "Originality", "Quality", "Yield (≥ 6 on both, of 20)", "Embedding diversity"] if en else ["조건", "독창성", "품질", "수율 (둘 다 6 이상, 20개 중)", "임베딩 다양성"]), rows1),
      ("p", (f"Originality and quality are means recomputed from the raw scores and match the report. Verdicts from the report: H2 (doxa is the most original) <b>rejected</b>: doxa beat only cot ({Cr['h2']['vs_cot']:+.2f}), equalled deny ({Cr['h2']['vs_deny']:+.2f}) and was lower than box ({Cr['h2']['vs_box']:+.2f}) and stim ({Cr['h2']['vs_stim']:+.2f}). H3 (highest yield) <b>rejected</b>: deny {ex['deny']['yield']:.2f}, doxa {ex['doxa']['yield']:.2f}, box {ex['box']['yield']:.2f}, with no significant difference. H4 (originality rising faster over rounds) <b>rejected</b>." if en
@@ -527,18 +599,27 @@ def build(lang, D):
      ("table", (["Development method", "Originality", "Quality", "Core retention (1–5)"] if en else ["발전 방식", "독창성", "품질", "핵심 유지도 (1–5)"]), rows2),
      ("p", (f"The common “critique and improve” loop did not improve the ideas: compared with developing them as they were, quality rose by {Cr['h5']['quality_diff']:.2f} but originality fell by {abs(Cr['h5']['originality_diff']):.2f}, and core retention fell from {Cr['h5']['retention_from']:.2f} to {Cr['h5']['retention_to']:.2f}. A retention of 2 means the idea was mostly replaced by a more conventional approach. Anchoring the core departure kept originality (+{Cr['h6']['originality_diff']:.2f}, p = {Cr['h6']['originality_p']:.2f}) and core (4.23) but did not raise quality ({Cr['h6']['quality_diff']:+.2f}): H6 is half supported, and anchor's quality matched or beat refine's in only {Cr['h6']['anchor_quality_ge_refine']} of {Cr['h6']['of']} cases. The p-values are quoted from the report; we did not recompute them." if en
             else f"흔히 쓰는 “비판하고 개선하라” 루프는 아이디어를 개선하지 못했습니다. 그대로 발전시킨 경우와 비교하면 품질은 {Cr['h5']['quality_diff']:.2f} 올랐지만 독창성은 {abs(Cr['h5']['originality_diff']):.2f} 떨어졌고, 핵심 유지도는 {Cr['h5']['retention_from']:.2f}에서 {Cr['h5']['retention_to']:.2f}로 낮아졌습니다. 유지도 2는 원래 아이디어가 대부분 더 관습적인 접근으로 바뀌었다는 뜻입니다. 핵심 이탈점을 고정하면 독창성(+{Cr['h6']['originality_diff']:.2f}, p = {Cr['h6']['originality_p']:.2f})과 핵심(4.23)은 유지됐지만 품질은 오르지 않았습니다({Cr['h6']['quality_diff']:+.2f}). 따라서 H6은 절반만 지지되며, anchor의 품질이 refine과 같거나 높은 경우는 {Cr['h6']['of']}개 중 {Cr['h6']['anchor_quality_ge_refine']}개뿐입니다. p값은 보고서에서 인용했으며 다시 계산하지 않았습니다.")),
-     ("p", (f"Exploratory, not pre-registered: among the top 10 ideas per task by originality × quality (80 slots), doxa held {Cr['exploratory_top10']['doxa_slots']} (an even split would be {Cr['exploratory_top10']['uniform_slots']}). The report treats this as a follow-up hypothesis, not a finding." if en
-            else f"사전등록하지 않은 탐색적 관찰도 있습니다. 과제별 독창성×품질 상위 10개(총 80자리) 가운데 doxa가 {Cr['exploratory_top10']['doxa_slots']}자리를 차지했습니다(균등하게 나뉜다면 {Cr['exploratory_top10']['uniform_slots']}자리). 보고서는 이를 발견이 아니라 후속 연구에서 검증할 가설로 다룹니다.")),
+     ("p", (f"Exploratory, not pre-registered: among the top 10 ideas per task by originality × quality (80 slots), doxa held {Cr['exploratory_top10']['doxa_slots']} (an even split would be {Cr['exploratory_top10']['uniform_slots']}). The report treated this as a follow-up hypothesis; the human check did not support it (doxa held {Cr['human']['doxa_top10_human']} slot in the human top ten), and the report now drops it." if en
+            else f"사전등록하지 않은 탐색적 관찰도 있습니다. 과제별 독창성×품질 상위 10개(총 80자리) 가운데 doxa가 {Cr['exploratory_top10']['doxa_slots']}자리를 차지했습니다(균등하게 나뉜다면 {Cr['exploratory_top10']['uniform_slots']}자리). 보고서는 이를 발견이 아니라 후속 연구에서 검증할 가설로 다뤘고, 사람 확인에서는 지지되지 않아(사람 평가 상위 10개에서 doxa는 {Cr['human']['doxa_top10_human']}자리) 지금은 이 가설을 철회했습니다.")),
+     ("h2", f"Human check — one rater {T('m')}" if en else f"사람 확인 — 평가자 한 명 {T('m')}"),
+     ("p", (f"Agreement with the LLM judges is weak. For the short ideas, the Spearman rank correlation between the LLM score and the human score is {Cr['human']['rho_a_orig'][0]:.2f} for originality (p = {Cr['human']['rho_a_orig'][1]:.3f}) and {Cr['human']['rho_a_qual'][0]:.2f} for quality (p = {Cr['human']['rho_a_qual'][1]:.3f}); for the developed proposals it is {Cr['human']['rho_b_orig'][0]:.2f} for originality (p = {Cr['human']['rho_b_orig'][1]:.3f}). The human ordering of the conditions by originality (box {Cr['human']['orig_means']['box']:.2f}, iid {Cr['human']['orig_means']['iid']:.2f}, deny {Cr['human']['orig_means']['deny']:.2f}, doxa {Cr['human']['orig_means']['doxa']:.2f}) is not the LLM ordering (box, doxa, deny, iid): doxa comes last. The one result whose direction replicated is in the development step: anchoring the core departure, compared with critique-and-improve, scored higher on originality ({Cr['human']['anchor_vs_refine_orig'][0]:+.2f}, p = {Cr['human']['anchor_vs_refine_orig'][1]:.3f}) and lower on quality ({Cr['human']['anchor_vs_refine_quality'][0]:+.2f}, p = {Cr['human']['anchor_vs_refine_quality'][1]:.3f})." if en
+            else f"LLM 심사 모델과의 일치도는 낮습니다. 짧은 아이디어에서 LLM 점수와 사람 점수의 스피어만 순위상관은 독창성 {Cr['human']['rho_a_orig'][0]:.2f}(p = {Cr['human']['rho_a_orig'][1]:.3f}), 품질 {Cr['human']['rho_a_qual'][0]:.2f}(p = {Cr['human']['rho_a_qual'][1]:.3f})이고, 발전시킨 제안에서는 독창성 {Cr['human']['rho_b_orig'][0]:.2f}(p = {Cr['human']['rho_b_orig'][1]:.3f})입니다. 독창성 기준 사람의 조건 순서(box {Cr['human']['orig_means']['box']:.2f}, iid {Cr['human']['orig_means']['iid']:.2f}, deny {Cr['human']['orig_means']['deny']:.2f}, doxa {Cr['human']['orig_means']['doxa']:.2f})는 LLM의 순서(box, doxa, deny, iid)와 다르며, doxa가 꼴찌입니다. 방향이 재현된 결과는 발전 단계에 있습니다. 핵심 이탈점을 고정해 발전시킨 쪽이 비판·개선 쪽보다 독창성은 높고({Cr['human']['anchor_vs_refine_orig'][0]:+.2f}, p = {Cr['human']['anchor_vs_refine_orig'][1]:.3f}) 품질은 낮았습니다({Cr['human']['anchor_vs_refine_quality'][0]:+.2f}, p = {Cr['human']['anchor_vs_refine_quality'][1]:.3f}).")),
+     ("ul", (["One rater, so there is no inter-rater agreement; the rater commissioned the study and had seen the report's example ideas, though conditions were blinded",
+              "The rater read a Korean summary made by another AI, with reworded ideas in a different order (the mapping was rebuilt by content and checked one to one), so translation distortion is uncontrolled",
+              "Short ideas and long proposals were mixed within each task, so the two kinds could be told apart; 16 ideas per condition and 8 per development arm; core retention and set-level diversity were not rated by a human"] if en else
+             ["평가자가 한 명이라 평가자 간 일치도는 없습니다. 평가자는 연구를 의뢰한 사람이고 보고서의 예시 아이디어를 본 적이 있지만, 조건은 가려져 있었습니다",
+              "평가자는 다른 AI가 만든 한국어 요약을 읽었고, 아이디어는 표현이 바뀌고 순서도 달랐습니다(대응 관계는 내용으로 복원해 일대일로 확인했습니다). 번역으로 인한 왜곡은 통제하지 못했습니다",
+              "과제마다 짧은 아이디어와 긴 제안이 섞여 있어 둘을 구분할 수 있었습니다. 조건당 아이디어 16개, 발전 방식당 8개이며, 핵심 유지도와 집합 수준 다양성은 사람이 평가하지 않았습니다"])),
      ("h2", "Limitations" if en else "한계"),
-     ("ul", (["The judges are LLMs of the same family as the generator, and earlier work reports that LLM judgments of novelty agree only weakly with experts. Every result is “as judged by the models”, not validated by humans",
+     ("ul", (["The judges are LLMs of the same family as the generator, and earlier work reports that LLM judgments of novelty agree only weakly with experts. Most results are “as judged by the models”; one human rater is too few to validate them",
               "A single generator model and 8 tasks; the experiment-3 design had 12 generations and 6 were run; experiment 2 had 24 of the 40 designed seeds",
               "The review of earlier work relied on abstracts and secondary summaries; several details are marked unverified in the repository"] if en else
-             ["심사자는 생성 모델과 같은 계열의 LLM이며, 선행연구에 따르면 LLM의 참신성 판단은 전문가 판단과 약하게만 일치합니다. 모든 결과는 사람이 검증한 것이 아니라 “모델이 판단한 결과”입니다",
+             ["심사자는 생성 모델과 같은 계열의 LLM이며, 선행연구에 따르면 LLM의 참신성 판단은 전문가 판단과 약하게만 일치합니다. 대부분의 결과는 “모델이 판단한 결과”이고, 사람 평가자 한 명으로는 검증하기에 부족합니다",
               "생성 모델은 하나, 과제는 8개입니다. 실험 3은 설계한 12세대 중 6세대만, 실험 2는 설계한 씨앗 40개 중 24개만 실행했습니다",
               "선행연구 검토는 초록과 2차 요약에 기댔고, 저장소에는 확인하지 않은 세부 사항이 여러 군데 표시되어 있습니다"])),
      ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
-     ("p", ("The experiment-1 and experiment-2 means were recomputed from the raw score files and match the report; p-values were not recomputed. Idea generation and judging are done by LLMs by design. AI-assisted implementation; the repository does not say how much of the code and report was AI-written. No independent review, and no human rating." if en
-            else "실험 1과 실험 2의 평균은 원점수 파일에서 다시 계산했고 보고서와 일치합니다. p값은 다시 계산하지 않았습니다. 아이디어 생성과 심사는 설계상 LLM이 맡습니다. 구현에는 AI의 도움을 받았으며, 코드와 보고서 중 어느 정도를 AI가 썼는지는 저장소에 적혀 있지 않습니다. 독립적인 검토와 사람 평가는 모두 없었습니다.")),
+     ("p", ("The experiment-1 and experiment-2 means were recomputed from the raw score files and match the report; p-values were not recomputed. Idea generation and judging are done by LLMs by design. AI-assisted implementation; the repository does not say how much of the code and report was AI-written. No independent review; one human rater only." if en
+            else "실험 1과 실험 2의 평균은 원점수 파일에서 다시 계산했고 보고서와 일치합니다. p값은 다시 계산하지 않았습니다. 아이디어 생성과 심사는 설계상 LLM이 맡습니다. 구현에는 AI의 도움을 받았으며, 코드와 보고서 중 어느 정도를 AI가 썼는지는 저장소에 적혀 있지 않습니다. 독립적인 검토는 받지 않았고, 사람 평가는 평가자 한 명뿐입니다.")),
     ]
 
     # ================================================================== Context Compaction
@@ -641,6 +722,62 @@ def build(lang, D):
      ("p", ("The table figures were copied from the project's final report and its auto-generated Phase 3 analysis, which agree; the Phase 4 ratios were re-summed from the batch result files. The analysis was not otherwise re-run. AI-assisted implementation: an AI agent (Claude Code) built the harness, ran the experiments and wrote the analysis and report; the author set the question, approved the usage budget and chose the Phase 3 design. The models under test belong to the same family as the agent that ran the study. The literature review was web-based, and only the sources marked as checked above were confirmed against the original. Code and raw data are kept private. No independent review." if en
             else "표의 수치는 프로젝트 최종 보고서와 자동 생성된 3단계 분석 파일에서 옮겼으며, 두 자료의 값은 일치합니다. 4단계 비율은 배치 결과 파일에서 다시 합산했습니다. 그 밖의 분석은 재실행하지 않았습니다. 구현에는 AI의 도움을 받았습니다. AI 에이전트(Claude Code)가 하네스를 만들고 실험을 실행했으며 분석과 보고서를 작성했습니다. 저자는 연구 질문을 정하고, 사용량 예산을 승인하고, 3단계 설계를 선택했습니다. 시험 대상 모델은 연구를 수행한 에이전트와 같은 계열입니다. 문헌 조사는 웹 기반으로 했고, 위에서 확인했다고 적은 출처만 원문과 대조했습니다. 코드와 원본 데이터는 비공개로 보관합니다. 독립적인 검토는 받지 않았습니다.")),
     ]
+    # ================================================================== ANC FxAPA
+    pages["anc-fxapa"] = [
+     ("note", ("<b>Simulation only.</b> No headphone, car or real-time audio hardware was tested. The measured data are room impulse responses, not headphone paths." if en
+               else "<b>시뮬레이션만 했습니다.</b> 헤드폰, 차량, 실시간 오디오 장비로 시험하지 않았습니다. 실측 데이터는 헤드폰 경로가 아니라 방 임펄스 응답입니다."), "warn"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("Active noise control plays an anti-noise signal through a speaker, and the adaptive filter that shapes it decides how fast and how well noise is cancelled. FxNLMS is the usual choice. This study asks whether a low-order affine-projection variant (FxAPA with K = 2) does better, and whether any gain holds on measured acoustic paths." if en
+            else "능동소음제어는 스피커로 반대 위상의 소리를 내보내고, 그 신호를 만드는 적응 필터가 소음을 얼마나 빨리, 얼마나 잘 지우는지를 정합니다. 보통은 FxNLMS를 씁니다. 이 연구는 저차 아핀 투영 변형(K = 2인 FxAPA)이 더 나은지, 그리고 그 이득이 실측 음향 경로에서도 남는지 묻습니다.")),
+     ("h2", f"Results {T('r')}" if en else f"결과 {T('r')}"),
+     ("ul", ([f"Randomized simulated MIMO plants: +{An['mimo_whole_run_db']:.2f} dB [{An['mimo_ci'][0]:.2f}, {An['mimo_ci'][1]:.2f}] over the whole run against best-grid FxNLMS, but about 0 in steady state (median {An['mimo_steady_db']:.2f} dB). The advantage is convergence speed, not final attenuation",
+              f"{An['measured_plants']} measured room responses: {An['measured_broadband_db']:+.2f} dB for broadband noise and {An['measured_tonal_db']:+.2f} dB for tonal noise. The default step size of {An['mu']} diverged in {An['diverged']} trials, so it must not be shipped as a default",
+              f"An earlier synthetic set ({An['synthetic_envs']} environments, {An['synthetic_trials']} trials) averaged +{An['synthetic_mean_db']:.2f} dB; the repository says the later verification overrides it"] if en else
+             [f"무작위 시뮬레이션 MIMO 플랜트: 그리드 최적 FxNLMS 대비 전체 구간 +{An['mimo_whole_run_db']:.2f} dB [{An['mimo_ci'][0]:.2f}, {An['mimo_ci'][1]:.2f}], 정상상태는 약 0(중앙값 {An['mimo_steady_db']:.2f} dB). 이점은 최종 감쇠가 아니라 수렴 속도입니다",
+              f"실측 방 응답 {An['measured_plants']}개: 광대역 소음 {An['measured_broadband_db']:+.2f} dB, 톤 소음 {An['measured_tonal_db']:+.2f} dB. 기본 스텝 크기 {An['mu']}는 {An['diverged']} 시행에서 발산해서 기본값으로 쓰면 안 됩니다",
+              f"앞선 합성 실험({An['synthetic_envs']}개 환경, {An['synthetic_trials']}회)은 평균 +{An['synthetic_mean_db']:.2f} dB였지만, 저장소는 뒤의 검증 결과가 우선한다고 적습니다"])),
+     ("h2", "Limitations" if en else "한계"),
+     ("ul", (["The FxNLMS baseline picks its step size per trial from the full result, which is an oracle-level baseline",
+              "Measured responses come from one room and one head angle, with a 2 ms preview imposed by the study",
+              "Open items recorded in the repository: a truncation bug in the secondary-path estimate and an acceptance check for the online nonlinear model"] if en else
+             ["기준선 FxNLMS는 시행마다 전체 결과를 보고 스텝을 고르므로 오라클 수준의 기준선입니다",
+              "실측 응답은 방 하나, 머리 각도 하나에서 나왔고, 2 ms 프리뷰는 연구에서 임의로 넣었습니다",
+              "저장소에 남은 과제: 2차 경로 추정의 잘림 버그, 온라인 비선형 모델의 수락 검사"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", (f"Figures are quoted from the repository's handoff and README and checked against them; not re-run for this page. The repository reports {An['tests']} passing tests. AI-assisted implementation with multi-agent review recorded in the commit history. No independent review." if en
+            else f"수치는 저장소의 인계 문서와 README에서 인용해 대조했고, 이 페이지를 위해 다시 돌리지는 않았습니다. 저장소는 테스트 {An['tests']}개 통과를 보고합니다. 구현에는 AI의 도움을 받았고, 커밋 이력에 멀티 에이전트 검토가 기록되어 있습니다. 독립적인 검토는 받지 않았습니다.")),
+    ]
+
+    # ================================================================== APTS-X
+    cv = Ap["coverage_after_shift"]
+    pages["apts-x"] = [
+     ("note", ("<b>Research prototype.</b> It is not a scheduler or an energy optimizer. Only a 1,000-row public sample was audited; the main comparison uses synthetic drift." if en
+               else "<b>연구 프로토타입입니다.</b> 스케줄러나 에너지 최적화기가 아닙니다. 공개 표본은 1,000행만 감사했고, 주된 비교는 합성 분포 변화로 했습니다."), "warn"),
+     ("h2", "Question" if en else "질문"),
+     ("p", ("HPC users request a walltime limit for each job. If the limit is too tight the job is killed; if too loose the scheduler wastes room. This study asks whether a bound recalibrated online from recent jobs keeps the overrun rate near a target when runtimes drift, where a fixed rule such as “twice the estimate” does not." if en
+            else "HPC 사용자는 작업마다 실행 시간 상한을 요청합니다. 너무 짧으면 작업이 강제로 끝나고, 너무 길면 스케줄러가 자리를 낭비합니다. 이 연구는 실행 시간 분포가 바뀔 때, 최근 작업으로 온라인 재보정한 상한이 “추정치의 두 배” 같은 고정 규칙과 달리 초과율을 목표 근처로 지키는지 묻습니다.")),
+     ("h2", f"Results {T('r')}" if en else f"결과 {T('r')}"),
+     ("table", (["Method (target 90%)", "Coverage after the shift"] if en else ["방법 (목표 90%)", "변화 후 coverage"]),
+      [["Fixed 2×" if en else "고정 2배", f"{cv['fixed_2x']:.2f}%"], ["Rolling conformal" if en else "롤링 conformal", f"{cv['rolling_conformal_90']:.2f}%"], ["Adaptive conformal (ACI)" if en else "적응형 conformal (ACI)", f"{cv['aci_90']:.2f}%"]]),
+     ("ul", ([f"Synthetic drift, {Ap['seeds']} seeds. The repository states the conclusion as “online recalibration beats fixed calibration”, not an effect unique to conformal methods",
+              f"The change detector reset on average {Ap['resets_per_seed']:.3f} times per seed and missed the change entirely in {Ap['seeds_no_reset']} of {Ap['seeds']} seeds",
+              f"With no delay in seeing finished jobs, rolling coverage right after the change rose from {Ap['zero_delay_from']}% to {Ap['zero_delay_to']}%: delayed feedback explains much of the dip",
+              f"Public sample audit: of {Ap['sample_rows']:,} rows only {Ap['unique_job_ids']} job IDs are unique; one repeated ID adds {Ap['repeated_id_extra_rows']} rows"] if en else
+             [f"합성 분포 변화, 시드 {Ap['seeds']}개. 저장소는 결론을 conformal만의 효과가 아니라 “온라인 재보정이 고정 보정을 이긴다”로 적습니다",
+              f"변화 탐지기는 시드당 평균 {Ap['resets_per_seed']:.3f}회 재설정했고, 시드 {Ap['seeds']}개 중 {Ap['seeds_no_reset']}개에서는 변화를 아예 놓쳤습니다",
+              f"끝난 작업을 지연 없이 본다면 변화 직후 롤링 coverage가 {Ap['zero_delay_from']}%에서 {Ap['zero_delay_to']}%로 오릅니다. 결과 공개 지연이 하락의 큰 원인입니다",
+              f"공개 표본 감사: {Ap['sample_rows']:,}행 중 고유 작업 ID는 {Ap['unique_job_ids']}개이고, 반복되는 ID 하나가 {Ap['repeated_id_extra_rows']}행을 더합니다"])),
+     ("h2", "Not done" if en else "하지 않은 것"),
+     ("ul", (["The full public trace, a time-split evaluation and paired comparisons on the same trace",
+              "Handling of censored jobs (timeouts) and coupling to a scheduler simulator or energy metrics",
+              "Under drift, exchangeability fails, so coverage here is empirical, not a guarantee"] if en else
+             ["공개 trace 전체 실행, 시간 분할 평가, 같은 trace 위 짝 비교",
+              "중도 절단된 작업(시간 초과) 처리, 스케줄러 시뮬레이터나 에너지 지표와의 결합",
+              "분포가 바뀌면 교환가능성이 깨지므로, 여기의 coverage는 보장이 아니라 경험적 결과입니다"])),
+     ("h2", "Verification and AI use" if en else "검증과 AI 활용"),
+     ("p", (f"Figures are quoted from the repository's report and checked against it; not re-run for this page. The repository reports {Ap['tests']} tests. An earlier “Pareto” claim was withdrawn after review. AI-assisted implementation; no independent review." if en
+            else f"수치는 저장소 보고서에서 인용해 대조했고, 이 페이지를 위해 다시 돌리지는 않았습니다. 저장소는 테스트 {Ap['tests']}개를 보고합니다. 앞선 버전의 “Pareto” 주장은 검토 뒤 철회됐습니다. 구현에는 AI의 도움을 받았으며, 독립적인 검토는 받지 않았습니다.")),
+    ]
     C["pages"] = pages
     C["detail_labels"] = dict(
         status="Status" if en else "상태", repo="Repository" if en else "저장소",
@@ -649,14 +786,49 @@ def build(lang, D):
     # ------------------------------------------------------------------ projects
     C["projects"] = dict(
       title="Projects" if en else "프로젝트",
-      intro=("Things built, not research results. Other projects stay private." if en else "연구 결과가 아니라 직접 만든 결과물입니다. 그 밖의 프로젝트는 비공개입니다."),
+      intro=("Things built, not research results. Repositories are private unless linked." if en else "연구 결과가 아니라 직접 만든 결과물입니다. 링크가 없는 저장소는 비공개입니다."),
       items=[dict(title="Hard Takeoff",
                   sub="AI-lab management simulation" if en else "AI 연구소 경영 시뮬레이션",
                   body=("A browser game (Korean UI, 48 months) in which the laws of intelligence differ from world to world, plus a Python reference simulation (180 months). It is a game, not a research paper, and has no hypothesis document." if en
                         else "세계마다 지능의 법칙이 다른 브라우저 게임(한국어 UI, 48개월)과 파이썬 참조 시뮬레이션(180개월)입니다. 연구 논문이 아니라 게임이며, 가설 문서도 없습니다."),
                   ai=("AI-assisted implementation; no per-file breakdown is recorded. Figures in its README were not re-run and are not shown here." if en
                       else "구현에는 AI의 도움을 받았으며, 파일별로 구분한 기록은 없습니다. README의 수치는 재실행하지 않았으므로 여기에 싣지 않았습니다."),
-                  repo="https://github.com/SeoJunLee-code/hard-takeoff")])
+                  repo="https://github.com/SeoJunLee-code/hard-takeoff"),
+             dict(title="LOSS CURVE",
+                  sub="AI-startup management game (desktop build)" if en else "AI 스타트업 경영 게임 (데스크톱 빌드)",
+                  body=("Grow a garage startup into a frontier lab; the good ending needs a model that scores 90 and is safe. Scaling rules and the best data mix are hidden per seed and estimated through in-game experiments. Playable from title to ending, packaged as a Windows executable; only the Steam store steps remain. A fresh take on the Hard Takeoff theme, sharing no code." if en
+                        else "차고 스타트업을 프론티어 연구소로 키우는 게임으로, 좋은 결말을 보려면 종합 90점이면서 안전한 모델이 필요합니다. 스케일링 법칙과 최적 데이터 배합은 시드마다 숨겨져 있고 게임 속 실험으로 추정합니다. 타이틀부터 엔딩까지 플레이할 수 있고 Windows 실행 파일로 패키징했으며, Steam 등록 절차만 남았습니다. Hard Takeoff와 주제가 같지만 코드를 공유하지 않는 새 해석입니다."),
+                  ai=("AI-assisted implementation. Balance figures come from bots, not human playtests, so they are not shown here." if en
+                      else "구현에는 AI의 도움을 받았습니다. 밸런스 수치는 사람 플레이테스트가 아니라 봇에서 나왔으므로 여기에 싣지 않습니다."),
+                  repo="https://github.com/SeoJunLee-code/loss-curve"),
+             dict(title="AI Era Systems Lab",
+                  sub="Six local-first tools for AI-centred work" if en else "AI 중심 작업을 위한 로컬 우선 도구 6종",
+                  body=("ContextOS, Executable Docs, ReproCase, an Agent Execution Gateway, an Incident Workspace and an evidence-based assessment tool, as MVPs (v0.4.1). After a multi-agent review pass, a secret canary in ReproCase leaked in 0 of 15 live runs instead of 8 of 15." if en
+                        else "ContextOS, Executable Docs, ReproCase, 에이전트 실행 게이트웨이, 장애 대응 작업 공간, 근거 기반 평가 도구를 MVP(v0.4.1)로 만들었습니다. 멀티 에이전트 검토 뒤 ReproCase의 비밀정보 canary 유출이 실제 실행 15회 중 8회에서 0회로 줄었습니다."),
+                  ai=("AI-assisted implementation. No controlled benchmark against a baseline yet, so no productivity claim. The gateway is not an OS sandbox." if en
+                      else "구현에는 AI의 도움을 받았습니다. 기준선과 비교한 통제 벤치마크가 아직 없어 생산성 주장은 하지 않습니다. 게이트웨이는 OS 샌드박스가 아닙니다."),
+                  repo="https://github.com/SeoJunLee-code/AGI-"),
+             dict(title="GRILL ME 5.0",
+                  sub="Simulation of an AI-native delivery pipeline" if en else "AI 중심 개발 파이프라인 시뮬레이션",
+                  body=("A discrete-event model of pull requests flowing through CI, human review and a merge train, with a rework loop. In the model, human review is the bottleneck at every load, and risk-based routing buys throughput at the cost of more latent defects reaching main." if en
+                        else "PR이 CI, 사람 리뷰, 머지 트레인을 지나고 수정 루프를 도는 과정을 이산 사건으로 모델링했습니다. 모델 안에서는 모든 부하에서 사람 리뷰가 병목이었고, 위험도 라우팅은 처리량을 얻는 대신 main에 들어가는 잠복 결함을 늘렸습니다."),
+                  ai=("All figures come from synthetic assumptions, not from a real repository. AI-assisted implementation." if en
+                      else "모든 수치는 실제 저장소가 아니라 합성 가정에서 나옵니다. 구현에는 AI의 도움을 받았습니다."),
+                  repo="https://github.com/SeoJunLee-code/AGI-"),
+             dict(title="ExamShield",
+                  sub="Multi-sensor check for AI smart glasses in exam rooms (research v0)" if en else "시험장 AI 스마트 안경 다중 센서 점검 (연구용 v0)",
+                  body=("Combines an optical lens sweep, BLE, Wi-Fi header patterns and a visual check into one of three advisories for an invigilator, and always states which device types the checks performed cannot detect. It does not judge cheating, jam signals, read traffic or recognise faces." if en
+                        else "광학 렌즈 스윕, BLE, Wi-Fi 헤더 패턴, 육안 검사를 묶어 감독관에게 세 단계 권고 중 하나를 주고, 이번 검사로 원리상 잡을 수 없는 기기 유형을 항상 함께 알립니다. 부정행위 판정, 전파 방해, 통신 내용 수집, 얼굴 인식은 하지 않습니다."),
+                  ai=("Validated on synthetic data only; no real-device measurement yet. AI-assisted implementation." if en
+                      else "합성 데이터로만 검증했고 실기기 측정은 아직 없습니다. 구현에는 AI의 도움을 받았습니다."),
+                  repo="https://github.com/SeoJunLee-code/examshield"),
+             dict(title="Saenggiro" if en else "생기로",
+                  sub="Evidence finder for Korean school records" if en else "생활기록부 근거 문장 검출 서비스",
+                  body=("Upload a school record and it detects the sentences that serve as evidence, then helps find study directions from that evidence. It does not write finished submissions for the user. The code is at beta level; the legal steps (terms of service, privacy officer, legal review) are not done, so it is not open." if en
+                        else "생활기록부를 올리면 근거가 되는 문장을 검출하고, 그 근거에서 탐구 방향을 함께 찾습니다. 제출용 완성 결과물을 대신 써 주지는 않습니다. 코드는 베타 수준이지만 법적 절차(이용약관, 보호책임자, 법률 검토)를 마치지 않아 공개하지 않았습니다."),
+                  ai=("AI-assisted implementation. Test counts in its status notes were not re-run for this page." if en
+                      else "구현에는 AI의 도움을 받았습니다. 현황 문서의 테스트 개수는 이 페이지를 위해 다시 돌리지 않았습니다."),
+                  repo="https://github.com/SeoJunLee-code/saenggiro")])
 
     # ------------------------------------------------------------------ about
     n_st = len(R)
